@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -12,18 +11,16 @@ class DatabaseSeeder extends Seeder
 
     /**
      * Seed the application's database.
+     *
+     * `DemoVendorSeeder` membuat admin, vendor lengkap dengan profil, dan paket
+     * contoh. Tanpa baris `vendors`, dev-login hanya menghasilkan 403
+     * `vendor_not_linked` di seluruh endpoint vendor.
      */
     public function run(): void
     {
         $this->call([
             PlanSeeder::class,
-        ]);
-
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            DemoVendorSeeder::class,
         ]);
     }
 }

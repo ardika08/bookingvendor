@@ -44,7 +44,7 @@ export function PublicScheduleLinkCard({ slug }: { slug: string }) {
     <Card>
       <CardHeader
         title="Link jadwal publik"
-        description="Bagikan tautan ini agar calon klien bisa melihat tanggal yang masih kosong."
+        description="Bagikan tautan ini agar calon klien bisa melihat tanggal yang masih tersedia."
       />
       <CardBody className="space-y-3">
         {slug ? (
@@ -76,8 +76,9 @@ export function PublicScheduleLinkCard({ slug }: { slug: string }) {
               </a>
             </div>
             <p className="border-t border-ink-100 pt-2 text-[11px] leading-relaxed text-ink-400">
-              Halaman ini hanya menampilkan tanggal yang sudah terisi dan daftar paket aktif.
-              Nama, kontak, dan nilai transaksi klien tidak pernah ditampilkan.
+              Kalender menandai tanggal yang sudah terisi, sehingga calon klien tahu sisa
+              tanggal yang tersedia. Nama, kontak, dan nilai transaksi klien tidak pernah
+              ditampilkan.
             </p>
           </>
         ) : (

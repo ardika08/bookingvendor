@@ -39,6 +39,10 @@ export function LoginPage() {
       account_not_registered:
         'Akun Google ini belum terdaftar. Minta admin platform menambahkan vendor terlebih dahulu.',
       account_inactive: 'Akun ini dinonaktifkan. Hubungi admin platform.',
+      // Akun vendor ada, tetapi baris `vendors` belum dibuat. Biasanya berarti
+      // database belum di-seed, bukan akun yang salah.
+      vendor_profile_missing:
+        'Akun vendor ini belum punya profil usaha. Jalankan `php artisan db:seed` untuk membuat profil contoh.',
     }
     setError(messages[code] ?? 'Terjadi kesalahan saat masuk.')
     window.history.replaceState(null, '', '/login')
