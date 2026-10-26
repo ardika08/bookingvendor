@@ -12,3 +12,7 @@ storage/framework/views/*
 .phpunit.result.cache
 .DS_Store
 *.sqlite
+
+# backup repo lama
+.git_rusak_*/
+.git_bak/
