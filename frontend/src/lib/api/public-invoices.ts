@@ -62,7 +62,84 @@ export async function fetchPublicInvoice(
     }
   }
 
-  return apiRequest<PublicInvoiceData>(`/public/invoices/${encodeURIComponent(token)}`, { signal })
+  return mapPublicInvoice(
+    await apiRequest<PublicInvoiceResponse>(`/public/invoices/${encodeURIComponent(token)}`, { signal }),
+  )
+}
+
+/**
+ * Bentuk respons mentah dari `PublicInvoiceResource`.
+ *
+ * Backend mengirim struktur datar (data invoice, acara, dan vendor sejajar),
+ * sedangkan halaman publik memakai bentuk bersarang. Pemetaan dilakukan di
+ * sini supaya kontrak API tidak perlu diubah hanya demi kenyamanan satu
+ * komponen.
+ */
+interface PublicInvoiceResponse {
+  number: string
+  type: Invoice['type']
+  status: Invoice['status']
+  dueAt: string | null
+  amount: number
+  paidAmount: number
+  booking?: {
+    clientName?: string | null
+    eventDate?: string | null
+    packageName?: string | null
+  } | null
+  vendor?: {
+    name?: string | null
+    contact?: string | null
+    bank?: {
+      name?: string | null
+      accountNumber?: string | null
+      accountName?: string | null
+    } | null
+  } | null
+}
+
+function mapPublicInvoice(raw: PublicInvoiceResponse): PublicInvoiceData {
+  return {
+    invoice: {
+      number: raw.number,
+      clientName: raw.booking?.clientName ?? '',
+      packageName: raw.booking?.packageName ?? null,
+      type: raw.type,
+      status: raw.status,
+      dueAt: raw.dueAt ?? '',
+      amount: raw.amount,
+      paidAmount: raw.paidAmount,
+      eventDate: raw.booking?.eventDate ?? '',
+    },
+    vendor: {
+      businessName: raw.vendor?.name ?? '',
+      contactPhone: raw.vendor?.contact ?? null,
+      bank: {
+        name: raw.vendor?.bank?.name ?? null,
+        accountNumber: raw.vendor?.bank?.accountNumber ?? null,
+        accountHolder: raw.vendor?.bank?.accountName ?? null,
+      },
+    },
+  }
+}
+
+/**
+ * Token tautan publik yang sedang aktif, atau `null` bila belum ada.
+ *
+ * Dipakai agar kartu share-link tetap menampilkan tautan yang sudah dibuat
+ * setelah halaman dimuat ulang. Tidak pernah membuat token baru.
+ */
+export async function fetchPublicInvoiceLink(invoiceId: string): Promise<string | null> {
+  if (USE_MOCK_DATA) {
+    await delay(80)
+    return findMockToken(invoiceId) ?? null
+  }
+
+  const result = await apiRequest<{ token: string | null; active: boolean }>(
+    `/invoices/${encodeURIComponent(invoiceId)}/share-link`,
+  )
+
+  return result.active ? result.token : null
 }
 
 /** Buat atau ambil tautan invoice publik untuk dibagikan kepada klien. */

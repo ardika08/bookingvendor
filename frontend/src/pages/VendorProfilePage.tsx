@@ -15,6 +15,7 @@ import { SubmitErrorBanner } from '@/components/bookings/SubmitErrorBanner'
 import { Button } from '@/components/ui/Button'
 import { Card, CardBody, CardFooter, CardHeader } from '@/components/ui/Card'
 import { Field, FormSection, inputClass, textareaClass } from '@/components/ui/Field'
+import { PublicScheduleLinkCard } from '@/components/vendor/PublicScheduleLinkCard'
 import { ApiError } from '@/lib/api/client'
 import { initials } from '@/lib/format'
 import { cn } from '@/lib/cn'
@@ -412,6 +413,8 @@ export function VendorProfilePage({
               invoice tetap bisa diterbitkan tetapi tanpa instruksi pembayaran.
             </p>
           </div>
+
+          <PublicScheduleLinkCard slug={slug} />
         </aside>
       </div>
 

@@ -11,10 +11,12 @@ use App\Http\Controllers\Api\CurrentUserController;
 use App\Http\Controllers\Api\DuitkuCallbackController;
 use App\Http\Controllers\Api\InvoiceController;
 use App\Http\Controllers\Api\InvoicePaymentController;
+use App\Http\Controllers\Api\InvoiceShareLinkController;
 use App\Http\Controllers\Api\PackageController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\PublicInvoiceController;
+use App\Http\Controllers\Api\PublicScheduleController;
 use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\UserProfileController;
 use App\Http\Controllers\Api\VendorProfileController;
@@ -112,6 +114,23 @@ Route::middleware(['auth:sanctum', 'vendor.active'])->group(function () {
         Route::match(['put', 'patch'], '{invoice}', [InvoiceController::class, 'update'])->name('invoices.update');
         Route::delete('{invoice}', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
 
+        /*
+         * Link publik invoice. Token adalah satu-satunya kunci akses halaman
+         * publik, jadi reset & nonaktifkan dipisah tegas dari pembuatan.
+         */
+        Route::prefix('{invoice}/share-link')->group(function () {
+            Route::get('/', [InvoiceShareLinkController::class, 'show'])
+                ->name('invoices.share-link.show');
+            Route::post('/', [InvoiceShareLinkController::class, 'store'])
+                ->name('invoices.share-link.store');
+            Route::post('reset', [InvoiceShareLinkController::class, 'reset'])
+                ->name('invoices.share-link.reset');
+            Route::delete('/', [InvoiceShareLinkController::class, 'destroy'])
+                ->name('invoices.share-link.destroy');
+        });
+
+        Route::get('{invoice}/payments', [InvoicePaymentController::class, 'index'])
+            ->name('invoices.payments.index');
         Route::post('{invoice}/payments', [InvoicePaymentController::class, 'store'])
             ->name('invoices.payments.store');
     });
@@ -194,4 +213,11 @@ Route::middleware(['auth:sanctum', 'vendor.active'])->group(function () {
 Route::prefix('public')->group(function () {
     Route::get('invoices/{token}', [PublicInvoiceController::class, 'show'])
         ->name('public.invoices.show');
+
+    /*
+     * Jadwal ketersediaan vendor. Publik karena dibagikan ke calon klien;
+     * isinya sengaja hanya tanggal terpakai + paket aktif, tanpa data klien.
+     */
+    Route::get('schedules/{slug}', [PublicScheduleController::class, 'show'])
+        ->name('public.schedules.show');
 });

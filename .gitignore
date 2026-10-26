@@ -1,17 +1,32 @@
 ﻿node_modules/
-vendor/
 .env
 .env.*
 !.env.example
-dist/
-build/
-storage/logs/*.log
-storage/framework/cache/*
-storage/framework/sessions/*
-storage/framework/views/*
-.phpunit.result.cache
 .DS_Store
+
+# ---------------------------------------------------------------------------
+# Pola di bawah di-anchor ke folder backend/frontend.
+#
+# Sebelumnya ditulis `vendor/`, `dist/`, `build/`, dan `storage/...` tanpa
+# awalan. Pola seperti itu cocok di kedalaman berapa pun, sehingga
+# `frontend/src/components/vendor/` ikut terabaikan dan berkas di dalamnya
+# tidak pernah masuk commit. Anchor membuat maksudnya jelas: yang diabaikan
+# hanya dependensi Composer dan hasil build frontend.
+# ---------------------------------------------------------------------------
+/backend/vendor/
+/backend/.env
+/backend/storage/logs/*.log
+/backend/storage/framework/cache/*
+/backend/storage/framework/sessions/*
+/backend/storage/framework/views/*
+/backend/.phpunit.result.cache
 *.sqlite
+
+/frontend/dist/
+/frontend/node_modules/
+/frontend/.env
+/frontend/.env.*
+!/frontend/.env.example
 
 # hasil `deploy/build-cpanel.sh` — dibuat ulang tiap deploy
 dist-deploy/

@@ -38,7 +38,11 @@ const PRIMARY_NAV: NavItem[] = [
 ]
 
 const SECONDARY_NAV: NavItem[] = [
-  { label: 'Paket Layanan', to: '/packages', icon: Sparkles, soon: true },
+  /*
+   * Paket Layanan sudah berfungsi penuh (CRUD + dipakai form booking serta
+   * halaman jadwal publik), jadi tidak lagi ditandai "soon".
+   */
+  { label: 'Paket Layanan', to: '/packages', icon: Sparkles },
   { label: 'Akun Saya', to: '/settings/akun', icon: UserRound },
   { label: 'Pengaturan', to: '/settings', icon: Settings2 },
 ]

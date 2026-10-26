@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Concerns\ResolvesVendor;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePaymentRequest;
 use App\Http\Resources\InvoiceResource;
@@ -21,8 +22,47 @@ use Illuminate\Support\Facades\DB;
  */
 class InvoicePaymentController extends Controller
 {
+    use ResolvesVendor;
     public function __construct(private readonly InvoiceStatusResolver $statuses)
     {
+    }
+
+    /**
+     * Riwayat pembayaran satu invoice.
+     *
+     * GET /api/invoices/{invoice}/payments
+     *
+     * Dipakai halaman detail invoice untuk menampilkan pembayaran yang sudah
+     * dicatat. Tanpa endpoint ini halaman gagal memuat (405) meski invoice-nya
+     * sendiri berhasil diambil.
+     */
+    public function index(Invoice $invoice): JsonResponse
+    {
+        $invoice->loadMissing('booking');
+
+        $vendorId = $invoice->booking?->vendor_id;
+
+        if ($vendorId === null || $vendorId !== $this->resolveVendor()->id) {
+            abort(404);
+        }
+
+        $payments = Payment::query()
+            ->where('invoice_id', $invoice->id)
+            ->orderByDesc('paid_at')
+            ->orderByDesc('id')
+            ->get()
+            ->map(fn (Payment $payment): array => [
+                'id' => (string) $payment->id,
+                'invoiceId' => (string) $payment->invoice_id,
+                'amount' => (float) $payment->amount,
+                'paidAt' => optional($payment->paid_at)->toDateString(),
+                'method' => $payment->method,
+                'note' => $payment->note,
+            ])
+            ->values()
+            ->all();
+
+        return response()->json($payments);
     }
 
     /**

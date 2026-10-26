@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Ban, Check, Copy, ExternalLink, Link2, LoaderCircle, RotateCw } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Card, CardBody, CardHeader } from '@/components/ui/Card'
 import {
   createPublicInvoiceLink,
   disablePublicInvoiceLink,
+  fetchPublicInvoiceLink,
   resetPublicInvoiceLink,
 } from '@/lib/api/public-invoices'
 
@@ -12,12 +13,39 @@ type LinkAction = 'reset' | 'disable'
 
 export function InvoiceShareLinkCard({ invoiceId }: { invoiceId: string }) {
   const [publicUrl, setPublicUrl] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
   const [creating, setCreating] = useState(false)
   const [savingAction, setSavingAction] = useState(false)
   const [pendingAction, setPendingAction] = useState<LinkAction | null>(null)
   const [copied, setCopied] = useState(false)
   const [notice, setNotice] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+
+  /*
+   * Tautan yang sudah pernah dibuat harus tetap terlihat setelah halaman
+   * dimuat ulang. Tanpa pemuatan awal ini, vendor mengira tautannya hilang dan
+   * membuat ulang — padahal token lama masih hidup.
+   */
+  useEffect(() => {
+    let active = true
+
+    fetchPublicInvoiceLink(invoiceId)
+      .then((token) => {
+        if (!active) return
+        setPublicUrl(token ? `${window.location.origin}/invoice/${encodeURIComponent(token)}` : null)
+      })
+      .catch((cause: unknown) => {
+        if (!active) return
+        setError(cause instanceof Error ? cause.message : 'Status link invoice gagal dimuat.')
+      })
+      .finally(() => {
+        if (active) setLoading(false)
+      })
+
+    return () => {
+      active = false
+    }
+  }, [invoiceId])
 
   async function createLink() {
     setCreating(true)
@@ -77,7 +105,12 @@ export function InvoiceShareLinkCard({ invoiceId }: { invoiceId: string }) {
         description="Bagikan rincian tagihan ini kepada klien."
       />
       <CardBody className="space-y-3">
-        {publicUrl ? (
+        {loading ? (
+          <p className="inline-flex items-center gap-1.5 text-[11.5px] text-ink-400">
+            <LoaderCircle className="size-3.5 animate-spin" aria-hidden="true" />
+            Memeriksa link…
+          </p>
+        ) : publicUrl ? (
           <>
             <label htmlFor="public-invoice-url" className="sr-only">
               Link invoice publik

@@ -6,12 +6,17 @@ import {
   ChevronRight,
   CircleCheck,
   CircleX,
+  Clock3,
   RefreshCw,
 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { ApiError } from '@/lib/api/client'
-import { fetchPublicSchedule, type PublicScheduleData } from '@/lib/api/public-schedule'
+import {
+  fetchPublicSchedule,
+  type PublicScheduleData,
+  type PublicSchedulePackage,
+} from '@/lib/api/public-schedule'
 import { currentMonthKey, formatLongDate, toIsoDate } from '@/lib/format'
 import {
   buildMonthMatrix,
@@ -211,9 +216,68 @@ export function PublicSchedulePage({ slug }: { slug: string }) {
         <footer className="px-2 pb-2 text-center text-[11px] leading-relaxed text-ink-400">
           Kalender ini hanya menampilkan status ketersediaan tanggal. Informasi pribadi klien tidak ditampilkan.
         </footer>
+
+        {data && data.vendor.packages && data.vendor.packages.length > 0 ? (
+          <PublicPackageList packages={data.vendor.packages} />
+        ) : null}
       </div>
     </main>
   )
+}
+
+/**
+ * Paket yang ditawarkan vendor.
+ *
+ * Calon klien melihat kisaran harga sebelum menghubungi vendor, sehingga
+ * halaman jadwal tidak berhenti di kalender saja.
+ */
+function PublicPackageList({ packages }: { packages: PublicSchedulePackage[] }) {
+  return (
+    <section className="space-y-3" aria-labelledby="paket-vendor">
+      <div className="px-1">
+        <h2 id="paket-vendor" className="text-[15px] font-semibold text-ink-900">
+          Paket layanan
+        </h2>
+        <p className="text-[12px] text-ink-500">
+          Harga sudah termasuk layanan sesuai durasi yang tertera.
+        </p>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2">
+        {packages.map((item) => (
+          <Card key={item.id}>
+            <div className="space-y-2 px-4 py-4">
+              <div className="flex items-start justify-between gap-3">
+                <h3 className="text-[13.5px] font-semibold text-ink-900">{item.name}</h3>
+                <p className="shrink-0 text-[13.5px] font-semibold tabular-nums text-brand-700">
+                  {formatRupiah(item.price)}
+                </p>
+              </div>
+
+              {item.durationHours !== null ? (
+                <p className="inline-flex items-center gap-1.5 text-[11.5px] text-ink-500">
+                  <Clock3 className="size-3.5" aria-hidden="true" />
+                  {item.durationHours} jam
+                </p>
+              ) : null}
+
+              {item.description ? (
+                <p className="text-[12px] leading-relaxed text-ink-600">{item.description}</p>
+              ) : null}
+            </div>
+          </Card>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function formatRupiah(value: number): string {
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0,
+  }).format(value)
 }
 
 export function PublicScheduleCalendar({
