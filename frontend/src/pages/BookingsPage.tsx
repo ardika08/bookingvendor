@@ -5,6 +5,7 @@ import { BookingFiltersBar } from '@/components/bookings/BookingFiltersBar'
 import { BookingTable } from '@/components/bookings/BookingTable'
 import { StatusCountPills } from '@/components/bookings/StatusControls'
 import { SubscriptionBar } from '@/components/layout/SubscriptionBar'
+import { ReadOnlyActionHint, ReadOnlyBanner } from '@/components/subscription/ReadOnlyBanner'
 import { Button, ButtonLink } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -13,6 +14,7 @@ import { useBookingList } from '@/hooks/useBookingList'
 import { useOptimisticBookingStatus } from '@/hooks/useBookingStatusChange'
 import { ApiError } from '@/lib/api/client'
 import { buildFilterQuery, parseFilters, type BookingsView } from '@/lib/booking-query'
+import { resolveAccess } from '@/lib/subscription-access'
 import { countStatuses } from '@/lib/booking-status-optimistic'
 import { formatMonthYear, toIsoDate } from '@/lib/format'
 import { VendorCalendar } from '@/components/calendar/VendorCalendar'
@@ -127,10 +129,13 @@ export function BookingsPage({ subscription }: { subscription: SubscriptionSumma
   const counts = useMemo(() => countStatuses(visibleBookings), [visibleBookings])
   const hasFilter =
     filters.search.trim() !== '' || filters.status !== 'all' || filters.month !== ''
+  /** Langganan berakhir → data lama tetap tampil, tombol pembuatan data direm. */
+  const access = resolveAccess(subscription)
 
   return (
     <div className="space-y-4">
       <SubscriptionBar subscription={subscription} />
+      <ReadOnlyBanner access={access} />
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
@@ -167,10 +172,14 @@ export function BookingsPage({ subscription }: { subscription: SubscriptionSumma
               </button>
             ))}
           </div>
-          <ButtonLink to="/bookings/new" className="shrink-0">
-            <CalendarPlus className="size-4" />
-            Booking Baru
-          </ButtonLink>
+          {access.readOnly ? (
+            <ReadOnlyActionHint label="Booking Baru" />
+          ) : (
+            <ButtonLink to="/bookings/new" className="shrink-0">
+              <CalendarPlus className="size-4" />
+              Booking Baru
+            </ButtonLink>
+          )}
         </div>
       </div>
 
@@ -190,7 +199,8 @@ export function BookingsPage({ subscription }: { subscription: SubscriptionSumma
           blocked={blocked}
           monthKey={calendarMonth}
           onMonthChange={setCalendarMonth}
-          onToggleBlocked={handleToggleBlocked}
+          onToggleBlocked={access.readOnly ? undefined : handleToggleBlocked}
+          createBookingLocked={access.readOnly}
         />
       ) : (
         <Card className="overflow-hidden">
@@ -228,13 +238,23 @@ export function BookingsPage({ subscription }: { subscription: SubscriptionSumma
             ) : (
               <EmptyState
                 icon={<CalendarPlus className="size-5" />}
-                title="Belum ada booking"
-                description="Catat acara pertama kamu supaya jadwal dan invoice bisa dilacak dari satu tempat."
+                title={access.readOnly ? 'Belum ada data tersimpan' : 'Belum ada booking'}
+                description={
+                  access.readOnly
+                    ? 'Belum ada data tersimpan. Booking baru bisa dibuat setelah langganan diperpanjang.'
+                    : 'Catat acara pertama kamu supaya jadwal dan invoice bisa dilacak dari satu tempat.'
+                }
                 action={
-                  <ButtonLink to="/bookings/new" size="sm">
-                    <CalendarPlus className="size-3.5" />
-                    Buat booking pertama
-                  </ButtonLink>
+                  access.readOnly ? (
+                    <ButtonLink to="/upgrade" size="sm">
+                      Perpanjang paket
+                    </ButtonLink>
+                  ) : (
+                    <ButtonLink to="/bookings/new" size="sm">
+                      <CalendarPlus className="size-3.5" />
+                      Buat booking pertama
+                    </ButtonLink>
+                  )
                 }
               />
             )

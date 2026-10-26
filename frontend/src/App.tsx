@@ -20,6 +20,7 @@ import { PublicScheduleRoute } from '@/pages/routes/PublicScheduleRoute'
 import { InvoiceCreateRoute } from '@/pages/routes/InvoiceCreateRoute'
 import { VendorProfileRoute } from '@/pages/routes/VendorProfileRoute'
 import { CheckoutRoute } from '@/pages/routes/CheckoutRoute'
+import { RequireWriteAccess } from '@/components/auth/RequireWriteAccess'
 import { PackagesPage } from '@/pages/PackagesPage'
 import { LoginPage } from '@/pages/LoginPage'
 import { AccountProfilePage } from '@/pages/AccountProfilePage'
@@ -55,10 +56,24 @@ export function App() {
         <Route path="dashboard" element={<DashboardHomePage />} />
         <Route path="bookings" element={<BookingsRoute />} />
         <Route path="calendar" element={<CalendarPage />} />
-        <Route path="bookings/new" element={<BookingCreateRoute />} />
+        <Route
+          path="bookings/new"
+          element={
+            <RequireWriteAccess>
+              <BookingCreateRoute />
+            </RequireWriteAccess>
+          }
+        />
         <Route path="bookings/:bookingId" element={<BookingDetailRoute />} />
         <Route path="bookings/:bookingId/edit" element={<BookingEditRoute />} />
-        <Route path="bookings/:bookingId/invoice/new" element={<InvoiceCreateRoute />} />
+        <Route
+          path="bookings/:bookingId/invoice/new"
+          element={
+            <RequireWriteAccess>
+              <InvoiceCreateRoute />
+            </RequireWriteAccess>
+          }
+        />
         <Route path="invoices" element={<InvoicesRoute />} />
         <Route path="invoices/:invoiceId" element={<InvoiceDetailRoute />} />
         <Route path="packages" element={<PackagesPage />} />

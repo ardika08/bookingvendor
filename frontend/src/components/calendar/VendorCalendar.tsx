@@ -46,6 +46,7 @@ export function VendorCalendar({
   onCreateBooking,
   onSelectDate,
   onToggleBlocked,
+  createBookingLocked = false,
 }: {
   bookings: Booking[]
   /** Tanggal yang diblokir vendor (libur / tidak menerima booking). */
@@ -57,6 +58,14 @@ export function VendorCalendar({
   onSelectDate?: (date: string) => void
   /** Blokir tanggal dengan keterangan opsional, atau lepas blokir yang ada. */
   onToggleBlocked?: (date: string, reason: string | null) => Promise<boolean>
+  /**
+   * Panel kanan tetap menampilkan pintasan "Booking baru", tetapi dikunci saat
+   * langganan berakhir. `onCreateBooking` saja tidak cukup: pintasan di panel
+   * ini adalah tautan langsung ke `/bookings/new`, bukan callback — jadi guard
+   * route akan mengalihkan tanpa penjelasan. Dengan flag ini tombolnya berhenti
+   * jadi tautan dan berubah menjadi penanda terkunci yang menjelaskan alasannya.
+   */
+  createBookingLocked?: boolean
 }) {
   const [todayIso] = useState(() => toIsoDate(new Date()))
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
@@ -370,10 +379,20 @@ export function VendorCalendar({
           ) : null}
 
           <div className="mt-4">
-            <ButtonLink to="/bookings/new" size="sm" variant="secondary" className="w-full">
-              <CalendarPlus className="size-3.5" />
-              Booking baru
-            </ButtonLink>
+            {createBookingLocked ? (
+              <span
+                title="Booking baru terkunci sampai langganan diperpanjang. Data lama tetap bisa dibaca."
+                className="inline-flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-lg bg-ink-100 px-3 py-2 text-[12.5px] font-medium text-ink-400"
+              >
+                <Lock className="size-3.5" />
+                Booking baru
+              </span>
+            ) : (
+              <ButtonLink to="/bookings/new" size="sm" variant="secondary" className="w-full">
+                <CalendarPlus className="size-3.5" />
+                Booking baru
+              </ButtonLink>
+            )}
           </div>
         </aside>
       </div>

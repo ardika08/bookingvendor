@@ -18,6 +18,9 @@ import { Card, CardBody, CardFooter, CardHeader } from '@/components/ui/Card'
 import { DetailGrid, DetailItem } from '@/components/ui/DetailGrid'
 import { BOOKING_STATUS_META } from '@/lib/booking-status'
 import { formatCurrency, formatLongDate, formatShortDate, formatTime, initials } from '@/lib/format'
+import { resolveAccess } from '@/lib/subscription-access'
+import { ReadOnlyActionHint, ReadOnlyBanner } from '@/components/subscription/ReadOnlyBanner'
+import { useDashboardUser } from '@/pages/DashboardHomePage'
 import type { Booking, BookingStatus } from '@/types/booking'
 
 /**
@@ -39,6 +42,8 @@ export function BookingDetailPage({
   const [pending, setPending] = useState(false)
   const meta = BOOKING_STATUS_META[status]
   const isCancelled = status === 'cancelled'
+  /** Detail & riwayat tetap terbaca saat kedaluwarsa; aksi tulis baru direm. */
+  const access = resolveAccess(useDashboardUser().subscription)
 
   async function handleStatus(next: BookingStatus) {
     const previous = status
@@ -58,6 +63,8 @@ export function BookingDetailPage({
 
   return (
     <div className="space-y-4">
+      <ReadOnlyBanner access={access} />
+
       <div className="flex items-center justify-between gap-2">
         <Link
           to="/bookings"
@@ -218,10 +225,14 @@ export function BookingDetailPage({
               )}
             </CardBody>
             <CardFooter>
-              <ButtonLink to={`/bookings/${booking.id}/invoice/new`} size="sm">
-                <Receipt className="size-3.5" />
-                Buat invoice
-              </ButtonLink>
+              {access.readOnly ? (
+                <ReadOnlyActionHint label="Buat invoice" />
+              ) : (
+                <ButtonLink to={`/bookings/${booking.id}/invoice/new`} size="sm">
+                  <Receipt className="size-3.5" />
+                  Buat invoice
+                </ButtonLink>
+              )}
             </CardFooter>
           </Card>
 

@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom'
 import { InvoiceFiltersBar } from '@/components/invoices/InvoiceFiltersBar'
 import { InvoiceTable } from '@/components/invoices/InvoiceTable'
 import { SubscriptionBar } from '@/components/layout/SubscriptionBar'
+import { ReadOnlyActionHint, ReadOnlyBanner } from '@/components/subscription/ReadOnlyBanner'
 import { Button, ButtonLink } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -13,6 +14,7 @@ import { ApiError } from '@/lib/api/client'
 import { INVOICE_STATUS_DISPLAY_ORDER, INVOICE_STATUS_META } from '@/lib/invoice-status'
 import { buildInvoiceFilterQuery, hasActiveInvoiceFilters, parseInvoiceFilters } from '@/lib/invoice-query'
 import { formatCurrency } from '@/lib/format'
+import { resolveAccess } from '@/lib/subscription-access'
 import type { SubscriptionSummary } from '@/types/booking'
 import type { InvoiceFilters } from '@/types/invoice'
 
@@ -59,10 +61,13 @@ export function InvoicesPage({ subscription }: { subscription: SubscriptionSumma
 
   const hasFilter = hasActiveInvoiceFilters(filters)
   const { summary } = result
+  /** Langganan berakhir → riwayat invoice tetap terbaca, pembuatan baru direm. */
+  const access = resolveAccess(subscription)
 
   return (
     <div className="space-y-4">
       <SubscriptionBar subscription={subscription} />
+      <ReadOnlyBanner access={access} />
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
@@ -71,10 +76,14 @@ export function InvoicesPage({ subscription }: { subscription: SubscriptionSumma
             Semua tagihan booking kamu — DP, pelunasan, dan sisa yang belum masuk.
           </p>
         </div>
-        <ButtonLink to="/bookings" variant="secondary" className="shrink-0">
-          <ReceiptText className="size-4" />
-          Buat dari booking
-        </ButtonLink>
+        {access.readOnly ? (
+          <ReadOnlyActionHint label="Buat dari booking" />
+        ) : (
+          <ButtonLink to="/bookings" variant="secondary" className="shrink-0">
+            <ReceiptText className="size-4" />
+            Buat dari booking
+          </ButtonLink>
+        )}
       </div>
 
       <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
@@ -126,12 +135,22 @@ export function InvoicesPage({ subscription }: { subscription: SubscriptionSumma
             ) : (
               <EmptyState
                 icon={<ReceiptText className="size-5" />}
-                title="Belum ada invoice"
-                description="Invoice dibuat dari data booking — pilih booking yang sudah fix, lalu terbitkan DP atau pelunasan."
+                title={access.readOnly ? 'Belum ada data tersimpan' : 'Belum ada invoice'}
+                description={
+                  access.readOnly
+                    ? 'Belum ada invoice tersimpan. Invoice baru bisa diterbitkan setelah langganan diperpanjang.'
+                    : 'Invoice dibuat dari data booking — pilih booking yang sudah fix, lalu terbitkan DP atau pelunasan.'
+                }
                 action={
-                  <ButtonLink to="/bookings" size="sm">
-                    Buka daftar booking
-                  </ButtonLink>
+                  access.readOnly ? (
+                    <ButtonLink to="/upgrade" size="sm">
+                      Perpanjang paket
+                    </ButtonLink>
+                  ) : (
+                    <ButtonLink to="/bookings" size="sm">
+                      Buka daftar booking
+                    </ButtonLink>
+                  )
                 }
               />
             )

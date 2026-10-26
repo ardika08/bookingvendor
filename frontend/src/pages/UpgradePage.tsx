@@ -1,4 +1,6 @@
+import { Lock } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { PlanCard } from '@/components/subscription/PlanCard'
 import { PaymentHistory } from '@/components/subscription/PaymentHistory'
 import { SubscriptionStatusCard } from '@/components/subscription/SubscriptionStatusCard'
@@ -22,6 +24,13 @@ import type { Payment, Plan, SubscriptionState } from '@/types/subscription'
  * task backend berikutnya.
  */
 export function UpgradePage() {
+  const [searchParams] = useSearchParams()
+  /**
+   * Diisi `RequireWriteAccess` saat vendor terlempar dari halaman pembuatan
+   * data. Tujuannya supaya pengalihan tidak terasa seperti error: vendor diberi
+   * tahu kenapa aksinya diblokir, bukan hanya tiba-tiba mendarat di katalog.
+   */
+  const redirectedFromExpired = searchParams.get('from') === 'expired'
   const [plans, setPlans] = useState<Plan[]>([])
   const [subscription, setSubscription] = useState<SubscriptionState | null>(null)
   const [payments, setPayments] = useState<Payment[]>([])
@@ -71,6 +80,22 @@ export function UpgradePage() {
           saat kamu upgrade.
         </p>
       </div>
+
+      {redirectedFromExpired ? (
+        <div
+          role="status"
+          className="flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50/70 px-4 py-3"
+        >
+          <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-rose-100 text-rose-700">
+            <Lock className="size-3.5" />
+          </span>
+          <p className="text-[12.5px] leading-relaxed text-rose-900">
+            <span className="font-semibold">Aksi itu terkunci karena langganan berakhir.</span>{' '}
+            Data lama tetap bisa dibaca dan diekspor. Pilih paket di bawah untuk membuka kembali
+            pembuatan booking &amp; invoice.
+          </p>
+        </div>
+      ) : null}
 
       <SubscriptionStatusCard subscription={subscription} />
 

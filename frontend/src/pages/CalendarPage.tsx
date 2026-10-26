@@ -2,6 +2,7 @@ import { CalendarPlus, RefreshCw } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { VendorCalendar } from '@/components/calendar/VendorCalendar'
+import { ReadOnlyActionHint, ReadOnlyBanner } from '@/components/subscription/ReadOnlyBanner'
 import { Button, ButtonLink } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -12,6 +13,8 @@ import { createBlockedDate, deleteBlockedDate, fetchBlockedDates } from '@/lib/a
 import { buildMonthMatrix, summarizeMonth } from '@/lib/vendor-calendar'
 import { currentMonthKey, toIsoDate } from '@/lib/format'
 import { cn } from '@/lib/cn'
+import { resolveAccess } from '@/lib/subscription-access'
+import { useDashboardUser } from '@/pages/DashboardHomePage'
 import type { Booking } from '@/types/booking'
 import type { BlockedDate } from '@/lib/vendor-availability'
 
@@ -35,6 +38,8 @@ export function CalendarPage() {
 
   const { notify } = useToast()
   const navigate = useNavigate()
+  /** Langganan berakhir → kalender tetap terbaca, blokir tanggal & booking baru direm. */
+  const access = resolveAccess(useDashboardUser().subscription)
   const [todayIso] = useState(() => toIsoDate(new Date()))
   const [bookings, setBookings] = useState<Booking[]>([])
   const [blocked, setBlocked] = useState<BlockedDate[]>([])
@@ -119,6 +124,8 @@ export function CalendarPage() {
 
   return (
     <div className="space-y-4">
+      <ReadOnlyBanner access={access} />
+
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h2 className="text-lg font-semibold tracking-tight text-ink-900">Kalender</h2>
@@ -126,10 +133,14 @@ export function CalendarPage() {
             Lihat tanggal terisi sekilas, blokir tanggal libur, dan buka detail acara.
           </p>
         </div>
-        <ButtonLink to="/bookings/new" className="shrink-0">
-          <CalendarPlus className="size-4" />
-          Booking Baru
-        </ButtonLink>
+        {access.readOnly ? (
+          <ReadOnlyActionHint label="Booking Baru" />
+        ) : (
+          <ButtonLink to="/bookings/new" className="shrink-0">
+            <CalendarPlus className="size-4" />
+            Booking Baru
+          </ButtonLink>
+        )}
       </div>
 
       <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
@@ -164,8 +175,9 @@ export function CalendarPage() {
           blocked={blocked}
           monthKey={monthKey}
           onMonthChange={changeMonth}
-          onCreateBooking={() => navigate('/bookings/new')}
-          onToggleBlocked={handleToggleBlocked}
+          onCreateBooking={access.readOnly ? undefined : () => navigate('/bookings/new')}
+          onToggleBlocked={access.readOnly ? undefined : handleToggleBlocked}
+          createBookingLocked={access.readOnly}
         />
       )}
 
