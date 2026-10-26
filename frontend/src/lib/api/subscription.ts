@@ -34,7 +34,7 @@ const delay = (ms: number) => new Promise((r) => setTimeout(r, ms))
  * Set `USE_MOCK_SUBSCRIPTION = false` saat backend siap; komponen tidak berubah.
  */
 
-export const USE_MOCK_SUBSCRIPTION = true
+export const USE_MOCK_SUBSCRIPTION = false
 
 export async function fetchPlans(): Promise<Plan[]> {
   if (USE_MOCK_SUBSCRIPTION) return structuredClone(mockPlans)

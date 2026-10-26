@@ -1,5 +1,4 @@
 import { Bell, ChevronDown, LogOut, Menu } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
 import { formatMonthYear, initials } from '@/lib/format'
 import { clearAuthRole } from '@/lib/auth-session'
 import type { CurrentUser } from '@/types/booking'
@@ -18,13 +17,13 @@ export function Topbar({
   onOpenSidebar: () => void
 }) {
   const { subscription } = user
-  const navigate = useNavigate()
   const isTrial = subscription.status === 'trial'
 
-  /** Keluar: hapus sesi mock lalu kembali ke halaman masuk. */
+  /** Keluar: redirect ke server logout, yang mengalihkan kembali ke /login. */
   function handleLogout() {
     clearAuthRole()
-    navigate('/login')
+    // GET /auth/logout menghapus sesi server lalu redirect ke /login.
+    window.location.href = '/auth/logout'
   }
 
   return (

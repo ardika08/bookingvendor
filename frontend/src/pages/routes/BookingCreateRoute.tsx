@@ -11,25 +11,39 @@ import { BookingFormPage } from '@/pages/BookingFormPage'
  * Route `/bookings/new`.
  *
  * Mengambil data pendukung form dari lapisan API (paket, tanggal terisi, klien
- * lama) lalu men-submit ke `POST /api/bookings`. Dalam mode mock, `createBooking`
- * menunggu sebentar dan mengembalikan objek booking palsu; begitu backend aktif,
- * cukup set `USE_MOCK_DATA = false` di `lib/api/bookings.ts` — route ini tidak berubah.
+ * lama) lalu men-submit ke `POST /api/bookings`.
  */
 export function BookingCreateRoute() {
   const { user } = useOutletContext<{ user: CurrentUser }>()
   const [packages, setPackages] = useState<VendorPackage[]>([])
   const [takenDates, setTakenDates] = useState<string[]>([])
   const [clients, setClients] = useState<ClientSummary[]>([])
+  const [loadError, setLoadError] = useState<string | null>(null)
 
   useEffect(() => {
     let active = true
-    Promise.all([fetchPackages(), fetchTakenDates()]).then(([packageList, dates]) => {
-      if (!active) return
-      setPackages(packageList)
-      setTakenDates(dates)
-      // Placeholder sampai `GET /api/clients` ada; sumbernya booking yang sama.
-      setClients(buildClientSummaries(mockBookings))
-    })
+
+    Promise.all([fetchPackages(), fetchTakenDates()])
+      .then(([packageList, dates]) => {
+        if (!active) return
+        setPackages(packageList)
+        setTakenDates(dates)
+        // Placeholder sampai `GET /api/clients` ada; sumbernya booking yang sama.
+        setClients(buildClientSummaries(mockBookings))
+        setLoadError(null)
+      })
+      .catch((error: unknown) => {
+        if (!active) return
+        // Tanpa catch, kegagalan satu request (mis. sesi berakhir → 401)
+        // membuat seluruh Promise.all reject dan muncul sebagai unhandled
+        // rejection — halaman jadi kosong tanpa penjelasan.
+        setLoadError(
+          error instanceof Error
+            ? error.message
+            : 'Gagal memuat data pendukung form.',
+        )
+      })
+
     return () => {
       active = false
     }
@@ -48,6 +62,15 @@ export function BookingCreateRoute() {
 
   return (
     <div className="space-y-4">
+      {loadError ? (
+        <div
+          role="alert"
+          className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-2.5 text-[12.5px] text-rose-800"
+        >
+          {loadError}
+        </div>
+      ) : null}
+
       {user.subscription.status === 'trial' ? (
         <div className="rounded-xl border border-amber-200 bg-amber-50/70 px-4 py-2.5 text-[12.5px] text-amber-900">
           <span className="font-semibold">Masa trial.</span> Form tetap bisa diisi penuh — submit

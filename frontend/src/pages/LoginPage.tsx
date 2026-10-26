@@ -1,6 +1,6 @@
 import { LoaderCircle, ShieldCheck, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { clearAuthRole, readAuthRole, saveAuthRole, type AuthRole } from '@/lib/auth-session'
 import { GoogleMark } from '@/components/auth/GoogleMark'
 
@@ -8,25 +8,16 @@ import { GoogleMark } from '@/components/auth/GoogleMark'
  * Halaman masuk (`/login`) — pintu satu-satunya ke aplikasi.
  *
  * PRD: masuk hanya lewat akun Google (satu klik), tanpa registrasi publik.
- * Setelah OAuth, backend menentukan arah peran: vendor → dashboard, admin →
- * panel admin.
+ * Tombol "Masuk dengan Google" mengarah ke `/auth/google/redirect` yang
+ * ditangani server (redirect flow). Setelah OAuth, server mengalihkan ke
+ * `/dashboard` atau `/admin` sesuai peran.
  *
- * Fase frontend: klik tombol memutar simulasi "menghubungkan ke Google" lalu
- * masuk sesuai peran. Baris kecil "Simulasi alur" menyediakan skenario gagal
- * (akun belum terdaftar) agar state error bisa diuji tanpa backend — baris ini
- * dihapus saat integrasi OAuth nyata.
+ * Saat APP_ENV=local, baris "Dev login" muncul untuk mengetes alur SPA tanpa
+ * kredensial Google — server langsung membuat sesi sebagai vendor pertama.
  */
 
-type LoginStatus = 'idle' | 'connecting'
-
-const CONNECT_DELAY = 900
-const FAILURE_MESSAGE =
-  'Akun Google ini belum terdaftar. Minta admin platform menambahkan vendor terlebih dahulu.'
-
 export function LoginPage() {
-  const navigate = useNavigate()
   const [sessionRole, setSessionRole] = useState<AuthRole | null>(() => readAuthRole())
-  const [status, setStatus] = useState<LoginStatus>('idle')
   const [error, setError] = useState<string | null>(null)
   const connected = useRef(true)
 
@@ -37,36 +28,25 @@ export function LoginPage() {
     }
   }, [])
 
-  const connecting = status === 'connecting'
+  /** Pesan error dari redirect OAuth (?error=…). */
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const code = params.get('error')
+    if (!code) return
 
-  /** Selesaikan simulasi login untuk satu peran. */
-  function finishLogin(role: AuthRole) {
-    saveAuthRole(role)
-    setSessionRole(role)
-    navigate(role === 'admin' ? '/admin' : '/dashboard')
-  }
+    const messages: Record<string, string> = {
+      oauth_failed: 'Gagal menghubungkan ke Google. Coba lagi.',
+      account_not_registered:
+        'Akun Google ini belum terdaftar. Minta admin platform menambahkan vendor terlebih dahulu.',
+      account_inactive: 'Akun ini dinonaktifkan. Hubungi admin platform.',
+    }
+    setError(messages[code] ?? 'Terjadi kesalahan saat masuk.')
+    window.history.replaceState(null, '', '/login')
+  }, [])
 
-  /** Alur sukses: tunggu sebentar seolah OAuth, lalu masuk. */
-  async function handleGoogle(role: AuthRole) {
-    setStatus('connecting')
-    setError(null)
-    await delay(CONNECT_DELAY)
-
-    if (!connected.current) return
-    finishLogin(role)
-  }
-
-  /** Alur gagal: akun Google belum terdaftar sebagai vendor/admin. */
-  async function handleSimulateFailure() {
-    setStatus('connecting')
-    setError(null)
-    await delay(CONNECT_DELAY)
-
-    if (!connected.current) return
-    clearAuthRole()
-    setSessionRole(null)
-    setStatus('idle')
-    setError(FAILURE_MESSAGE)
+  /** Login dev: langsung redirect ke /auth/dev-login (server membuat sesi). */
+  function handleDevLogin() {
+    window.location.href = '/auth/dev-login'
   }
 
   /** Hapus sesi aktif lalu segarkan tampilan halaman masuk. */
@@ -127,36 +107,36 @@ export function LoginPage() {
             </div>
           ) : null}
 
-          <button
-            type="button"
-            disabled={connecting}
-            onClick={() => void handleGoogle('vendor')}
-            className="flex h-11 w-full items-center justify-center gap-3 rounded-lg border border-ink-200 bg-white text-sm font-medium text-ink-800 shadow-sm transition-colors hover:bg-ink-50 disabled:cursor-wait disabled:opacity-70"
+          <a
+            href="/auth/google/redirect"
+            className="flex h-11 w-full items-center justify-center gap-3 rounded-lg border border-ink-200 bg-white text-sm font-medium text-ink-800 shadow-sm transition-colors hover:bg-ink-50"
           >
-            {connecting ? (
-              <>
-                <LoaderCircle className="size-4 shrink-0 animate-spin text-ink-400" />
-                Menghubungkan ke Google…
-              </>
-            ) : (
-              <>
-                <GoogleMark />
-                Masuk dengan Google
-              </>
-            )}
-          </button>
+            <GoogleMark />
+            Masuk dengan Google
+          </a>
 
           <p className="mt-4 text-center text-[11.5px] leading-relaxed text-ink-400">
-            Tidak ada registrasi publik. Akun vendor & admin disiapkan admin —
+            Tidak ada registrasi publik. Akun vendor &amp; admin disiapkan admin —
             cukup masuk lewat akun Google yang terdaftar.
           </p>
 
-          <SimulationRow
-            disabled={connecting}
-            onVendor={() => void handleGoogle('vendor')}
-            onAdmin={() => void handleGoogle('admin')}
-            onFail={() => void handleSimulateFailure()}
-          />        </div>
+          {/* Dev bypass: hanya muncul saat APP_ENV=local. Server mengembalikan
+              404 untuk endpoint ini di environment lain, jadi tombol ini
+              aman untuk dibiarkan di kode. */}
+          <div className="mt-4 border-t border-dashed border-ink-200 pt-3">
+            <p className="text-center text-[10px] font-semibold uppercase tracking-wider text-ink-300">
+              Dev login (tanpa Google)
+            </p>
+            <button
+              type="button"
+              onClick={handleDevLogin}
+              className="mt-2 flex h-9 w-full items-center justify-center gap-2 rounded-lg bg-ink-100 text-[12px] font-medium text-ink-700 transition-colors hover:bg-ink-200"
+            >
+              <LoaderCircle className="size-3.5" />
+              Masuk sebagai vendor uji
+            </button>
+          </div>
+        </div>
 
         <p className="mt-6 text-center text-[12px] text-ink-400">
           Mengelola platform?{' '}
@@ -172,60 +152,4 @@ export function LoginPage() {
       </div>
     </div>
   )
-}
-
-/**
- * Baris simulasi alur (khusus fase frontend).
- *
- * Tiga skenario: sukses vendor, sukses admin, dan gagal. Saat integrasi OAuth
- * nyata, baris ini tidak lagi dirender.
- */
-function SimulationRow({
-  disabled,
-  onVendor,
-  onAdmin,
-  onFail,
-}: {
-  disabled: boolean
-  onVendor: () => void
-  onAdmin: () => void
-  onFail: () => void
-}) {
-  return (
-    <div className="mt-4 border-t border-dashed border-ink-200 pt-3">
-      <p className="text-center text-[10px] font-semibold uppercase tracking-wider text-ink-300">
-        Simulasi alur (uji frontend)
-      </p>
-      <div className="mt-2 flex items-center justify-center gap-1.5">
-        <SimulationButton label="Sukses · Vendor" disabled={disabled} onClick={onVendor} />
-        <SimulationButton label="Sukses · Admin" disabled={disabled} onClick={onAdmin} />
-        <SimulationButton label="Gagal" disabled={disabled} onClick={onFail} />
-      </div>
-    </div>
-  )
-}
-
-function SimulationButton({
-  label,
-  disabled,
-  onClick,
-}: {
-  label: string
-  disabled?: boolean
-  onClick: () => void
-}) {
-  return (
-    <button
-      type="button"
-      disabled={disabled}
-      onClick={onClick}
-      className="rounded-md px-2 py-1 text-[11px] font-medium text-ink-500 ring-1 ring-ink-200 transition-colors hover:bg-ink-50 hover:text-ink-800 disabled:opacity-50"
-    >
-      {label}
-    </button>
-  )
-}
-
-function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms))
 }

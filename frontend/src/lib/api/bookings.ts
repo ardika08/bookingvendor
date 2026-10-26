@@ -19,7 +19,7 @@ import { mockBookings, mockPackages, mockUser } from '../mock/bookings'
  * didefinisikan PRD, dan komponen tidak perlu diubah.
  */
 
-export const USE_MOCK_DATA = true
+export const USE_MOCK_DATA = false
 
 /** Tunda singkat agar skeleton/loading state terlihat realistis di mode mock. */
 const delay = (ms: number, signal?: AbortSignal) =>

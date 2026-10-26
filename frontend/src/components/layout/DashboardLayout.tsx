@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { Sidebar } from './Sidebar'
 import { Topbar } from './Topbar'
-import { mockUser } from '@/lib/mock/bookings'
+import { fetchCurrentUser } from '@/lib/auth-session'
 import type { CurrentUser } from '@/types/booking'
 
 /**
@@ -11,6 +11,10 @@ import type { CurrentUser } from '@/types/booking'
  * Layout dua kolom: sidebar tetap di desktop (≥lg) dan drawer di mobile.
  * Judul topbar diturunkan dari route agar setiap halaman tidak perlu
  * mengirim props navigasi sendiri.
+ *
+ * User dimuat dari `GET /api/me` — RoleGate sudah memastikan sesi valid
+ * sebelum layout ini dirender, jadi di sini error hanya terjadi bila sesi
+ * berakhir di tengah navigasi.
  */
 
 const ROUTE_TITLES: Record<string, string> = {
@@ -31,14 +35,37 @@ function resolveTitle(pathname: string): string {
 
 export function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [user, setUser] = useState<CurrentUser | null>(null)
   const location = useLocation()
-  const user: CurrentUser = mockUser
 
   useEffect(() => {
     setSidebarOpen(false)
   }, [location.pathname])
 
+  useEffect(() => {
+    let cancelled = false
+    fetchCurrentUser()
+      .then((u) => {
+        if (!cancelled) setUser(u)
+      })
+      .catch(() => {
+        // RoleGate menangani redirect ke /login bila sesi tidak valid.
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   const title = resolveTitle(location.pathname)
+
+  // Skeleton ringan sebelum data user tersedia.
+  if (user === null) {
+    return (
+      <div className="flex min-h-dvh items-center justify-center bg-ink-50">
+        <div className="size-6 animate-spin rounded-full border-2 border-ink-200 border-t-brand-600" />
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-dvh bg-ink-50">
@@ -46,26 +73,30 @@ export function DashboardLayout() {
         <Sidebar />
       </aside>
 
-      {sidebarOpen ? (
-        <div className="fixed inset-0 z-40 lg:hidden">
-          <button
-            type="button"
-            className="absolute inset-0 bg-ink-900/40"
-            aria-label="Tutup menu"
-            onClick={() => setSidebarOpen(false)}
-          />
-          <div className="absolute inset-y-0 left-0 w-64 border-r border-ink-200 bg-white shadow-xl">
-            <Sidebar onNavigate={() => setSidebarOpen(false)} />
-          </div>
-        </div>
-      ) : null}
-
       <div className="lg:pl-60">
-        <Topbar user={user} title={title} onOpenSidebar={() => setSidebarOpen(true)} />
-        <main className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
+        <Topbar
+          user={user}
+          title={title}
+          onOpenSidebar={() => setSidebarOpen(true)}
+        />
+
+        <main className="mx-auto max-w-5xl px-4 py-6 sm:px-6">
           <Outlet context={{ user }} />
         </main>
       </div>
+
+      {/* Drawer sidebar untuk mobile */}
+      {sidebarOpen && (
+        <div className="fixed inset-0 z-30 lg:hidden">
+          <div
+            className="absolute inset-0 bg-ink-900/40"
+            onClick={() => setSidebarOpen(false)}
+          />
+          <aside className="absolute inset-y-0 left-0 w-64 border-r border-ink-200 bg-white">
+            <Sidebar />
+          </aside>
+        </div>
+      )}
     </div>
   )
 }

@@ -71,6 +71,10 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
         Accept: 'application/json',
         ...(body ? { 'Content-Type': 'application/json' } : {}),
         'X-Requested-With': 'XMLHttpRequest',
+        // CSRF: Laravel (Sanctum stateful) mewajibkan header ini untuk
+        // POST/PUT/PATCH/DELETE. Nilai dibaca dari cookie XSRF-TOKEN yang
+        // diset server; cookie di-encode URL sehingga harus di-decode.
+        ...csrfHeader(),
       },
       body: body ? JSON.stringify(body) : undefined,
     })
@@ -99,6 +103,27 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
   }
 
   return payload as T
+}
+
+/**
+ * Header CSRF dari cookie `XSRF-TOKEN`.
+ *
+ * Sanctum stateful memvalidasi token CSRF untuk semua method non-GET. Cookie
+ * `XSRF-TOKEN` di-set Laravel dan nilainya URL-encoded, jadi harus di-decode
+ * sebelum dikirim sebagai header `X-XSRF-TOKEN`.
+ *
+ * Bila cookie belum ada (mis. request pertama sebelum halaman memuat sesi),
+ * kembalikan objek kosong — request GET tetap berjalan, dan request non-GET
+ * akan gagal 419 yang ditangani sebagai `isUnauthorized` di atas.
+ */
+function csrfHeader(): Record<string, string> {
+  const match = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]+)/)
+  if (!match) return {}
+  try {
+    return { 'X-XSRF-TOKEN': decodeURIComponent(match[1]) }
+  } catch {
+    return {}
+  }
 }
 
 /** Laravel mengirim `{ message, errors: { field: [pesan, ...] } }` untuk 422. */

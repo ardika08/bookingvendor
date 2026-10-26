@@ -1,17 +1,25 @@
 /**
- * Sesi login tiruan (fase frontend) — fitur "Masuk dengan Google".
+ * Sesi login: bridge antara SPA dan backend Laravel (Sanctum guard web).
  *
- * OAuth belum ada; role yang dipilih saat masuk disimpan di localStorage agar
- * kedua dashboard (vendor & admin) punya konteks sesi yang konsisten saat
- * diklik-klik. Begitu backend aktif, fungsi-fungsi ini diganti panggilan API
- * Sanctum tanpa mengubah pemanggilnya.
+ * Login Google adalah server-side redirect flow:
+ *   klik tombol → /auth/google/redirect → Google → /auth/google/callback
+ *   → redirect ke /dashboard atau /admin.
+ *
+ * Setelah redirect, SPA perlu tahu siapa yang login. Endpoint `GET /api/me`
+ * mengembalikan CurrentUser (termasuk role); modul ini menyimpan role di
+ * localStorage sebagai cache agar RoleGate tidak memblokir render sebelum
+ * /me selesai dimuat. Cache ini tidak dipakai untuk otorisasi — setiap
+ * request API tetap divalidasi server lewat cookie sesi.
  */
+
+import type { CurrentUser } from '@/types/booking'
+import { apiRequest, ApiError } from '@/lib/api/client'
 
 export type AuthRole = 'vendor' | 'admin'
 
 const STORAGE_KEY = 'booking-vendor:auth-role'
 
-/** Simpan role yang dipilih saat masuk (mock OAuth sukses). */
+/** Simpan role dari hasil /me (dipakai RoleGate untuk redirect awal). */
 export function saveAuthRole(role: AuthRole): void {
   try {
     localStorage.setItem(STORAGE_KEY, role)
@@ -20,7 +28,7 @@ export function saveAuthRole(role: AuthRole): void {
   }
 }
 
-/** Role sesi saat ini; null bila belum masuk. */
+/** Role yang di-cache; null bila belum masuk. */
 export function readAuthRole(): AuthRole | null {
   try {
     const value = localStorage.getItem(STORAGE_KEY)
@@ -30,11 +38,26 @@ export function readAuthRole(): AuthRole | null {
   }
 }
 
-/** Keluar: hapus sesi mock. */
+/** Keluar: hapus cache role lokal. Sesi server dibersihkan lewat POST /auth/logout. */
 export function clearAuthRole(): void {
   try {
     localStorage.removeItem(STORAGE_KEY)
   } catch {
-    // diabaikan — sama seperti simpan.
+    // diabaikan.
   }
+}
+
+/**
+ * Ambil CurrentUser dari backend.
+ *
+ * Melempar ApiError 401 bila belum login — pemanggil menangani redirect
+ * ke /login.
+ */
+export async function fetchCurrentUser(): Promise<CurrentUser> {
+  return apiRequest<CurrentUser>('/me')
+}
+
+/** True bila ApiError berasal dari belum-login (401/419). */
+export function isAuthError(error: unknown): boolean {
+  return error instanceof ApiError && error.isUnauthorized
 }
