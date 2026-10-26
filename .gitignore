@@ -1,0 +1,14 @@
+﻿node_modules/
+vendor/
+.env
+.env.*
+!.env.example
+dist/
+build/
+storage/logs/*.log
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+.phpunit.result.cache
+.DS_Store
+*.sqlite
