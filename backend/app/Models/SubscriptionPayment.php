@@ -56,4 +56,22 @@ class SubscriptionPayment extends Model
     {
         return $this->belongsTo(Plan::class);
     }
+
+    /**
+     * Route binding menerima ID numerik maupun `order_id`.
+     *
+     * Halaman `/subscription/success` adalah tujuan redirect Duitku, yang
+     * mengirim `merchantOrderId` — bukan ID internal. Menerima keduanya membuat
+     * satu route bisa dipakai UI maupun sebagai titik masuk dari gateway.
+     */
+    public function resolveRouteBinding($value, $field = null): ?self
+    {
+        $query = $this->newQuery();
+
+        if (ctype_digit((string) $value)) {
+            return $query->whereKey($value)->first();
+        }
+
+        return $query->where('order_id', $value)->first();
+    }
 }

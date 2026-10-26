@@ -1,0 +1,45 @@
+# ---------------------------------------------------------------------------
+# public_html/.htaccess — Booking Vendor di cPanel
+#
+# Tiga tugas: teruskan /api & /auth ke Laravel, layani aset statis,
+# arahkan sisanya ke SPA (React Router).
+# ---------------------------------------------------------------------------
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # --- 1. Endpoint Laravel -------------------------------------------------
+    # WAJIB paling atas. Tanpa ini, aturan SPA di bawah menangkap /api/me dan
+    # mengembalikan index.html sehingga frontend menerima HTML, bukan JSON.
+    RewriteRule ^(api|auth)(/.*)?$ index.php [L,QSA]
+
+    # --- 2. Aset statis ------------------------------------------------------
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # --- 3. SPA --------------------------------------------------------------
+    # Route seperti /dashboard atau /jadwal/:slug ditangani React Router.
+    RewriteRule ^ index.html [L]
+</IfModule>
+
+# Jangan tampilkan daftar isi folder.
+Options -Indexes
+
+# Jangan pernah layani berkas sensitif bila tidak sengaja ikut terunggah.
+<FilesMatch "^\.(env|git)|composer\.(json|lock)$|\.(sqlite|log|md)$">
+    Require all denied
+</FilesMatch>
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json
+</IfModule>
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    # Aset Vite memuat hash di nama berkas, aman di-cache lama.
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 month"
+</IfModule>

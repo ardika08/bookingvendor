@@ -73,8 +73,14 @@ export interface PaymentMethod {
   virtualAccount?: string
   /** Deep link e-wallet (hanya bila code = 'ewallet'). */
   ewalletDeepLink?: string
-  /** URL QR code placeholder (untuk mock; backend akan beri URL nyata). */
+  /** URL gambar QR siap pakai (bila gateway menyediakannya). */
   qrCodeUrl?: string
+  /**
+   * Payload QR mentah dari gateway (EMVCo string), mis. dari Duitku.
+   * Dirender menjadi gambar QR di sisi klien karena gateway hanya
+   * mengirim string, bukan gambar.
+   */
+  qrString?: string
 }
 
 export type CheckoutStep = 'summary' | 'instructions' | 'success' | 'expired'

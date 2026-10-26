@@ -6,6 +6,7 @@ import {
   Clock3,
   Copy,
   CreditCard,
+  ExternalLink,
   LoaderCircle,
   QrCode,
   RefreshCw,
@@ -524,19 +525,96 @@ function MethodInstructions({ method, amount }: { method: PaymentMethod; amount:
     )
   }
 
-  // QRIS — placeholder QR (backend akan mengirim URL QR sesungguhnya).
+  // QRIS — render payload `qrString` dari gateway menjadi gambar QR.
   return (
     <div className="space-y-3">
-      <div className="flex size-40 items-center justify-center rounded-xl border border-ink-200 bg-white">
-        <div className="flex flex-col items-center gap-1 text-ink-400">
-          <QrCode className="size-14" />
-          <span className="text-[10.5px] font-medium">QRIS</span>
-        </div>
-      </div>
+      <QrisImage method={method} amount={amount} />
+
       <p className="text-[12.5px] leading-relaxed text-ink-600">
         Scan QR dengan aplikasi bank atau e-wallet apa pun, lalu bayar{' '}
         <span className="font-semibold tabular-nums text-ink-800">{formatCurrency(amount)}</span>.
       </p>
+
+      {method.qrCodeUrl ? (
+        <a
+          href={method.qrCodeUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex h-10 items-center gap-2 rounded-lg border border-ink-200 px-4 text-sm font-medium text-ink-700 hover:bg-ink-50"
+        >
+          <ExternalLink className="size-4" /> Buka halaman pembayaran
+        </a>
+      ) : null}
+    </div>
+  )
+}
+
+/**
+ * Gambar QR dari payload EMVCo gateway.
+ *
+ * Duitku mengirim `qrString` (bukan gambar), jadi QR dirender di klien.
+ * Bila `qrCodeUrl` tersedia dan `qrString` tidak, gambar langsung dipakai.
+ */
+function QrisImage({ method, amount }: { method: PaymentMethod; amount: number }) {
+  const [dataUrl, setDataUrl] = useState<string | null>(null)
+  const [failed, setFailed] = useState(false)
+
+  useEffect(() => {
+    let active = true
+
+    if (!method.qrString) {
+      setDataUrl(null)
+      return
+    }
+
+    // Impor dinamis: pustaka QR hanya dibutuhkan di langkah ini, jadi tidak
+    // ikut membebani bundle halaman lain.
+    import('qrcode')
+      .then((QRCode) =>
+        QRCode.toDataURL(method.qrString as string, {
+          width: 320,
+          margin: 1,
+          errorCorrectionLevel: 'M',
+        }),
+      )
+      .then((url) => {
+        if (active) setDataUrl(url)
+      })
+      .catch(() => {
+        if (active) setFailed(true)
+      })
+
+    return () => {
+      active = false
+    }
+  }, [method.qrString])
+
+  if (method.qrCodeUrl && !method.qrString) {
+    return (
+      <img
+        src={method.qrCodeUrl}
+        alt={`QRIS ${formatCurrency(amount)}`}
+        className="size-48 rounded-xl border border-ink-200 bg-white object-contain p-2"
+      />
+    )
+  }
+
+  if (dataUrl) {
+    return (
+      <img
+        src={dataUrl}
+        alt={`QRIS ${formatCurrency(amount)}`}
+        className="size-48 rounded-xl border border-ink-200 bg-white p-2"
+      />
+    )
+  }
+
+  return (
+    <div className="flex size-48 flex-col items-center justify-center gap-1 rounded-xl border border-ink-200 bg-white text-ink-400">
+      <QrCode className="size-14" />
+      <span className="text-[10.5px] font-medium">
+        {failed ? 'QR gagal dimuat' : 'Menyiapkan QR…'}
+      </span>
     </div>
   )
 }

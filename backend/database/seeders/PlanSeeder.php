@@ -8,8 +8,14 @@ use Illuminate\Database\Seeder;
 /**
  * Paket langganan bawaan sesuai PRD.
  *
- * Bulanan sudah punya harga pasti (Rp50.000). 3 Bulan & Tahunan sengaja
- * `null` — harga belum ditetapkan dan admin mengisinya lewat panel.
+ * Harga bertingkat untuk mendorong komitmen lebih panjang:
+ *   Bulanan  Rp50.000  → Rp50.000/bln (acuan)
+ *   3 Bulan  Rp135.000 → Rp45.000/bln (diskon 10%)
+ *   Tahunan  Rp480.000 → Rp40.000/bln (diskon 20%)
+ *
+ * Diskon sengaja dijaga di bawah 25% agar nilai produk tidak terkesan murah
+ * dan masih ada ruang promo di masa depan.
+ *
  * Idempoten: aman dijalankan ulang tanpa menggandakan baris.
  */
 class PlanSeeder extends Seeder
@@ -28,14 +34,14 @@ class PlanSeeder extends Seeder
                 'code' => 'quarterly',
                 'name' => '3 Bulan',
                 'duration_months' => 3,
-                'price' => null,
+                'price' => 135000,
                 'is_active' => true,
             ],
             [
                 'code' => 'yearly',
                 'name' => 'Tahunan',
                 'duration_months' => 12,
-                'price' => null,
+                'price' => 480000,
                 'is_active' => true,
             ],
         ];

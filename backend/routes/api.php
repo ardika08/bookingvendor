@@ -6,10 +6,14 @@ use App\Http\Controllers\Api\AdminSubscriptionPaymentController;
 use App\Http\Controllers\Api\AdminVendorController;
 use App\Http\Controllers\Api\BlockedDateController;
 use App\Http\Controllers\Api\BookingController;
+use App\Http\Controllers\Api\CheckoutController;
 use App\Http\Controllers\Api\CurrentUserController;
+use App\Http\Controllers\Api\DuitkuCallbackController;
 use App\Http\Controllers\Api\InvoiceController;
 use App\Http\Controllers\Api\InvoicePaymentController;
 use App\Http\Controllers\Api\PackageController;
+use App\Http\Controllers\Api\PaymentController;
+use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\PublicInvoiceController;
 use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\UserProfileController;
@@ -34,6 +38,19 @@ use Illuminate\Support\Facades\Route;
 // Identitas pengguna yang sedang login. Dipakai SPA sebagai pemeriksa sesi.
 Route::middleware('auth:sanctum')->get('me', [CurrentUserController::class, 'show'])
     ->name('me.show');
+
+/*
+| Callback payment gateway.
+|
+| Publik — dipanggil server Duitku, bukan browser vendor, sehingga tidak boleh
+| memakai `auth:sanctum`. Keamanan dijaga oleh verifikasi signature dan
+| pengecekan ulang status ke gateway di dalam controller.
+|
+| Didaftarkan tanpa middleware `api` tambahan agar tidak terkena rate limit
+| berbasis IP: Duitku dapat mengirim beberapa callback berurutan.
+*/
+Route::post('webhooks/duitku', DuitkuCallbackController::class)
+    ->name('webhooks.duitku');
 
 /*
 | Panel admin platform. Hanya pengguna berperan `admin`.
@@ -112,6 +129,42 @@ Route::middleware(['auth:sanctum', 'vendor.active'])->group(function () {
     });
 
     Route::get('subscription', [SubscriptionController::class, 'show'])->name('subscription.show');
+
+    /*
+     * Katalog paket & pembayaran langganan.
+     *
+     * `plans` butuh login karena harganya khusus vendor terdaftar. `payments`
+     * hanya menampilkan transaksi milik vendor yang sedang login.
+     */
+    Route::get('plans', [PlanController::class, 'index'])->name('plans.index');
+
+    Route::get('payments', [PaymentController::class, 'index'])->name('payments.index');
+
+    Route::prefix('subscription/checkout')->group(function () {
+        // Ringkasan sebelum transaksi dibuat (tidak memanggil gateway).
+        Route::get('/', [CheckoutController::class, 'show'])->name('subscription.checkout.show');
+
+        // Membuat transaksi Duitku; mengembalikan QR untuk dipindai.
+        Route::post('/', [CheckoutController::class, 'store'])->name('subscription.checkout.store');
+
+        // Metode yang tersedia (QRIS saja).
+        Route::get('methods', [CheckoutController::class, 'methods'])
+            ->name('subscription.checkout.methods');
+    });
+
+    Route::prefix('payments/{payment}')->group(function () {
+        // Pilih metode → kembalikan instruksi bayar (QRIS: QR + URL bayar).
+        Route::post('method', [CheckoutController::class, 'selectMethod'])->name('payments.method');
+
+        // Lanjutkan transaksi pending dari riwayat pembayaran.
+        Route::get('checkout', [CheckoutController::class, 'resume'])->name('payments.checkout');
+
+        // Polling status selama vendor menunggu pembayaran.
+        Route::get('status', [CheckoutController::class, 'status'])->name('payments.status');
+
+        // Tandai kedaluwarsa saat countdown di UI habis.
+        Route::post('expire', [CheckoutController::class, 'expire'])->name('payments.expire');
+    });
 
     Route::prefix('packages')->group(function () {
         Route::get('/', [PackageController::class, 'index'])->name('packages.index');

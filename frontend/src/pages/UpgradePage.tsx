@@ -35,6 +35,7 @@ export function UpgradePage() {
   const [subscription, setSubscription] = useState<SubscriptionState | null>(null)
   const [payments, setPayments] = useState<Payment[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     let active = true
@@ -44,6 +45,11 @@ export function UpgradePage() {
         setPlans(planList)
         setSubscription(sub)
         setPayments(paymentList)
+      })
+      // Tanpa catch, kegagalan API membuat halaman kosong tanpa penjelasan.
+      // Halaman tetap tampil dengan data kosong dan pesan galat.
+      .catch(() => {
+        if (active) setError('Gagal memuat data langganan. Coba muat ulang halaman.')
       })
       .finally(() => {
         if (active) setLoading(false)
@@ -58,7 +64,7 @@ export function UpgradePage() {
     [payments],
   )
 
-  if (loading || !subscription) {
+  if (loading) {
     return (
       <div className="space-y-4">
         <div className="h-24 animate-pulse rounded-xl bg-white" />
@@ -67,6 +73,17 @@ export function UpgradePage() {
           <div className="h-64 animate-pulse rounded-xl bg-white" />
           <div className="h-64 animate-pulse rounded-xl bg-white" />
         </div>
+      </div>
+    )
+  }
+
+  // Gagal memuat: tampilkan penyebabnya, jangan halaman kosong.
+  if (error !== null || !subscription) {
+    return (
+      <div className="rounded-xl border border-rose-200 bg-rose-50/70 px-4 py-3">
+        <p className="text-[12.5px] text-rose-900">
+          {error ?? 'Data langganan tidak tersedia.'}
+        </p>
       </div>
     )
   }

@@ -13,6 +13,9 @@ storage/framework/views/*
 .DS_Store
 *.sqlite
 
+# hasil `deploy/build-cpanel.sh` — dibuat ulang tiap deploy
+dist-deploy/
+
 # backup repo lama
 .git_rusak_*/
 .git_bak/

@@ -20,6 +20,7 @@ import { PublicScheduleRoute } from '@/pages/routes/PublicScheduleRoute'
 import { InvoiceCreateRoute } from '@/pages/routes/InvoiceCreateRoute'
 import { VendorProfileRoute } from '@/pages/routes/VendorProfileRoute'
 import { CheckoutRoute } from '@/pages/routes/CheckoutRoute'
+import { SubscriptionSuccessPage } from '@/pages/SubscriptionSuccessPage'
 import { RequireWriteAccess } from '@/components/auth/RequireWriteAccess'
 import { PackagesPage } from '@/pages/PackagesPage'
 import { LoginPage } from '@/pages/LoginPage'
@@ -44,6 +45,8 @@ export function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/invoice/:token" element={<PublicInvoiceRoute />} />
       <Route path="/jadwal/:slug" element={<PublicScheduleRoute />} />
+      {/* Tujuan redirect Duitku setelah pembayaran (DUITKU_RETURN_URL). */}
+      <Route path="/subscription/success" element={<SubscriptionSuccessPage />} />
 
       <Route
         path="/"
