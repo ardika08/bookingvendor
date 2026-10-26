@@ -21,6 +21,20 @@ Route::get('/auth/dev-login', DevLoginController::class)
 Route::get('/auth/logout', LogoutController::class)
     ->name('auth.logout');
 
+/*
+ * Middleware `auth` mengarahkan request yang belum login ke route bernama
+ * `login` lewat `redirect()->guest(route('login'))`. Route itu tidak pernah
+ * ada karena SPA memakai halaman login sendiri di origin terpisah, sehingga
+ * setiap request tanpa header `Accept: application/json` berujung
+ * RouteNotFoundException alias HTTP 500 — bukan 401.
+ *
+ * Route ini menutup lubang tersebut: request web diarahkan ke halaman login
+ * frontend, sementara request `api/*` tetap dijawab JSON 401 oleh handler di
+ * `bootstrap/app.php`.
+ */
+Route::get('/login', fn () => redirect()->away(config('app.frontend_url').'/login'))
+    ->name('login');
+
 Route::get('/', function () {
     return view('welcome');
 });
