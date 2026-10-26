@@ -60,7 +60,27 @@ Route::middleware(['auth:sanctum', 'admin.only'])->prefix('admin')->group(functi
 | Dashboard vendor. Login wajib; akun yang dinonaktifkan admin ditolak 403.
 */
 Route::middleware(['auth:sanctum', 'vendor.active'])->group(function () {
+    // Daftar pesanan masuk (status tentative) untuk kartu dashboard.
     Route::get('bookings/incoming', [BookingController::class, 'incoming'])->name('bookings.incoming');
+
+    // Daftar booking berhalaman + daftar lengkap (untuk agregat dashboard).
+    Route::get('bookings', [BookingController::class, 'index'])->name('bookings.index');
+
+    // Tanggal yang sudah terpakai (booking aktif + blokir manual).
+    Route::get('bookings/taken-dates', [BookingController::class, 'takenDates'])->name('bookings.taken-dates');
+
+    // Rincian satu booking.
+    Route::get('bookings/{booking}', [BookingController::class, 'show'])->name('bookings.show');
+
+    // Buat booking baru. Pembatas langganan & kuota trial diperiksa di
+    // controller (bukan middleware) karena payload tidak membawa id vendor.
+    Route::post('bookings', [BookingController::class, 'store'])->name('bookings.store');
+
+    // Ubah booking.
+    Route::match(['put', 'patch'], 'bookings/{booking}', [BookingController::class, 'update'])->name('bookings.update');
+
+    // Ubah status booking (transisi yang sah saja).
+    Route::patch('bookings/{booking}/status', [BookingController::class, 'updateStatus'])->name('bookings.status');
 
     Route::prefix('bookings/{booking}')->group(function () {
         Route::get('invoices', [InvoiceController::class, 'byBooking'])->name('bookings.invoices.index');

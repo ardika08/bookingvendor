@@ -121,6 +121,25 @@ class TrialQuota
     }
 
     /**
+     * Tambah penghitung pemakaian booking selama trial (bila relevan).
+     */
+    public function recordBookingUsage(Vendor $vendor): void
+    {
+        if (! Schema::hasTable('subscriptions')) {
+            return;
+        }
+
+        $subscription = $this->activeSubscription($vendor);
+        if ($subscription === null || $subscription->status !== 'trial') {
+            return;
+        }
+
+        DB::table('subscriptions')
+            ->where('id', $subscription->id)
+            ->increment('trial_bookings_used');
+    }
+
+    /**
      * Tambah penghitung pemakaian invoice selama trial (bila relevan).
      */
     public function recordInvoiceUsage(Vendor $vendor): void

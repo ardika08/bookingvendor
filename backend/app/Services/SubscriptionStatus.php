@@ -133,6 +133,10 @@ class SubscriptionStatus
             'status' => $status,
             'endsAt' => $endsAt?->toDateString(),
             'graceEndsAt' => $graceEndsAt?->toDateString(),
+            // Membuat booking & invoice sama-sama butuh langganan aktif.
+            // Kuota trial dipisahkan oleh TrialQuota, tetapi penjagaan status
+            // langganan identik untuk keduanya.
+            'canCreateBooking' => $canCreateInvoice,
             'canCreateInvoice' => $canCreateInvoice,
             'code' => $code,
         ];
