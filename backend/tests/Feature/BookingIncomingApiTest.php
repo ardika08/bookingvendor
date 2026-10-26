@@ -46,6 +46,8 @@ class BookingIncomingApiTest extends TestCase
             'phone' => '6281234567890',
             'email' => 'rani@example.test',
         ]);
+    
+        $this->loginAsVendorOf($this->vendor);
     }
 
     private function makeBooking(array $overrides = []): Booking

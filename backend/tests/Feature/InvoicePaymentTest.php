@@ -60,6 +60,8 @@ class InvoicePaymentTest extends TestCase
             'status' => Invoice::STATUS_UNPAID,
             'due_date' => '2026-10-30',
         ]);
+    
+        $this->loginAsVendorOf($vendor);
     }
 
     private function today(): string

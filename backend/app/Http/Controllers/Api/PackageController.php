@@ -82,6 +82,8 @@ class PackageController extends Controller
      */
     public function update(UpdatePackageRequest $request, Package $package): JsonResponse
     {
+        $this->authorizePackage($package);
+
         $validated = $request->validated();
 
         foreach (['name', 'price', 'duration_hours', 'description'] as $field) {
@@ -104,6 +106,8 @@ class PackageController extends Controller
      */
     public function destroy(Package $package): JsonResponse
     {
+        $this->authorizePackage($package);
+
         if ($package->bookings()->exists()) {
             return response()->json([
                 'message' => 'Paket sudah dipakai booking. Nonaktifkan saja supaya riwayat tetap akurat.',
@@ -113,5 +117,18 @@ class PackageController extends Controller
         $package->delete();
 
         return response()->json(null, 204);
+    }
+
+    /**
+     * Pastikan paket milik vendor yang sedang login.
+     *
+     * Route-model binding hanya menjamin barisnya ada; tanpa cek ini vendor
+     * bisa mengubah atau menghapus paket vendor lain lewat id.
+     */
+    private function authorizePackage(Package $package): void
+    {
+        if ($package->vendor_id !== $this->resolveVendor()->id) {
+            abort(404);
+        }
     }
 }

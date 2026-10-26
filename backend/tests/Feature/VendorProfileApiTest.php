@@ -37,6 +37,8 @@ class VendorProfileApiTest extends TestCase
             'location' => 'Jakarta Selatan',
             'contact' => '081290001122',
         ]);
+    
+        $this->loginAsVendorOf($this->vendor);
     }
 
     private function updatePayload(array $overrides = []): array

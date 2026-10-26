@@ -46,6 +46,8 @@ class VendorActiveEnforcementTest extends TestCase
             'name' => 'Rani & Bagas',
             'phone' => '6281234567890',
         ]);
+    
+        $this->loginAsVendorOf($this->vendor);
     }
 
     private function deactivate(): void
@@ -105,7 +107,10 @@ class VendorActiveEnforcementTest extends TestCase
     {
         $this->deactivate();
 
-        $this->getJson('/api/admin/vendors')
+        // Admin memakai akun sendiri; middleware `vendor.active` tidak berlaku
+        // untuknya karena hanya grup route vendor yang memakainya.
+        $this->loginAsAdmin()
+            ->getJson('/api/admin/vendors')
             ->assertOk()
             ->assertJsonPath('0.isActive', false);
     }
@@ -117,15 +122,20 @@ class VendorActiveEnforcementTest extends TestCase
 
         $this->vendor->update(['is_active' => true]);
 
-        $this->getJson('/api/packages')->assertOk();
+        $this->loginAsVendorOf($this->vendor->fresh())
+            ->getJson('/api/packages')
+            ->assertOk();
     }
 
     public function test_tanpa_vendor_tidak_terblokir_middleware(): void
     {
         $this->vendor->delete();
 
-        // Middleware tidak menemukan vendor → diteruskan, controller yang
-        // menjawab 404 "Profil vendor belum terdaftar".
-        $this->getJson('/api/packages')->assertNotFound();
+        // Setelah auth aktif, akun tanpa profil vendor ditolak 403 oleh
+        // ResolvesVendor — bukan lagi 404 dari fallback "vendor pertama".
+        $this->loginAs($this->vendor->user)
+            ->getJson('/api/packages')
+            ->assertForbidden()
+            ->assertJsonPath('code', 'vendor_not_linked');
     }
 }

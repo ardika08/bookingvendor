@@ -55,6 +55,8 @@ class AdminSubscriptionRenewalApiTest extends TestCase
             'price' => null,
             'is_active' => true,
         ]);
+    
+        $this->loginAsAdmin();
     }
 
     public function test_aktivasi_dari_trial_mulai_hari_ini(): void

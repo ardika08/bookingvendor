@@ -48,6 +48,8 @@ class VendorScheduleSchemaTest extends TestCase
             'phone' => '6281234567890',
         ]);
         $this->clientId = $client->id;
+    
+        $this->loginAsVendorOf($this->vendor);
     }
 
     private function makeBooking(string $date = '2026-11-14'): Booking

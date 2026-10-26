@@ -21,6 +21,13 @@ class AdminVendorApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->loginAsAdmin();
+    }
+
     private function makeVendor(array $overrides = []): Vendor
     {
         static $sequence = 0;

@@ -74,6 +74,8 @@ class SubscriptionStatusTest extends TestCase
             'status' => 'confirmed',
             'total_price' => 15000000,
         ]);
+    
+        $this->loginAsVendorOf($this->vendor);
     }
 
     private function subscribe(string $status, ?string $endsAt = null, int $invoicesUsed = 0): void

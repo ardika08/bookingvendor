@@ -46,6 +46,8 @@ class BookingSchemaTest extends TestCase
             'name' => 'Rani & Bagas',
             'phone' => '6281234567890',
         ]);
+    
+        $this->loginAsVendorOf($this->vendor);
     }
 
     private function makeBooking(array $overrides = []): Booking

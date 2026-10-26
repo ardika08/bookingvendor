@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\AdminSubscriptionPaymentController;
 use App\Http\Controllers\Api\AdminVendorController;
 use App\Http\Controllers\Api\BlockedDateController;
 use App\Http\Controllers\Api\BookingController;
+use App\Http\Controllers\Api\CurrentUserController;
 use App\Http\Controllers\Api\InvoiceController;
 use App\Http\Controllers\Api\InvoicePaymentController;
 use App\Http\Controllers\Api\PackageController;
@@ -20,13 +21,24 @@ use Illuminate\Support\Facades\Route;
 | API Routes
 |--------------------------------------------------------------------------
 |
-| Seluruh endpoint dashboard vendor. Autentikasi (Google OAuth + sesi Sanctum)
-| ditambahkan pada task autentikasi; sampai saat itu route di sini belum
-| dilindungi middleware auth.
+| Autentikasi memakai Sanctum dengan jembatan sesi SPA (`statefulApi()` di
+| bootstrap/app.php): login Google menulis cookie sesi pada guard `web`, lalu
+| SPA memanggil endpoint di bawah dengan `credentials: 'include'`.
+|
+| Setiap grup di bawah WAJIB dibungkus `auth:sanctum`. Middleware peran
+| (`admin.only`) dan aturan bisnis (`vendor.active`, `invoice.trial`) dipasang
+| SETELAH auth karena semuanya membaca `$request->user()`.
 |
 */
 
-Route::prefix('admin')->group(function () {
+// Identitas pengguna yang sedang login. Dipakai SPA sebagai pemeriksa sesi.
+Route::middleware('auth:sanctum')->get('me', [CurrentUserController::class, 'show'])
+    ->name('me.show');
+
+/*
+| Panel admin platform. Hanya pengguna berperan `admin`.
+*/
+Route::middleware(['auth:sanctum', 'admin.only'])->prefix('admin')->group(function () {
     Route::get('vendors', [AdminVendorController::class, 'index'])->name('admin.vendors.index');
     Route::post('vendors', [AdminVendorController::class, 'store'])->name('admin.vendors.store');
     Route::get('vendors/{vendor}', [AdminVendorController::class, 'show'])->name('admin.vendors.show');
@@ -44,7 +56,10 @@ Route::prefix('admin')->group(function () {
         ->name('admin.plans.update');
 });
 
-Route::middleware('vendor.active')->group(function () {
+/*
+| Dashboard vendor. Login wajib; akun yang dinonaktifkan admin ditolak 403.
+*/
+Route::middleware(['auth:sanctum', 'vendor.active'])->group(function () {
     Route::get('bookings/incoming', [BookingController::class, 'incoming'])->name('bookings.incoming');
 
     Route::prefix('bookings/{booking}')->group(function () {

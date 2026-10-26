@@ -55,6 +55,8 @@ class SubscriptionStatusApiTest extends TestCase
             'price' => 50000,
             'is_active' => true,
         ]);
+    
+        $this->loginAsVendorOf($this->vendor);
     }
 
     private function subscribe(string $status, ?string $endsAt = null, int $bookingsUsed = 0, int $invoicesUsed = 0): void

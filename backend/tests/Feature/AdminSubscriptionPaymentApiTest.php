@@ -45,6 +45,8 @@ class AdminSubscriptionPaymentApiTest extends TestCase
             'price' => 50000,
             'is_active' => true,
         ]);
+    
+        $this->loginAsAdmin();
     }
 
     private function makePayment(array $overrides = []): SubscriptionPayment

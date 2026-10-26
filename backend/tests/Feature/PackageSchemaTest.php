@@ -40,6 +40,8 @@ class PackageSchemaTest extends TestCase
             'name' => 'Lumen Wedding Story',
             'slug' => 'lumen-wedding-story',
         ]);
+    
+        $this->loginAsVendorOf($this->vendor);
     }
 
     public function test_kolom_tabel_paket_lengkap(): void

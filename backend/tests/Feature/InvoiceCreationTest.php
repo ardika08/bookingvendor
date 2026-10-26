@@ -40,6 +40,9 @@ class InvoiceCreationTest extends TestCase
             'phone' => '6281234567890',
         ]);
 
+        // Endpoint invoice butuh sesi login pemilik vendor.
+        $this->loginAsVendorOf($vendor);
+
         return Booking::create([
             'vendor_id' => $vendor->id,
             'client_id' => $client->id,

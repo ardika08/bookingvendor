@@ -70,6 +70,8 @@ class PublicInvoiceTest extends TestCase
             'note' => 'Mohon cantumkan nomor invoice pada berita transfer.',
             'link_active' => true,
         ]);
+    
+        $this->loginAsVendorOf($this->vendor);
     }
 
     private function publicUrl(string $token = 'rahasia-token-klien'): string

@@ -40,6 +40,8 @@ class AdminVendorUpdateApiTest extends TestCase
             'contact' => '0812-9000-1122',
             'is_active' => true,
         ]);
+    
+        $this->loginAsAdmin();
     }
 
     public function test_detail_vendor_memuat_kontak_dan_deskripsi(): void

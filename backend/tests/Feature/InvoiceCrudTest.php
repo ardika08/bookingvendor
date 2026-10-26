@@ -48,6 +48,8 @@ class InvoiceCrudTest extends TestCase
             'status' => 'confirmed',
             'total_price' => 15000000,
         ]);
+    
+        $this->loginAsVendorOf($vendor);
     }
 
     private function makeInvoice(array $overrides = []): Invoice

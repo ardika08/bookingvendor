@@ -29,6 +29,8 @@ class UserProfileApiTest extends TestCase
             'role' => 'vendor',
             'avatar_url' => 'https://example.test/avatar.png',
         ]);
+
+        $this->loginAs($this->user);
     }
 
     public function test_menampilkan_profil_akun(): void
@@ -133,11 +135,16 @@ public function test_profil_diambil_sesuai_akun_yang_login(): void
             ->assertJsonPath('role', 'admin');
     }
 
-    public function test_tidak_ada_akun_menghasilkan_404(): void
+    public function test_tanpa_sesi_ditolak_401(): void
     {
-        $this->user->delete();
+        // Sebelum auth aktif, endpoint ini menjawab 404 "akun tidak ditemukan"
+        // karena memakai fallback pengguna pertama. Sekarang tanpa sesi
+        // permintaan harus ditolak di lapisan auth, bukan di controller.
+        $this->loginAs(null);
 
-        $this->getJson('/api/user/profile')->assertNotFound();
+        $this->getJson('/api/user/profile')
+            ->assertUnauthorized()
+            ->assertJsonPath('code', 'unauthenticated');
     }
 
     public function test_profil_menampilkan_nilai_terbaru_setelah_disimpan(): void

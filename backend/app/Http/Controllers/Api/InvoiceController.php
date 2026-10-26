@@ -90,6 +90,8 @@ class InvoiceController extends Controller
      */
     public function byBooking(Booking $booking): JsonResponse
     {
+        $this->authorizeBooking($booking);
+
         $invoices = $booking->invoices()
             ->with('booking.client', 'booking.package')
             ->orderBy('created_at')
@@ -106,6 +108,8 @@ class InvoiceController extends Controller
      */
     public function show(Invoice $invoice): JsonResponse
     {
+        $this->authorizeInvoice($invoice);
+
         $invoice->load('booking.client', 'booking.package');
 
         return (new InvoiceResource($invoice))->response();
@@ -165,6 +169,8 @@ class InvoiceController extends Controller
      */
     public function update(UpdateInvoiceRequest $request, Invoice $invoice): JsonResponse
     {
+        $this->authorizeInvoice($invoice);
+
         $validated = $request->validated();
 
         if (array_key_exists('amount', $validated)) {
@@ -212,6 +218,8 @@ class InvoiceController extends Controller
      */
     public function destroy(Invoice $invoice): JsonResponse
     {
+        $this->authorizeInvoice($invoice);
+
         if ((float) $invoice->paid_amount > 0) {
             return response()->json([
                 'message' => 'Invoice yang sudah menerima pembayaran tidak bisa dibatalkan.',
@@ -264,4 +272,50 @@ class InvoiceController extends Controller
         ];
     }
 
+    /**
+     * Pastikan invoice milik vendor yang sedang login.
+     *
+     * Route-model binding hanya memastikan barisnya ada, bukan bahwa baris itu
+     * milik pemanggil. Tanpa pemeriksaan ini, vendor mana pun bisa membaca dan
+     * mengubah invoice vendor lain hanya dengan menebak id.
+     *
+     * Jawaban 404 (bukan 403) dipilih supaya keberadaan invoice vendor lain
+     * tidak bisa dipastikan dari perbedaan status.
+     */
+    private function authorizeInvoice(Invoice $invoice): void
+    {
+        $vendorId = $invoice->booking?->vendor_id;
+
+        if ($vendorId === null || $vendorId !== $this->currentVendorId()) {
+            abort(404);
+        }
+    }
+
+    /**
+     * Pastikan booking milik vendor yang sedang login.
+     */
+    private function authorizeBooking(Booking $booking): void
+    {
+        if ($booking->vendor_id !== $this->currentVendorId()) {
+            abort(404);
+        }
+    }
+
+    /**
+     * Id vendor pemilik sesi saat ini.
+     *
+     * Middleware `auth:sanctum` menjamin pengguna ada, tetapi akun tanpa profil
+     * vendor bisa saja lolos sampai ke sini; dalam kasus itu tidak ada data yang
+     * boleh diakses sehingga `abort(404)` tetap jawaban yang tepat.
+     */
+    private function currentVendorId(): int
+    {
+        $vendorId = auth()->user()?->vendor?->id;
+
+        if ($vendorId === null) {
+            abort(404);
+        }
+
+        return $vendorId;
+    }
 }

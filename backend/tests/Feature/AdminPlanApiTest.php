@@ -16,6 +16,13 @@ class AdminPlanApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->loginAsAdmin();
+    }
+
     private function makePlans(): void
     {
         Plan::create([

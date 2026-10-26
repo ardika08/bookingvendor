@@ -78,6 +78,8 @@ class AdminOperationalAccessTest extends TestCase
             'due_date' => '2026-10-30',
             'note' => 'Catatan internal untuk klien.',
         ]);
+    
+        $this->loginAsAdmin();
     }
 
     /** Nilai yang tidak boleh bocor ke panel admin. */
@@ -193,7 +195,8 @@ class AdminOperationalAccessTest extends TestCase
         $this->booking->update(['status' => 'tentative']);
 
         // Pembatasan hanya di sisi admin; vendor tetap melihat datanya.
-        $this->getJson('/api/bookings/incoming')
+        $this->loginAsVendorOf($this->vendor)
+            ->getJson('/api/bookings/incoming')
             ->assertOk()
             ->assertJsonPath('items.0.client.name', 'Rani & Bagas')
             ->assertJsonPath('items.0.eventLocation', 'Balai Kartini, Jakarta');
