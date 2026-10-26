@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\AdminSubscriptionPaymentController;
 use App\Http\Controllers\Api\AdminVendorController;
 use App\Http\Controllers\Api\BlockedDateController;
 use App\Http\Controllers\Api\BookingController;
+use App\Http\Controllers\Api\ClientController;
 use App\Http\Controllers\Api\CheckoutController;
 use App\Http\Controllers\Api\CurrentUserController;
 use App\Http\Controllers\Api\DuitkuCallbackController;
@@ -107,6 +108,14 @@ Route::middleware(['auth:sanctum', 'vendor.active'])->group(function () {
             ->middleware('invoice.trial')
             ->name('bookings.invoices.store');
     });
+
+    /*
+     * Klien dibuat otomatis dari form booking, jadi hanya ada endpoint baca.
+     * `{client}` memakai route-model binding; controller memastikan klien itu
+     * milik vendor yang login.
+     */
+    Route::get('clients', [ClientController::class, 'index'])->name('clients.index');
+    Route::get('clients/{client}', [ClientController::class, 'show'])->name('clients.show');
 
     Route::prefix('invoices')->group(function () {
         Route::get('/', [InvoiceController::class, 'index'])->name('invoices.index');

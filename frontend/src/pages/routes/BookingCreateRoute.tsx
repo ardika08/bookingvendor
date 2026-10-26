@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import { fetchPackages, fetchTakenDates, createBooking } from '@/lib/api/bookings'
+import { fetchClients } from '@/lib/api/clients'
 import type { ClientSummary } from '@/lib/clients'
-import { buildClientSummaries } from '@/lib/clients'
-import { mockBookings } from '@/lib/mock/bookings'
 import type { CurrentUser, VendorPackage } from '@/types/booking'
 import { BookingFormPage } from '@/pages/BookingFormPage'
 
@@ -23,13 +22,29 @@ export function BookingCreateRoute() {
   useEffect(() => {
     let active = true
 
-    Promise.all([fetchPackages(), fetchTakenDates()])
-      .then(([packageList, dates]) => {
+    Promise.all([fetchPackages(), fetchTakenDates(), fetchClients({ search: '', sort: 'name' }, 1, 100)])
+      .then(([packageList, dates, clientPage]) => {
         if (!active) return
         setPackages(packageList)
         setTakenDates(dates)
-        // Placeholder sampai `GET /api/clients` ada; sumbernya booking yang sama.
-        setClients(buildClientSummaries(mockBookings))
+
+        /*
+         * Sebelumnya daftar ini dirakit dari `mockBookings`, sehingga vendor
+         * yang mencari klien lama tidak menemukan apa pun di data nyata.
+         * Sekarang diambil dari `GET /api/clients`.
+         */
+        setClients(
+          clientPage.items.map((client) => ({
+            id: client.id,
+            name: client.name,
+            phone: client.phone,
+            email: client.email,
+            bookingCount: client.bookingCount,
+            totalValue: client.totalValue,
+            lastEventDate: client.lastEventDate,
+            lastStatus: client.lastStatus as ClientSummary['lastStatus'],
+          })),
+        )
         setLoadError(null)
       })
       .catch((error: unknown) => {

@@ -23,6 +23,7 @@ import { CheckoutRoute } from '@/pages/routes/CheckoutRoute'
 import { SubscriptionSuccessPage } from '@/pages/SubscriptionSuccessPage'
 import { RequireWriteAccess } from '@/components/auth/RequireWriteAccess'
 import { PackagesPage } from '@/pages/PackagesPage'
+import { ClientsPage } from '@/pages/ClientsPage'
 import { LoginPage } from '@/pages/LoginPage'
 import { AccountProfilePage } from '@/pages/AccountProfilePage'
 import { PromoLayout } from '@/components/promo/PromoLayout'
@@ -80,6 +81,7 @@ export function App() {
         <Route path="invoices" element={<InvoicesRoute />} />
         <Route path="invoices/:invoiceId" element={<InvoiceDetailRoute />} />
         <Route path="packages" element={<PackagesPage />} />
+        <Route path="clients" element={<ClientsPage />} />
         <Route path="settings" element={<VendorProfileRoute />} />
         <Route path="settings/akun" element={<AccountProfilePage />} />
         <Route path="upgrade" element={<UpgradeRoute />} />

@@ -34,7 +34,7 @@ const PRIMARY_NAV: NavItem[] = [
   { label: 'Booking', to: '/bookings', icon: CalendarDays },
   { label: 'Kalender', to: '/calendar', icon: CalendarClock },
   { label: 'Invoice', to: '/invoices', icon: FileText },
-  { label: 'Klien', to: '/clients', icon: Users, soon: true },
+  { label: 'Klien', to: '/clients', icon: Users },
 ]
 
 const SECONDARY_NAV: NavItem[] = [

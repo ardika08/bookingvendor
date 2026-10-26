@@ -50,7 +50,13 @@ export async function fetchCurrentUser(): Promise<CurrentUser> {
 
 export async function fetchPackages(): Promise<VendorPackage[]> {
   if (USE_MOCK_DATA) return structuredClone(mockPackages)
-  return apiRequest<VendorPackage[]>('/packages')
+
+  /*
+   * `active=1` wajib: tanpa filter ini paket yang sudah dinonaktifkan tetap
+   * muncul di dropdown dan panel "Paket Cepat". Paket nonaktif sengaja
+   * dipertahankan untuk riwayat booking/invoice, bukan untuk dipilih lagi.
+   */
+  return apiRequest<VendorPackage[]>('/packages', { query: { active: 1 } })
 }
 
 /**
