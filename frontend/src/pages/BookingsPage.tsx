@@ -1,22 +1,29 @@
-import { CalendarPlus, RefreshCw, SearchX, WifiOff } from 'lucide-react'
+import {
+  CalendarPlus,
+  ChevronLeft,
+  ChevronRight,
+  RefreshCw,
+  SearchX,
+  WifiOff,
+} from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { BookingFiltersBar } from '@/components/bookings/BookingFiltersBar'
+import { BookingDateGrid } from '@/components/bookings/BookingDateGrid'
+import { BookingSummaryTiles } from '@/components/bookings/BookingSummaryTiles'
 import { BookingTable } from '@/components/bookings/BookingTable'
-import { StatusCountPills } from '@/components/bookings/StatusControls'
+import { BookingToolbar } from '@/components/bookings/BookingToolbar'
 import { SubscriptionBar } from '@/components/layout/SubscriptionBar'
 import { ReadOnlyActionHint, ReadOnlyBanner } from '@/components/subscription/ReadOnlyBanner'
 import { Button, ButtonLink } from '@/components/ui/Button'
-import { Card } from '@/components/ui/Card'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { TableSkeleton } from '@/components/ui/TableSkeleton'
 import { useBookingList } from '@/hooks/useBookingList'
+import { useBookingSummary } from '@/hooks/useBookingSummary'
 import { useOptimisticBookingStatus } from '@/hooks/useBookingStatusChange'
 import { ApiError } from '@/lib/api/client'
 import { buildFilterQuery, parseFilters, type BookingsView } from '@/lib/booking-query'
 import { resolveAccess } from '@/lib/subscription-access'
-import { countStatuses } from '@/lib/booking-status-optimistic'
-import { formatMonthYear, toIsoDate } from '@/lib/format'
+import { currentMonthKey, formatMonthYear, toIsoDate } from '@/lib/format'
 import { VendorCalendar } from '@/components/calendar/VendorCalendar'
 import { cn } from '@/lib/cn'
 import { useToast } from '@/components/ui/Toast'
@@ -26,10 +33,15 @@ import {
   fetchBlockedDates,
 } from '@/lib/api/blocked-dates'
 import type { BlockedDate } from '@/lib/vendor-availability'
-import type { SubscriptionSummary } from '@/types/booking'
+import type { BookingStatus, SubscriptionSummary } from '@/types/booking'
 
 /**
  * Halaman daftar booking vendor (`/bookings`).
+ *
+ * Tata letak mengikuti acuan desain: panel status tanggal (kiri) berdampingan
+ * dengan kartu ringkasan (kanan), lalu tabel booking selebar konten di
+ * bawahnya. Tujuannya agar vendor bisa menilai kondisi jadwal sekilas sebelum
+ * membaca daftar rinci.
  *
  * Data & filter dikelola `useBookingList` (request ke API, debounce pencarian,
  * pembatalan request usang) dan disinkronkan ke query string supaya refresh /
@@ -48,9 +60,12 @@ export function BookingsPage({ subscription }: { subscription: SubscriptionSumma
       month: view === 'calendar' ? calendarMonth : urlFilters.month,
       status: urlFilters.status,
       search: urlFilters.search,
+      sort: urlFilters.sort,
     },
     urlFilters.page,
   )
+
+  const { summary, loading: summaryLoading } = useBookingSummary(filters)
 
   /** Dorong filter ke URL (replace agar tidak menumpuk riwayat di tiap ketikan). */
   useEffect(() => {
@@ -62,6 +77,7 @@ export function BookingsPage({ subscription }: { subscription: SubscriptionSumma
     const params = new URLSearchParams(base)
     if (view === 'calendar') params.set('view', 'calendar')
     else params.delete('view')
+    if (filters.sort && filters.sort !== 'event_date') params.set('sort', filters.sort)
     const next = params.toString()
 
     if (next !== searchParams.toString()) {
@@ -75,6 +91,14 @@ export function BookingsPage({ subscription }: { subscription: SubscriptionSumma
     const params = new URLSearchParams(searchParams)
     if (nextView === 'calendar') params.set('view', 'calendar')
     else params.delete('view')
+    setSearchParams(params, { replace: true })
+  }
+
+  /** Pindah halaman tabel tanpa kehilangan filter aktif. */
+  function setPage(nextPage: number) {
+    const params = new URLSearchParams(searchParams)
+    if (nextPage > 1) params.set('page', String(nextPage))
+    else params.delete('page')
     setSearchParams(params, { replace: true })
   }
 
@@ -126,11 +150,36 @@ export function BookingsPage({ subscription }: { subscription: SubscriptionSumma
   /** Daftar final = hasil server + override optimistis yang masih berjalan. */
   const visibleBookings = useMemo(() => applyOverrides(result.items), [applyOverrides, result.items])
 
-  const counts = useMemo(() => countStatuses(visibleBookings), [visibleBookings])
   const hasFilter =
-    filters.search.trim() !== '' || filters.status !== 'all' || filters.month !== ''
+    filters.search.trim() !== '' ||
+    filters.status !== 'all' ||
+    filters.month !== '' ||
+    (filters.sort !== undefined && filters.sort !== 'event_date')
   /** Langganan berakhir → data lama tetap tampil, tombol pembuatan data direm. */
   const access = resolveAccess(subscription)
+
+  /** Bulan yang ditampilkan grid: bulan filter, atau bulan berjalan. */
+  const gridMonth = filters.month || currentMonthKey()
+  const totalPages = Math.max(1, Math.ceil(result.total / (result.perPage || 10)))
+
+  /** Klik tanggal di grid → filter daftar ke bulan itu (pindah view tabel). */
+  function focusMonth(next: string) {
+    setFilters({ ...filters, month: next })
+    if (view === 'calendar') setCalendarMonth(next)
+  }
+
+  function selectStatus(status: BookingStatus | 'all') {
+    setFilters({ ...filters, status })
+  }
+
+  const createAction = access.readOnly ? (
+    <ReadOnlyActionHint label="Booking Baru" />
+  ) : (
+    <ButtonLink to="/bookings/new" className="h-9 shrink-0 rounded-full px-4 text-[13px]">
+      <CalendarPlus className="size-4" />
+      Booking Baru
+    </ButtonLink>
+  )
 
   return (
     <div className="space-y-4">
@@ -139,17 +188,17 @@ export function BookingsPage({ subscription }: { subscription: SubscriptionSumma
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold tracking-tight text-ink-900">
+          <h1 className="text-[19px] font-bold tracking-tight text-ink-900">
             {view === 'calendar' ? 'Jadwal Booking' : 'Daftar Booking'}
-          </h2>
-          <p className="mt-0.5 text-[13px] text-ink-500">
+          </h1>
+          <p className="mt-0.5 text-[12.5px] text-ink-500">
             {view === 'calendar'
               ? 'Lihat tanggal terisi sekilas — klik tanggal untuk detail acara.'
-              : 'Semua acara yang kamu bukukan, lengkap dengan status dan nilai kontrak.'}
+              : 'Kelola reservasi, pembatalan, dan aktivitas booking.'}
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <div className="inline-flex rounded-lg bg-ink-100 p-0.5">
+          <div className="inline-flex rounded-full bg-ink-100 p-0.5">
             {(
               [
                 { value: 'list', label: 'Daftar' },
@@ -162,7 +211,7 @@ export function BookingsPage({ subscription }: { subscription: SubscriptionSumma
                 onClick={() => setView(option.value)}
                 aria-pressed={view === option.value}
                 className={cn(
-                  'rounded-[7px] px-3 py-1.5 text-[12.5px] font-medium transition-colors',
+                  'rounded-full px-3 py-1.5 text-[12.5px] font-medium transition-colors',
                   view === option.value
                     ? 'bg-white text-ink-900 shadow-sm'
                     : 'text-ink-500 hover:text-ink-800',
@@ -172,25 +221,7 @@ export function BookingsPage({ subscription }: { subscription: SubscriptionSumma
               </button>
             ))}
           </div>
-          {access.readOnly ? (
-            <ReadOnlyActionHint label="Booking Baru" />
-          ) : (
-            <ButtonLink to="/bookings/new" className="shrink-0">
-              <CalendarPlus className="size-4" />
-              Booking Baru
-            </ButtonLink>
-          )}
         </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
-        <StatTile label="Total" value={result.total} />
-        <StatTile label="Terkonfirmasi" value={counts.confirmed} tone="emerald" />
-        <StatTile label="Tentatif" value={counts.tentative} tone="amber" />
-        <StatTile
-          label={view === 'calendar' ? 'Bulan ini' : 'Halaman ini'}
-          value={result.items.length}
-        />
       </div>
 
       {view === 'calendar' ? (
@@ -203,89 +234,173 @@ export function BookingsPage({ subscription }: { subscription: SubscriptionSumma
           createBookingLocked={access.readOnly}
         />
       ) : (
-        <Card className="overflow-hidden">
-        <BookingFiltersBar filters={filters} onChange={setFilters} resultCount={result.total} />
-
-        <div className="border-t border-ink-100 px-4 py-2.5 sm:px-5">
-          <StatusCountPills
-            counts={counts}
-            active={filters.status}
-            onSelect={(status) => setFilters({ ...filters, status })}
-          />
-        </div>
-
-        <div className="border-t border-ink-100">
-          {initialLoading ? (
-            <TableSkeleton rows={5} columns={6} />
-          ) : error ? (
-            <ErrorState error={error} onRetry={reload} />
-          ) : result.items.length === 0 ? (
-            hasFilter ? (
-              <EmptyState
-                icon={<SearchX className="size-5" />}
-                title="Tidak ada booking yang cocok"
-                description="Coba ubah kata kunci, bulan, atau status filter untuk melihat hasil lain."
-                action={
+        <>
+          {/* Panel atas: status tanggal + kartu ringkasan */}
+          <div className="grid gap-3 lg:grid-cols-[1.55fr_1fr]">
+            <section className="rounded-2xl border border-ink-200/70 bg-white p-4">
+              <div className="mb-3 flex items-center justify-between gap-2">
+                <div>
+                  <h2 className="text-[14px] font-semibold text-ink-900">Status Tanggal</h2>
+                  {/*
+                   * Subjudul dibuat dinamis. Tanpa ini grid (satu bulan) tampil
+                   * berdampingan dengan Ringkasan (seluruh periode) seolah bisa
+                   * dibandingkan, padahal cakupannya berbeda.
+                   */}
+                  <p className="text-[11.5px] text-ink-400">
+                    {filters.month
+                      ? `Sebaran acara ${formatMonthYear(filters.month)}.`
+                      : 'Bulan berjalan — pilih bulan untuk memfilter tabel.'}
+                  </p>
+                </div>
+                {filters.month ? (
                   <button
                     type="button"
-                    onClick={() => setFilters({ month: '', status: 'all', search: '' })}
-                    className="text-[13px] font-medium text-brand-700 hover:underline"
+                    onClick={() => setFilters({ ...filters, month: '' })}
+                    className="shrink-0 rounded-full bg-brand-50 px-2.5 py-1 text-[11px] font-medium text-brand-700 hover:bg-brand-100"
                   >
-                    Reset semua filter
+                    {formatMonthYear(filters.month)} ✕
                   </button>
-                }
+                ) : null}
+              </div>
+              <BookingDateGrid
+                bookings={visibleBookings}
+                blocked={blocked}
+                monthKey={gridMonth}
+                onMonthChange={focusMonth}
+                onSelectDate={focusMonth}
               />
-            ) : (
-              <EmptyState
-                icon={<CalendarPlus className="size-5" />}
-                title={access.readOnly ? 'Belum ada data tersimpan' : 'Belum ada booking'}
-                description={
-                  access.readOnly
-                    ? 'Belum ada data tersimpan. Booking baru bisa dibuat setelah langganan diperpanjang.'
-                    : 'Catat acara pertama kamu supaya jadwal dan invoice bisa dilacak dari satu tempat.'
-                }
-                action={
-                  access.readOnly ? (
-                    <ButtonLink to="/upgrade" size="sm">
-                      Perpanjang paket
-                    </ButtonLink>
-                  ) : (
-                    <ButtonLink to="/bookings/new" size="sm">
-                      <CalendarPlus className="size-3.5" />
-                      Buat booking pertama
-                    </ButtonLink>
-                  )
-                }
-              />
-            )
-          ) : (
-            <BookingTable
-              bookings={visibleBookings}
-              pendingIds={pendingIds}
-              onChangeStatus={(booking, next) => void changeStatus(booking, next)}
-            />
-          )}
-        </div>
+            </section>
 
-        {result.items.length > 0 ? (
-          <div className="flex items-center justify-between gap-2 border-t border-ink-100 px-4 py-2.5 text-[12px] text-ink-500 sm:px-5">
-            <span>
-              Menampilkan {result.items.length} dari {result.total} booking
-              {filters.month ? ` · ${formatMonthYear(filters.month)}` : ''}
-              {loading ? ' · memuat…' : ''}
-            </span>
-            {hasFilter ? (
-              <button
-                type="button"
-                onClick={() => setFilters({ month: '', status: 'all', search: '' })}
-                className="font-medium text-ink-600 hover:text-ink-900"
-              >
-                Reset filter
-              </button>
-            ) : null}
+            <section className="rounded-2xl border border-ink-200/70 bg-white p-4">
+              <div className="mb-3">
+                <h2 className="text-[14px] font-semibold text-ink-900">Ringkasan</h2>
+                <p className="text-[11.5px] text-ink-400">
+                  {filters.month ? formatMonthYear(filters.month) : 'Seluruh periode'}
+                  {filters.search ? ' · hasil pencarian' : ''}
+                </p>
+              </div>
+              <BookingSummaryTiles
+                summary={summary}
+                loading={summaryLoading}
+                activeStatus={filters.status}
+                onSelectStatus={selectStatus}
+              />
+              <p className="mt-3 border-t border-ink-100 pt-2.5 text-[11px] leading-relaxed text-ink-400">
+                Nilai kontrak hanya menghitung booking terkonfirmasi dan selesai. Klik
+                kartu untuk memfilter tabel.
+              </p>
+            </section>
           </div>
-        ) : null}
-        </Card>
+
+          {/* Tabel booking */}
+          <section className="overflow-hidden rounded-2xl border border-ink-200/70 bg-white">
+            <div className="flex flex-col gap-2 border-b border-ink-100 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+              <div className="min-w-0">
+                <h2 className="text-[14px] font-semibold text-ink-900">Daftar Booking</h2>
+                <p className="text-[11.5px] text-ink-400">
+                  {result.total} booking
+                  {filters.month ? ` · ${formatMonthYear(filters.month)}` : ''}
+                  {loading ? ' · memuat…' : ''}
+                </p>
+              </div>
+              <div className="flex items-center gap-2 sm:hidden">{createAction}</div>
+            </div>
+
+            <BookingToolbar
+              filters={filters}
+              onChange={setFilters}
+              resultCount={result.total}
+              onCreate={<span className="hidden sm:inline-flex">{createAction}</span>}
+            />
+
+            <div className="border-t border-ink-100">
+              {initialLoading ? (
+                <TableSkeleton rows={5} columns={6} />
+              ) : error ? (
+                <ErrorState error={error} onRetry={reload} />
+              ) : result.items.length === 0 ? (
+                hasFilter ? (
+                  <EmptyState
+                    icon={<SearchX className="size-5" />}
+                    title="Tidak ada booking yang cocok"
+                    description="Coba ubah kata kunci, bulan, atau status filter untuk melihat hasil lain."
+                    action={
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setFilters({ month: '', status: 'all', search: '', sort: 'event_date' })
+                        }
+                        className="text-[13px] font-medium text-brand-700 hover:underline"
+                      >
+                        Reset semua filter
+                      </button>
+                    }
+                  />
+                ) : (
+                  <EmptyState
+                    icon={<CalendarPlus className="size-5" />}
+                    title={access.readOnly ? 'Belum ada data tersimpan' : 'Belum ada booking'}
+                    description={
+                      access.readOnly
+                        ? 'Belum ada data tersimpan. Booking baru bisa dibuat setelah langganan diperpanjang.'
+                        : 'Catat acara pertama kamu supaya jadwal dan invoice bisa dilacak dari satu tempat.'
+                    }
+                    action={
+                      access.readOnly ? (
+                        <ButtonLink to="/upgrade" size="sm">
+                          Perpanjang paket
+                        </ButtonLink>
+                      ) : (
+                        <ButtonLink to="/bookings/new" size="sm">
+                          <CalendarPlus className="size-3.5" />
+                          Buat booking pertama
+                        </ButtonLink>
+                      )
+                    }
+                  />
+                )
+              ) : (
+                <BookingTable
+                  bookings={visibleBookings}
+                  pendingIds={pendingIds}
+                  onChangeStatus={(booking, next) => void changeStatus(booking, next)}
+                />
+              )}
+            </div>
+
+            {result.items.length > 0 ? (
+              <div className="flex flex-wrap items-center justify-between gap-2 border-t border-ink-100 px-4 py-2.5 text-[12px] text-ink-500 sm:px-5">
+                <span>
+                  Menampilkan {result.items.length} dari {result.total} booking
+                  {hasFilter ? ' · filter aktif' : ''}
+                </span>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    disabled={urlFilters.page <= 1 || loading}
+                    onClick={() => setPage(urlFilters.page - 1)}
+                    className="inline-flex size-7 items-center justify-center rounded-full text-ink-600 ring-1 ring-inset ring-ink-200 transition-colors hover:bg-ink-50 disabled:cursor-not-allowed disabled:opacity-40"
+                    aria-label="Halaman sebelumnya"
+                  >
+                    <ChevronLeft className="size-3.5" />
+                  </button>
+                  <span className="tabular-nums text-[11.5px]">
+                    {urlFilters.page} / {totalPages}
+                  </span>
+                  <button
+                    type="button"
+                    disabled={urlFilters.page >= totalPages || loading}
+                    onClick={() => setPage(urlFilters.page + 1)}
+                    className="inline-flex size-7 items-center justify-center rounded-full text-ink-600 ring-1 ring-inset ring-ink-200 transition-colors hover:bg-ink-50 disabled:cursor-not-allowed disabled:opacity-40"
+                    aria-label="Halaman berikutnya"
+                  >
+                    <ChevronRight className="size-3.5" />
+                  </button>
+                </div>
+              </div>
+            ) : null}
+          </section>
+        </>
       )}
     </div>
   )
@@ -317,29 +432,5 @@ function ErrorState({ error, onRetry }: { error: ApiError | Error; onRetry: () =
         )
       }
     />
-  )
-}
-
-const TONE_CLASS = {
-  neutral: 'text-ink-900',
-  emerald: 'text-emerald-700',
-  amber: 'text-amber-700',
-  brand: 'text-brand-700',
-} as const
-
-function StatTile({
-  label,
-  value,
-  tone = 'neutral',
-}: {
-  label: string
-  value: number
-  tone?: keyof typeof TONE_CLASS
-}) {
-  return (
-    <div className="rounded-xl border border-ink-200/80 bg-white px-3.5 py-3">
-      <p className="text-[11px] font-medium uppercase tracking-wide text-ink-400">{label}</p>
-      <p className={`mt-1 text-[17px] font-semibold tabular-nums ${TONE_CLASS[tone]}`}>{value}</p>
-    </div>
   )
 }

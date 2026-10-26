@@ -74,13 +74,27 @@ export interface CurrentUser {
   subscription: SubscriptionSummary
 }
 
-/** Filter yang dipakai halaman daftar booking dan dikirim ke API nanti. */
+/** Urutan daftar booking. Nilai ini dipetakan ke allowlist di backend. */
+export const BOOKING_SORTS = [
+  'event_date',
+  'event_date_desc',
+  'price_desc',
+  'created_desc',
+] as const
+
+export type BookingSort = (typeof BOOKING_SORTS)[number]
+
 export interface BookingFilters {
   /** `YYYY-MM`, kosong = semua bulan. */
   month: string
   status: BookingStatus | 'all'
   /** Kata kunci nama klien. */
   search: string
+  /**
+   * Opsional supaya pemanggil lama tetap valid; `undefined` berarti urut
+   * tanggal acara terdekat (default backend).
+   */
+  sort?: BookingSort
 }
 
 export interface BookingListResult {

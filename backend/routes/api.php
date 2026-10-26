@@ -81,6 +81,7 @@ Route::middleware(['auth:sanctum', 'admin.only'])->prefix('admin')->group(functi
 */
 Route::middleware(['auth:sanctum', 'vendor.active'])->group(function () {
     // Daftar pesanan masuk (status tentative) untuk kartu dashboard.
+    Route::get('bookings/summary', [BookingController::class, 'summary'])->name('bookings.summary');
     Route::get('bookings/incoming', [BookingController::class, 'incoming'])->name('bookings.incoming');
 
     // Daftar booking berhalaman + daftar lengkap (untuk agregat dashboard).

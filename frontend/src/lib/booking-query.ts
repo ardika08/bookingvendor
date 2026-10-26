@@ -1,4 +1,5 @@
-import type { BookingFilters } from '@/types/booking'
+import type { BookingFilters, BookingSort } from '@/types/booking'
+import { BOOKING_SORTS } from '@/types/booking'
 
 /**
  * Sinkronisasi filter daftar booking dengan query string URL.
@@ -25,11 +26,15 @@ export function parseFilters(
   const status = searchParams.get('status') ?? 'all'
   const page = Number.parseInt(searchParams.get('page') ?? '1', 10)
   const view = searchParams.get('view') ?? 'list'
+  const sortParam = searchParams.get('sort') ?? ''
 
   return {
     month: MONTH_PATTERN.test(month) ? month : '',
     status: VALID_STATUS.has(status) ? (status as BookingFilters['status']) : 'all',
     search: (searchParams.get('q') ?? '').slice(0, 100),
+    sort: (BOOKING_SORTS as readonly string[]).includes(sortParam)
+      ? (sortParam as BookingSort)
+      : 'event_date',
     page: Number.isFinite(page) && page > 0 ? page : 1,
     view: view === 'calendar' ? 'calendar' : 'list',
   }

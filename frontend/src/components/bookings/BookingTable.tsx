@@ -1,7 +1,6 @@
-import { FileText, MapPin, Phone } from 'lucide-react'
+import { FileText, MapPin } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { StatusBadge, StatusMenu } from '@/components/bookings/StatusControls'
-import { Badge } from '@/components/ui/Badge'
 import { cn } from '@/lib/cn'
 import { formatCurrency, formatShortDate, formatTime, initials } from '@/lib/format'
 import type { Booking, BookingStatus } from '@/types/booking'
@@ -9,10 +8,10 @@ import type { Booking, BookingStatus } from '@/types/booking'
 /**
  * Tabel daftar booking.
  *
- * Di layar ≥md ditampilkan sebagai tabel 6 kolom; di ponsel berubah menjadi
- * kartu bertumpuk supaya nama klien, tanggal, dan status tetap terbaca tanpa
- * scroll horizontal. Kolom aksi memakai `StatusMenu` — hanya transisi status
- * yang sah yang ditawarkan, sesuai alur operasional vendor.
+ * Gaya mengikuti acuan desain: header ringan berhuruf kecil, baris longgar,
+ * nama klien dengan avatar, dan nilai penting dibungkus chip agar mudah
+ * dipindai. Di layar <md tabel berubah menjadi kartu bertumpuk supaya nama,
+ * tanggal, dan status tetap terbaca tanpa scroll horizontal.
  */
 export function BookingTable({
   bookings,
@@ -25,23 +24,27 @@ export function BookingTable({
   pendingIds?: Set<string>
 }) {
   const isPending = (id: string) => pendingIds?.has(id) ?? false
+
   return (
     <>
       <div className="hidden overflow-x-auto scrollbar-slim md:block">
         <table className="w-full border-collapse text-left">
           <thead>
-            <tr className="border-b border-ink-100 bg-ink-50/60 text-[11px] font-semibold uppercase tracking-wide text-ink-500">
-              <th scope="col" className="py-2.5 pl-5 pr-3">Klien</th>
-              <th scope="col" className="px-3 py-2.5">Acara</th>
-              <th scope="col" className="px-3 py-2.5">Paket</th>
-              <th scope="col" className="px-3 py-2.5">Status</th>
-              <th scope="col" className="px-3 py-2.5 text-right">Nilai</th>
-              <th scope="col" className="py-2.5 pl-3 pr-5 text-right">Aksi</th>
+            <tr className="text-[11px] font-medium text-ink-400">
+              <th scope="col" className="py-2 pl-5 pr-3 font-medium">Klien</th>
+              <th scope="col" className="px-3 py-2 font-medium">Tanggal acara</th>
+              <th scope="col" className="px-3 py-2 font-medium">Paket</th>
+              <th scope="col" className="px-3 py-2 font-medium">Status</th>
+              <th scope="col" className="px-3 py-2 text-right font-medium">Nilai</th>
+              <th scope="col" className="py-2 pl-3 pr-5 text-right font-medium">Aksi</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-ink-100">
+          <tbody>
             {bookings.map((booking) => (
-              <tr key={booking.id} className="group hover:bg-ink-50/70">
+              <tr
+                key={booking.id}
+                className="border-t border-ink-100 transition-colors hover:bg-ink-50/60"
+              >
                 <td className="py-3 pl-5 pr-3">
                   <ClientCell booking={booking} />
                 </td>
@@ -49,25 +52,29 @@ export function BookingTable({
                   <EventCell booking={booking} />
                 </td>
                 <td className="px-3 py-3">
-                  <p className="max-w-[13rem] truncate text-[13px] text-ink-700">
-                    {booking.packageName ?? 'Tanpa paket'}
-                  </p>
+                  {booking.packageName ? (
+                    <span className="inline-flex max-w-[11rem] items-center gap-1.5 rounded-full bg-brand-50 px-2.5 py-1 text-[11.5px] font-medium text-brand-700">
+                      <span className="truncate">{booking.packageName}</span>
+                    </span>
+                  ) : (
+                    <span className="text-[12.5px] text-ink-400">Tanpa paket</span>
+                  )}
                   {booking.invoiceCount > 0 ? (
-                    <Badge className="mt-1">
+                    <span className="mt-1 flex items-center gap-1 text-[11px] text-ink-500">
                       <FileText className="size-3" />
                       {booking.invoiceCount} invoice
-                    </Badge>
+                    </span>
                   ) : null}
                 </td>
                 <td className="px-3 py-3">
                   <StatusBadge status={booking.status} />
                 </td>
                 <td className="px-3 py-3 text-right">
-                  <p className="text-[13px] font-semibold text-ink-900">
+                  <span className="text-[13px] font-semibold tabular-nums text-ink-900">
                     {formatCurrency(booking.totalPrice)}
-                  </p>
+                  </span>
                 </td>
-                <td className="py-3 pl-3 pr-5 text-right">
+                <td className="whitespace-nowrap py-3 pl-3 pr-5 text-right">
                   {onChangeStatus ? (
                     <StatusMenu
                       status={booking.status}
@@ -95,13 +102,13 @@ export function BookingTable({
                   </p>
                   <StatusBadge status={booking.status} className="shrink-0" />
                 </div>
-                <p className="mt-0.5 flex items-center gap-1 text-[12px] text-ink-500">
-                  <span className="font-medium text-ink-700">
+                <p className="mt-1 flex items-center gap-1 text-[12px] text-ink-500">
+                  <span className="rounded-md bg-ink-50 px-1.5 py-0.5 font-medium text-ink-700">
                     {formatShortDate(booking.eventDate)}
                   </span>
                   {booking.eventTime ? <span>· {formatTime(booking.eventTime)}</span> : null}
                 </p>
-                <p className="mt-0.5 truncate text-[12px] text-ink-500">
+                <p className="mt-1 truncate text-[12px] text-ink-500">
                   {booking.packageName ?? 'Tanpa paket'} · {formatCurrency(booking.totalPrice)}
                 </p>
               </div>
@@ -130,14 +137,11 @@ function ClientCell({ booking }: { booking: Booking }) {
       <div className="min-w-0">
         <Link
           to={`/bookings/${booking.id}`}
-          className="block max-w-[13rem] truncate text-[13px] font-semibold text-ink-900 hover:text-brand-700"
+          className="block max-w-[12rem] truncate text-[13px] font-semibold text-ink-900 hover:text-brand-700"
         >
           {booking.client.name}
         </Link>
-        <p className="flex items-center gap-1 text-[11.5px] text-ink-500">
-          <Phone className="size-3" />
-          {booking.client.phone}
-        </p>
+        <p className="truncate text-[11.5px] text-ink-400">{booking.client.phone}</p>
       </div>
     </div>
   )
@@ -146,15 +150,17 @@ function ClientCell({ booking }: { booking: Booking }) {
 function EventCell({ booking }: { booking: Booking }) {
   return (
     <div>
-      <p className="text-[13px] font-medium text-ink-800">
-        {formatShortDate(booking.eventDate)}
+      <p className="flex flex-wrap items-center gap-1.5">
+        <span className="rounded-md bg-ink-50 px-2 py-0.5 text-[11.5px] font-medium text-ink-700">
+          {formatShortDate(booking.eventDate)}
+        </span>
         {booking.eventTime ? (
-          <span className="ml-1.5 font-normal text-ink-500">· {formatTime(booking.eventTime)}</span>
+          <span className="text-[11.5px] text-ink-400">{formatTime(booking.eventTime)}</span>
         ) : null}
       </p>
-      <p className="flex items-center gap-1 text-[11.5px] text-ink-500">
+      <p className="mt-1 flex items-center gap-1 text-[11.5px] text-ink-400">
         <MapPin className="size-3 shrink-0" />
-        <span className="max-w-[13rem] truncate">{booking.eventLocation ?? 'Lokasi belum diisi'}</span>
+        <span className="max-w-[11rem] truncate">{booking.eventLocation ?? 'Lokasi belum diisi'}</span>
       </p>
     </div>
   )

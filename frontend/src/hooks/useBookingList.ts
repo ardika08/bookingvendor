@@ -55,9 +55,16 @@ export function useBookingList(
     return () => window.clearTimeout(timeout)
   }, [filters.search])
 
+  /*
+   * `sort` wajib ada di dependency: tanpa itu, memilih urutan lain mengubah
+   * URL tetapi tidak memicu request ulang, sehingga tabel tetap menampilkan
+   * urutan lama. Sebelumnya `eslint-disable` di baris ini menyembunyikan
+   * dependency yang hilang tersebut.
+   */
   const effectiveFilters = useMemo<BookingFilters>(
     () => ({ ...filters, search: debouncedSearch }),
-    [filters.month, filters.status, debouncedSearch], // eslint-disable-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [filters.month, filters.status, filters.sort, debouncedSearch],
   )
 
   useEffect(() => {

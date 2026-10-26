@@ -80,7 +80,12 @@ export function DashboardLayout() {
           onOpenSidebar={() => setSidebarOpen(true)}
         />
 
-        <main className="mx-auto max-w-5xl px-4 py-6 sm:px-6">
+        {/*
+          * Lebar konten dibuat lebar (bukan max-w-5xl) karena halaman booking
+          * memakai tata letak dua kolom: panel status tanggal + kartu ringkasan.
+          * Pada 5xl keduanya saling menghimpit dan tabel mulai terpotong.
+          */}
+        <main className="mx-auto max-w-[86rem] px-4 py-5 sm:px-6">
           <Outlet context={{ user }} />
         </main>
       </div>

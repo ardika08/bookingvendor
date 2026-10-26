@@ -115,8 +115,58 @@ export async function fetchBookings(
       month: filters.month || undefined,
       status: filters.status === 'all' ? undefined : filters.status,
       q: filters.search.trim() || undefined,
+      sort: filters.sort,
       page,
       per_page: perPage,
+    },
+    signal,
+  })
+}
+
+export interface BookingSummary {
+  total: number
+  byStatus: Record<BookingStatus, number>
+  /** Total nilai kontrak dari booking terkonfirmasi + selesai. */
+  revenue: number
+}
+
+/**
+ * Agregat daftar booking untuk kartu ringkasan.
+ *
+ * Dihitung di server atas seluruh baris yang cocok filter — bukan hanya
+ * halaman aktif — supaya angka tidak berubah saat vendor pindah halaman.
+ */
+export async function fetchBookingSummary(
+  filters: BookingFilters,
+  signal?: AbortSignal,
+): Promise<BookingSummary> {
+  if (USE_MOCK_DATA) {
+    await delay(120, signal)
+    const byStatus = { tentative: 0, confirmed: 0, completed: 0, cancelled: 0 }
+    let revenue = 0
+    for (const booking of mockBookings) {
+      if (filters.month && !booking.eventDate.startsWith(filters.month)) continue
+      if (filters.search) {
+        const keyword = filters.search.toLowerCase()
+        const haystack = `${booking.client.name} ${booking.client.phone}`.toLowerCase()
+        if (!haystack.includes(keyword)) continue
+      }
+      byStatus[booking.status] += 1
+      if (booking.status === 'confirmed' || booking.status === 'completed') {
+        revenue += booking.totalPrice
+      }
+    }
+    return {
+      total: Object.values(byStatus).reduce((sum, value) => sum + value, 0),
+      byStatus,
+      revenue,
+    }
+  }
+
+  return apiRequest<BookingSummary>('/bookings/summary', {
+    query: {
+      month: filters.month || undefined,
+      q: filters.search.trim() || undefined,
     },
     signal,
   })

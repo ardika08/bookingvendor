@@ -68,7 +68,23 @@ class BookingController extends Controller
             });
         }
 
-        $query->orderBy('event_date')->orderBy('event_time');
+        /*
+         * Urutan. `sort` sudah lama tertulis di komentar endpoint tetapi belum
+         * pernah dibaca, sehingga parameter apa pun diabaikan diam-diam dan
+         * hasil selalu urut tanggal. Sekarang dipetakan lewat allowlist —
+         * nama kolom tidak pernah diambil langsung dari query string.
+         */
+        $sortMap = [
+            'event_date' => [['event_date', 'asc'], ['event_time', 'asc']],
+            'event_date_desc' => [['event_date', 'desc'], ['event_time', 'desc']],
+            'price_desc' => [['total_price', 'desc'], ['event_date', 'asc']],
+            'created_desc' => [['created_at', 'desc']],
+        ];
+        $sort = (string) $request->query('sort', 'event_date');
+        $orders = $sortMap[$sort] ?? $sortMap['event_date'];
+        foreach ($orders as [$column, $direction]) {
+            $query->orderBy($column, $direction);
+        }
 
         // Tanpa `page` frontend meminta seluruh baris (dipakai untuk agregat).
         if (! $request->has('page')) {
@@ -90,6 +106,62 @@ class BookingController extends Controller
             'total' => $total,
             'page' => $page,
             'perPage' => $perPage,
+        ]);
+    }
+
+    /**
+     * GET /api/bookings/summary?month=&status=&q=
+     *
+     * Agregat untuk kartu ringkasan di halaman daftar booking.
+     *
+     * Tanpa endpoint ini kartu hanya bisa menghitung baris halaman aktif,
+     * sehingga "Terkonfirmasi 3" berubah-ubah saat vendor pindah halaman —
+     * angka yang menyesatkan untuk keputusan operasional.
+     *
+     * `status` sengaja **tidak** dipakai saat menghitung `byStatus`: kartu
+     * status harus menunjukkan sebaran seluruh data pada filter bulan/pencarian,
+     * bukan hanya status yang sedang dipilih (kalau dipakai, semua angka lain
+     * akan nol).
+     */
+    public function summary(Request $request): JsonResponse
+    {
+        $vendor = $this->resolveVendor();
+
+        $base = $vendor->bookings();
+
+        if ($month = $request->query('month')) {
+            $base->inMonth((string) $month);
+        }
+
+        if ($keyword = trim((string) $request->query('q'))) {
+            $base->whereHas('client', function ($inner) use ($keyword) {
+                $inner->where(function ($match) use ($keyword) {
+                    $match->where('name', 'like', '%' . $keyword . '%')
+                        ->orWhere('phone', 'like', '%' . $keyword . '%');
+                });
+            });
+        }
+
+        $byStatus = (clone $base)
+            ->selectRaw('status, COUNT(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
+        // Nilai kontrak hanya dihitung dari acara yang benar-benar berjalan;
+        // booking batal tidak boleh menggelembungkan angka pendapatan.
+        $revenue = (float) (clone $base)
+            ->whereIn('status', [Booking::STATUS_CONFIRMED, Booking::STATUS_COMPLETED])
+            ->sum('total_price');
+
+        return response()->json([
+            'total' => (clone $base)->count(),
+            'byStatus' => [
+                'tentative' => (int) ($byStatus[Booking::STATUS_TENTATIVE] ?? 0),
+                'confirmed' => (int) ($byStatus[Booking::STATUS_CONFIRMED] ?? 0),
+                'completed' => (int) ($byStatus[Booking::STATUS_COMPLETED] ?? 0),
+                'cancelled' => (int) ($byStatus[Booking::STATUS_CANCELLED] ?? 0),
+            ],
+            'revenue' => $revenue,
         ]);
     }
 
