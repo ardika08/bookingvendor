@@ -2,7 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { DashboardLayout } from '@/components/layout/DashboardLayout'
 import { AdminLayout } from '@/components/admin/AdminLayout'
 import { RoleGate } from '@/components/auth/RoleGate'
-import { useDashboardUser } from '@/pages/DashboardHomePage'
+import { DashboardHomePage, useDashboardUser } from '@/pages/DashboardHomePage'
 import { BookingsPage } from '@/pages/BookingsPage'
 import { CalendarPage } from '@/pages/CalendarPage'
 import { InvoicesPage } from '@/pages/InvoicesPage'
@@ -108,12 +108,6 @@ export function App() {
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
   )
-}
-
-/** `/dashboard` sementara menampilkan daftar booking dengan konteks langganan. */
-function DashboardHomePage() {
-  const user = useDashboardUser()
-  return <BookingsPage subscription={user.subscription} />
 }
 
 function BookingsRoute() {
