@@ -98,7 +98,7 @@ export function RevenueChart() {
     <section className="rounded-xl border border-ink-200/80 bg-white px-5 py-5">
       <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex items-start gap-2.5">
-          <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
+          <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-700">
             <TrendingUp className="size-4" />
           </span>
           <div>

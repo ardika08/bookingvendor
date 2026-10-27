@@ -22,7 +22,7 @@ export function PlanCard({ plan, current }: { plan: Plan; current?: boolean }) {
       )}
     >
       {plan.highlight ? (
-        <span className="absolute -top-2.5 left-5 inline-flex items-center gap-1 rounded-full bg-brand-600 px-2 py-0.5 text-2xs font-semibold uppercase tracking-wide text-white">
+        <span className="absolute -top-2.5 left-5 inline-flex items-center gap-1 rounded-full bg-brand-400 px-2 py-0.5 text-2xs font-semibold uppercase tracking-wide text-ink-900">
           <Crown className="size-3" />
           Populer
         </span>

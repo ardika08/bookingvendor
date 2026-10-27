@@ -30,7 +30,7 @@ export function PromoLayout() {
       <header className="sticky top-0 z-30 border-b border-ink-200/70 bg-white/85 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
           <Link to="/" className="flex shrink-0 items-center gap-2.5">
-            <span className="flex size-8 items-center justify-center rounded-lg bg-brand-600 text-body font-bold text-white">
+            <span className="flex size-8 items-center justify-center rounded-lg bg-brand-400 text-body font-bold text-ink-900">
               BV
             </span>
             <span className="text-lead font-semibold text-ink-900">Booking Vendor</span>
@@ -98,7 +98,7 @@ export function PromoLayout() {
         <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr]">
           <div>
             <div className="flex items-center gap-2.5">
-              <span className="flex size-8 items-center justify-center rounded-lg bg-brand-600 text-body font-bold text-white">
+              <span className="flex size-8 items-center justify-center rounded-lg bg-brand-400 text-body font-bold text-ink-900">
                 BV
               </span>
               <span className="text-lead font-semibold text-ink-900">Booking Vendor</span>

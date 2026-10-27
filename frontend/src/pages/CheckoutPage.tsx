@@ -131,7 +131,7 @@ function CheckoutStepper({ step }: { step: CheckoutSession['step'] }) {
               className={cn(
                 'flex size-6 items-center justify-center rounded-full text-caption font-semibold',
                 active
-                  ? 'bg-brand-600 text-white'
+                  ? 'bg-brand-400 text-ink-900'
                   : done
                     ? 'bg-brand-100 text-brand-700'
                     : 'bg-ink-100 text-ink-400',
@@ -516,7 +516,7 @@ function MethodInstructions({ method, amount }: { method: PaymentMethod; amount:
             href={method.ewalletDeepLink}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex h-10 items-center gap-2 rounded-lg bg-brand-600 px-4 text-body font-medium text-white shadow-sm hover:bg-brand-700"
+            className="inline-flex h-10 items-center gap-2 rounded-lg bg-brand-400 px-4 text-body font-medium text-ink-900 shadow-sm hover:bg-brand-500"
           >
             <Wallet className="size-4" /> Buka aplikasi e-wallet
           </a>

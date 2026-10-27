@@ -124,7 +124,7 @@ export function ClientLookup({
             aria-autocomplete="list"
             className={cn(
               'h-10 w-full rounded-lg border bg-white pl-9 pr-3 text-body text-ink-800 placeholder:text-ink-400',
-              'focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100',
+              'focus:border-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-100',
               error ? 'border-rose-300' : 'border-ink-200',
             )}
           />
@@ -162,7 +162,7 @@ export function ClientLookup({
                         {client.lastEventDate ? ` · terakhir ${formatShortDate(client.lastEventDate)}` : ''}
                       </span>
                     </span>
-                    {index === highlight ? <Check className="size-3.5 text-brand-600" /> : null}
+                    {index === highlight ? <Check className="size-3.5 text-brand-700" /> : null}
                   </button>
                 </li>
               ))}

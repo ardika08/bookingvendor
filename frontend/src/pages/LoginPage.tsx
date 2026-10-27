@@ -63,7 +63,7 @@ export function LoginPage() {
     <div className="flex min-h-dvh flex-col items-center justify-center bg-ink-50 px-4">
       <div className="w-full max-w-sm">
         <div className="text-center">
-          <span className="inline-flex size-12 items-center justify-center rounded-xl bg-brand-600 text-lead text-white">
+          <span className="inline-flex size-12 items-center justify-center rounded-xl bg-brand-400 text-lead text-ink-900">
             BV
           </span>
           <h1 className="mt-4 text-heading tracking-tight text-ink-900">

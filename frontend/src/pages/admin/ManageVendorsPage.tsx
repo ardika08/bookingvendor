@@ -96,7 +96,7 @@ export function ManageVendorsPage() {
               onChange={(event) => setFilters({ ...filters, search: event.target.value })}
               placeholder="Cari nama usaha, pemilik, email, atau kota…"
               aria-label="Cari vendor"
-              className="h-10 w-full rounded-lg border border-ink-200 bg-white pl-9 pr-9 text-body text-ink-800 placeholder:text-ink-400 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+              className="h-10 w-full rounded-lg border border-ink-200 bg-white pl-9 pr-9 text-body text-ink-800 placeholder:text-ink-400 focus:border-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-100"
             />
             {filters.search ? (
               <button
@@ -120,7 +120,7 @@ export function ManageVendorsPage() {
                 })
               }
               aria-label="Filter langganan"
-              className="h-10 rounded-lg border border-ink-200 bg-white px-3 text-body text-ink-700 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+              className="h-10 rounded-lg border border-ink-200 bg-white px-3 text-body text-ink-700 focus:border-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-100"
             >
               <option value="all">Semua langganan</option>
               <option value="trial">Trial</option>
@@ -138,7 +138,7 @@ export function ManageVendorsPage() {
                 })
               }
               aria-label="Filter status akun"
-              className="h-10 rounded-lg border border-ink-200 bg-white px-3 text-body text-ink-700 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+              className="h-10 rounded-lg border border-ink-200 bg-white px-3 text-body text-ink-700 focus:border-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-100"
             >
               <option value="all">Semua akun</option>
               <option value="active">Aktif</option>

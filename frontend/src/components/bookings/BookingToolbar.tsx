@@ -48,7 +48,7 @@ export function BookingToolbar({
           value={filters.search}
           onChange={(event) => onChange({ ...filters, search: event.target.value })}
           placeholder="Cari nama klien atau nomor WA…"
-          className="h-9 w-full rounded-full border border-ink-200 bg-white pl-9 pr-9 text-body text-ink-800 placeholder:text-ink-400 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+          className="h-9 w-full rounded-full border border-ink-200 bg-white pl-9 pr-9 text-body text-ink-800 placeholder:text-ink-400 focus:border-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-100"
           aria-label="Cari booking"
         />
         {filters.search ? (
@@ -323,7 +323,7 @@ function MenuOption({
     >
       {dotClass ? <span className={cn('size-2 rounded-full', dotClass)} aria-hidden /> : null}
       <span className="flex-1">{label}</span>
-      {active ? <Check className="size-3.5 text-brand-600" /> : null}
+      {active ? <Check className="size-3.5 text-brand-700" /> : null}
     </button>
   )
 }

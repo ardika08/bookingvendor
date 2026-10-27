@@ -154,7 +154,7 @@ export function BookingDateGrid({
                   : day.isBlocked
                     ? BLOCKED_CLASS
                     : 'bg-ink-50 text-ink-600 ring-1 ring-inset ring-ink-100 hover:bg-ink-100',
-                isActive && 'ring-2 ring-brand-500 ring-offset-1',
+                isActive && 'ring-2 ring-brand-700 ring-offset-1',
               )}
             >
               {String(day.day).padStart(2, '0')}

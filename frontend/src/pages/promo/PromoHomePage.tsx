@@ -35,7 +35,7 @@ export function PromoHomePage() {
 
             <h1 className="mt-5 text-display leading-tight tracking-tight text-ink-900 sm:text-[2.625rem] sm:leading-[1.1]">
               Kelola booking vendor pernikahan
-              <span className="text-brand-600"> tanpa bentrok jadwal.</span>
+              <span className="text-brand-700"> tanpa bentrok jadwal.</span>
             </h1>
 
             <p className="mx-auto mt-4 max-w-xl text-lead leading-relaxed text-ink-600">

@@ -51,7 +51,7 @@ export function Sidebar({ onNavigate, className }: { onNavigate?: () => void; cl
   return (
     <div className={cn('flex h-full flex-col bg-white', className)}>
       <div className="flex h-16 items-center gap-2.5 px-5">
-        <span className="flex size-8 items-center justify-center rounded-lg bg-brand-600 text-body font-bold text-white">
+        <span className="flex size-8 items-center justify-center rounded-lg bg-brand-400 text-body font-bold text-ink-900">
           BV
         </span>
         <div className="leading-tight">
@@ -142,7 +142,7 @@ function NavRow({ item, onNavigate }: { item: NavItem; onNavigate?: () => void }
         <Icon className="size-4 shrink-0" />
         <span className="flex-1 leading-none">{item.label}</span>
         {item.badge ? (
-          <span className="rounded-full bg-brand-600 px-1.5 py-0.5 text-2xs font-semibold text-white">
+          <span className="rounded-full bg-brand-400 px-1.5 py-0.5 text-2xs font-semibold text-ink-900">
             {item.badge}
           </span>
         ) : null}

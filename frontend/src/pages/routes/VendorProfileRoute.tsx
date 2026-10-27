@@ -99,7 +99,7 @@ function ProfileError({
         <button
           type="button"
           onClick={onRetry}
-          className="mt-4 inline-flex h-9 items-center gap-1.5 rounded-lg bg-brand-600 px-3 text-body font-medium text-white hover:bg-brand-700"
+          className="mt-4 inline-flex h-9 items-center gap-1.5 rounded-lg bg-brand-400 px-3 text-body font-medium text-ink-900 hover:bg-brand-500"
         >
           Coba lagi
         </button>

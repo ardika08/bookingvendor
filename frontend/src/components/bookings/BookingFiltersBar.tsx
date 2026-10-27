@@ -30,7 +30,7 @@ export function BookingFiltersBar({
           value={filters.search}
           onChange={(event) => onChange({ ...filters, search: event.target.value })}
           placeholder="Cari nama klien atau nomor WA…"
-          className="h-10 w-full rounded-lg border border-ink-200 bg-white pl-9 pr-9 text-body text-ink-800 placeholder:text-ink-400 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+          className="h-10 w-full rounded-lg border border-ink-200 bg-white pl-9 pr-9 text-body text-ink-800 placeholder:text-ink-400 focus:border-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-100"
           aria-label="Cari booking"
         />
         {filters.search ? (
@@ -51,7 +51,7 @@ export function BookingFiltersBar({
             type="month"
             value={filters.month}
             onChange={(event) => onChange({ ...filters, month: event.target.value })}
-            className="h-10 w-[9.5rem] rounded-lg border border-ink-200 bg-white px-3 text-body text-ink-700 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+            className="h-10 w-[9.5rem] rounded-lg border border-ink-200 bg-white px-3 text-body text-ink-700 focus:border-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-100"
             aria-label="Filter bulan acara"
             placeholder="Semua bulan"
           />
@@ -63,7 +63,7 @@ export function BookingFiltersBar({
             onChange={(event) =>
               onChange({ ...filters, status: event.target.value as BookingFilters['status'] })
             }
-            className="h-10 appearance-none rounded-lg border border-ink-200 bg-white pl-3 pr-8 text-body text-ink-700 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+            className="h-10 appearance-none rounded-lg border border-ink-200 bg-white pl-3 pr-8 text-body text-ink-700 focus:border-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-100"
             aria-label="Filter status booking"
           >
             <option value="all">Semua status</option>

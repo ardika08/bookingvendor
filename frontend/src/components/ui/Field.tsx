@@ -51,7 +51,7 @@ export function Field({
     <div className={cn('space-y-1.5', className)}>
       <label htmlFor={id} className="flex items-center gap-1 text-meta font-medium text-ink-700">
         {label}
-        {required ? <span className="text-brand-600">*</span> : null}
+        {required ? <span className="text-brand-700">*</span> : null}
       </label>
       {children}
       {error ? (
@@ -67,7 +67,7 @@ export function Field({
 }
 
 const CONTROL_CLASS =
-  'w-full rounded-lg border border-ink-200 bg-white px-3 text-body text-ink-800 placeholder:text-ink-400 transition-colors focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100 disabled:bg-ink-50 disabled:text-ink-400'
+  'w-full rounded-lg border border-ink-200 bg-white px-3 text-body text-ink-800 placeholder:text-ink-400 transition-colors focus:border-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-100 disabled:bg-ink-50 disabled:text-ink-400'
 
 export const inputClass = (hasError?: boolean) =>
   cn(CONTROL_CLASS, 'h-10', hasError && 'border-rose-300 focus:border-rose-400 focus:ring-rose-100')

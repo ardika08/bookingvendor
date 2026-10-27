@@ -269,7 +269,7 @@ export function VendorCalendar({
                       onChange={(event) => setBlockReason(event.target.value)}
                       maxLength={120}
                       placeholder="Contoh: acara keluarga"
-                      className="h-9 w-full rounded-md border border-ink-200 px-2.5 text-meta text-ink-800 placeholder:text-ink-400 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+                      className="h-9 w-full rounded-md border border-ink-200 px-2.5 text-meta text-ink-800 placeholder:text-ink-400 focus:border-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-100"
                     />
                     <Button type="submit" size="sm" disabled={savingBlock} className="w-full">
                       <Lock className="size-3.5" />

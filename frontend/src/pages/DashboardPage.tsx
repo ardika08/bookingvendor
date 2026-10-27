@@ -163,7 +163,7 @@ export function DashboardPage() {
                 <button
                   type="button"
                   onClick={reload}
-                  className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-brand-600 px-3 text-body font-medium text-white hover:bg-brand-700"
+                  className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-brand-400 px-3 text-body font-medium text-ink-900 hover:bg-brand-500"
                 >
                   <RefreshCw className="size-3.5" />
                   Coba lagi

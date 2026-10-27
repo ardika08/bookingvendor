@@ -130,7 +130,7 @@ export function PackageFiltersBar({
           onChange={(event) => onChange({ ...filters, search: event.target.value })}
           placeholder="Cari nama paket…"
           aria-label="Cari paket"
-          className="h-10 w-full rounded-lg border border-ink-200 bg-white pl-9 pr-9 text-body text-ink-800 placeholder:text-ink-400 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+          className="h-10 w-full rounded-lg border border-ink-200 bg-white pl-9 pr-9 text-body text-ink-800 placeholder:text-ink-400 focus:border-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-100"
         />
         {filters.search ? (
           <button
@@ -364,7 +364,7 @@ export function PackageEditorDialog({
                 onChange={(event) => update('description', event.target.value)}
                 rows={3}
                 placeholder="2 fotografer, liputan 10 jam, album 20 halaman."
-                className="w-full rounded-lg border border-ink-200 bg-white px-3 py-2 text-body leading-relaxed text-ink-800 placeholder:text-ink-400 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+                className="w-full rounded-lg border border-ink-200 bg-white px-3 py-2 text-body leading-relaxed text-ink-800 placeholder:text-ink-400 focus:border-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-100"
               />
             </Field>
 

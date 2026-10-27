@@ -84,7 +84,7 @@ export function SubscriptionSuccessPage() {
       <div className="w-full max-w-md rounded-2xl border border-ink-200 bg-white p-8 text-center shadow-sm">
         {state === 'checking' ? (
           <>
-            <LoaderCircle className="mx-auto size-10 animate-spin text-brand-600" />
+            <LoaderCircle className="mx-auto size-10 animate-spin text-brand-700" />
             <h1 className="mt-4 text-title text-ink-900">Memeriksa pembayaran…</h1>
             <p className="mt-1 text-body text-ink-500">Mohon tunggu sebentar, jangan tutup halaman ini.</p>
           </>
@@ -104,7 +104,7 @@ export function SubscriptionSuccessPage() {
             </p>
             <Link
               to="/dashboard"
-              className="mt-6 inline-flex h-10 items-center justify-center rounded-lg bg-brand-600 px-5 text-body font-medium text-white hover:bg-brand-700"
+              className="mt-6 inline-flex h-10 items-center justify-center rounded-lg bg-brand-400 px-5 text-body font-medium text-ink-900 hover:bg-brand-500"
             >
               Ke dashboard
             </Link>
@@ -138,7 +138,7 @@ export function SubscriptionSuccessPage() {
             </p>
             <Link
               to="/upgrade"
-              className="mt-6 inline-flex h-10 items-center justify-center rounded-lg bg-brand-600 px-5 text-body font-medium text-white hover:bg-brand-700"
+              className="mt-6 inline-flex h-10 items-center justify-center rounded-lg bg-brand-400 px-5 text-body font-medium text-ink-900 hover:bg-brand-500"
             >
               Kembali ke paket
             </Link>

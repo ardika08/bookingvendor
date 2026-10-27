@@ -228,7 +228,7 @@ function PlanOption({
           <span className="flex flex-wrap items-center gap-1.5">
             <span className="text-body font-medium text-ink-900">{plan.name}</span>
             {plan.highlight ? (
-              <span className="rounded bg-brand-600 px-1.5 py-0.5 text-2xs font-semibold uppercase text-white">
+              <span className="rounded bg-brand-400 px-1.5 py-0.5 text-2xs font-semibold uppercase text-ink-900">
                 Populer
               </span>
             ) : null}
@@ -240,7 +240,7 @@ function PlanOption({
             <span className="mt-1.5 flex flex-col gap-0.5">
               {plan.benefits.slice(0, 3).map((benefit) => (
                 <span key={benefit} className="flex items-start gap-1 text-caption text-ink-500">
-                  <Check className="mt-0.5 size-3 shrink-0 text-brand-600" aria-hidden />
+                  <Check className="mt-0.5 size-3 shrink-0 text-brand-700" aria-hidden />
                   {benefit}
                 </span>
               ))}

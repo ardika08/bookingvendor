@@ -29,7 +29,7 @@ export function InvoiceFiltersBar({
           value={filters.search}
           onChange={(event) => onChange({ ...filters, search: event.target.value })}
           placeholder="Cari nomor invoice, nama klien, atau nomor WA…"
-          className="h-10 w-full rounded-lg border border-ink-200 bg-white pl-9 pr-9 text-body text-ink-800 placeholder:text-ink-400 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+          className="h-10 w-full rounded-lg border border-ink-200 bg-white pl-9 pr-9 text-body text-ink-800 placeholder:text-ink-400 focus:border-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-100"
           aria-label="Cari invoice"
         />
         {filters.search ? (
@@ -51,7 +51,7 @@ export function InvoiceFiltersBar({
             onChange={(event) =>
               onChange({ ...filters, status: event.target.value as InvoiceFilters['status'] })
             }
-            className="h-10 appearance-none rounded-lg border border-ink-200 bg-white pl-3 pr-8 text-body text-ink-700 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+            className="h-10 appearance-none rounded-lg border border-ink-200 bg-white pl-3 pr-8 text-body text-ink-700 focus:border-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-100"
             aria-label="Filter status invoice"
           >
             <option value="all">Semua status</option>
@@ -70,7 +70,7 @@ export function InvoiceFiltersBar({
             onChange={(event) =>
               onChange({ ...filters, type: event.target.value as InvoiceFilters['type'] })
             }
-            className="h-10 appearance-none rounded-lg border border-ink-200 bg-white pl-3 pr-8 text-body text-ink-700 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+            className="h-10 appearance-none rounded-lg border border-ink-200 bg-white pl-3 pr-8 text-body text-ink-700 focus:border-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-100"
             aria-label="Filter jenis invoice"
           >
             <option value="all">Semua jenis</option>

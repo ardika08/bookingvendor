@@ -121,7 +121,7 @@ export function InvoiceShareLinkCard({ invoiceId }: { invoiceId: string }) {
               readOnly
               value={publicUrl}
               onFocus={(event) => event.currentTarget.select()}
-              className="h-9 w-full rounded-lg border border-ink-200 bg-ink-50 px-3 text-caption text-ink-700 outline-none focus:border-brand-400"
+              className="h-9 w-full rounded-lg border border-ink-200 bg-ink-50 px-3 text-caption text-ink-700 outline-none focus:border-brand-700"
             />
             <div className="flex flex-wrap gap-2">
               <Button type="button" variant="secondary" size="sm" onClick={copyLink} disabled={savingAction}>

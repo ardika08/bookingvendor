@@ -59,7 +59,7 @@ function PricingCard({ plan }: { plan: Plan }) {
       )}
     >
       {plan.highlight ? (
-        <span className="absolute -top-2.5 left-5 rounded-full bg-brand-600 px-2.5 py-0.5 text-2xs font-semibold uppercase tracking-wide text-white">
+        <span className="absolute -top-2.5 left-5 rounded-full bg-brand-400 px-2.5 py-0.5 text-2xs font-semibold uppercase tracking-wide text-ink-900">
           Populer
         </span>
       ) : null}
@@ -91,7 +91,7 @@ function PricingCard({ plan }: { plan: Plan }) {
       <ul className="mt-4 space-y-2">
         {plan.benefits.map((benefit) => (
           <li key={benefit} className="flex items-start gap-2 text-meta text-ink-600">
-            <Check className="mt-0.5 size-3.5 shrink-0 text-brand-600" aria-hidden />
+            <Check className="mt-0.5 size-3.5 shrink-0 text-brand-700" aria-hidden />
             <span>{benefit}</span>
           </li>
         ))}
