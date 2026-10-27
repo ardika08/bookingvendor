@@ -41,12 +41,19 @@ const RANGE_OPTIONS = [3, 6, 12] as const
  * untuk uang masuk. Dua hue ini cukup berjauhan di roda warna sehingga area
  * yang bertumpuk tetap terbaca sebagai dua bidang berbeda.
  */
-const CONTRACT_COLOR = '#4a90d9'
-const PAID_COLOR = '#8b5cf6'
-/** Token netral yang dipakai grid/sumbu (lihat `index.css`). */
+const CONTRACT_COLOR = '#276fb9'
+const PAID_COLOR = '#7a45d6'
+/**
+ * Token netral yang dipakai grid/sumbu (lihat `index.css`).
+ *
+ * `INK_400` diperbarui mengikuti revisi kontras token: nilai lama `#8c96a3`
+ * hanya 3.00:1 di putih. Recharts butuh nilai literal (atribut SVG tidak
+ * me-resolve `var()`), jadi angkanya disalin dari token dan harus ikut
+ * berubah bila token berubah.
+ */
 const INK_100 = '#eceef0'
 const INK_300 = '#b6bdc6'
-const INK_400 = '#8c96a3'
+const INK_400 = '#5f6a77'
 
 /**
  * Gradasi area: pekat di dekat garis, luruh ke transparan di dasar plot.

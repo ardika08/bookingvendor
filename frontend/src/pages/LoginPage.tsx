@@ -128,7 +128,7 @@ export function LoginPage() {
               404 untuk endpoint ini di environment lain, jadi tombol ini
               aman untuk dibiarkan di kode. */}
           <div className="mt-4 border-t border-dashed border-ink-200 pt-3">
-            <p className="text-center text-2xs font-semibold uppercase tracking-wider text-ink-300">
+            <p className="text-center text-2xs font-semibold uppercase tracking-wider text-ink-500">
               Dev login (tanpa Google)
             </p>
             <button

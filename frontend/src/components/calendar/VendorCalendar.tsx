@@ -442,7 +442,15 @@ function CalendarDay({
             : isBlocked
               ? 'border-ink-300 border-dashed bg-ink-100/70 hover:border-ink-400'
               : 'border-transparent bg-ink-50/60 hover:border-ink-200 hover:bg-white',
-        isPast && count === 0 && !isBlocked && 'opacity-60',
+        /*
+         * Tanggal lampau ditandai dengan warna teks yang lebih redup, BUKAN
+         * `opacity-60`. Opacity mengomposit seluruh sel dengan latar, sehingga
+         * teks ink-600 6.67:1 turun jadi 2.70:1 — angka tanggal praktis tidak
+         * terbaca, padahal tanggal lampau tetap informasi yang sah.
+         * `text-ink-500` (#5b636f) memberi 6.07:1 dan tetap terlihat lebih
+         * redup daripada tanggal aktif yang memakai ink-600.
+         */
+        isPast && count === 0 && !isBlocked && 'text-ink-500',
       )}
     >
       <span className="flex w-full items-center justify-between gap-1">

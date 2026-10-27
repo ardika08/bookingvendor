@@ -102,6 +102,25 @@
    * desain memakai oranye hangat, jadi hue digeser ke ~24° dengan saturasi
    * lebih tinggi. Nama token tetap `brand-*` supaya 46 file yang sudah memakainya
    * tidak perlu diubah — hanya nilainya yang bergeser.
+   *
+   * REVISI KONTRAS (WCAG 1.4.3). Nilai lama gagal ambang teks:
+   *   - brand-600 #ea6a12 dipakai sebagai fill 17 tombol dengan teks putih,
+   *     hanya 3.20:1 (butuh 4.5:1).
+   *   - brand-600 sebagai teks di bg-brand-50 hanya 4.39:1.
+   *   - brand-700 sebagai teks nav aktif di brand-50 hanya 4.33:1, dan badge
+   *     di brand-100 hanya 4.01:1.
+   *
+   * Ramp digelapkan dengan jarak lightness tetap ~0.055 supaya tiap langkah
+   * masih terbedakan mata, bukan hasil pencarian otomatis yang menumpuk semua
+   * langkah di satu titik. Hue 24° dan saturasi dipertahankan, jadi karakternya
+   * tetap oranye hangat — hanya lebih pekat.
+   *
+   * Konsekuensi yang disengaja: oranye tampil lebih gelap dari sebelumnya.
+   * Itu harga yang tidak bisa dihindari untuk mencapai 4.5:1; oranye seterang
+   * #ea6a12 secara matematis tidak mungkin lulus dengan teks putih.
+   *
+   * brand-500 sengaja TIDAK diubah: ia hanya dipakai sebagai fill dekoratif
+   * (progress bar, ring pilihan) yang tidak membawa teks.
    */
   --color-brand-50: #fff7ed;
   --color-brand-100: #ffedd5;
@@ -109,17 +128,29 @@
   --color-brand-300: #fdba74;
   --color-brand-400: #fb923c;
   --color-brand-500: #f97316;
-  --color-brand-600: #ea6a12;
-  --color-brand-700: #c2540b;
-  --color-brand-800: #9a430a;
-  --color-brand-900: #7c3a0d;
+  --color-brand-600: #b7530e; /* 4.93:1 di putih, 4.65:1 di brand-50 */
+  --color-brand-700: #a04509; /* 6.27:1 di putih, 5.90:1 di brand-50, 5.47:1 di brand-100 */
+  --color-brand-800: #843a09; /* 8.11:1 di putih */
+  --color-brand-900: #66300b;
 
+  /*
+   * Neutral. ink-400 dan ink-500 dipakai sebagai TEKS di 174 + 52 tempat
+   * (label, caption, placeholder, metadata), bukan sebagai border.
+   *
+   * Nilai lama gagal:
+   *   - ink-400 #8c96a3: 3.00:1 di putih, 2.79:1 di bg-ink-50 (butuh 4.5:1).
+   *   - ink-500 #6b7583: 4.35:1 di bg-ink-50 (gagal tipis).
+   *
+   * Digelapkan secukupnya agar lulus di ketiga latar yang benar-benar dipakai
+   * (putih, ink-50, ink-100) sambil menjaga urutan ramp tetap menurun. Nilai
+   * dipilih di bawah ink-600 #545d69 supaya langkahnya tidak bertabrakan.
+   */
   --color-ink-50: #f6f7f8;
   --color-ink-100: #eceef0;
   --color-ink-200: #d9dde2;
   --color-ink-300: #b6bdc6;
-  --color-ink-400: #8c96a3;
-  --color-ink-500: #6b7583;
+  --color-ink-400: #5f6a77; /* 5.51:1 putih, 5.13:1 ink-50, 4.73:1 ink-100 */
+  --color-ink-500: #5b636f; /* 6.07:1 putih, 5.66:1 ink-50, 5.22:1 ink-100 */
   --color-ink-600: #545d69;
   --color-ink-700: #434a54;
   --color-ink-800: #2c323a;
@@ -183,8 +214,20 @@
     letter-spacing: -0.015em;
   }
 
+  /*
+   * Focus ring.
+   *
+   * Sebelumnya `outline-brand-500` (#f97316) hanya mencapai 2.80:1 di latar
+   * putih dan 2.61:1 di bg-ink-50, padahal WCAG 1.4.11 menuntut 3:1 untuk
+   * indikator fokus. Ring-nya memang muncul di setiap stop Tab, tetapi terlalu
+   * pudar untuk dilihat pengguna low-vision — sama saja dengan tidak ada.
+   *
+   * `brand-700` (#a04509) memberi 6.27:1 di putih dan 5.90:1 di brand-50.
+   * Satu token ini menutup semua latar yang dipakai aplikasi, tanpa perlu
+   * ring ganda atau outline gelap+terang.
+   */
   :focus-visible {
-    @apply outline-2 outline-offset-2 outline-brand-500;
+    @apply outline-2 outline-offset-2 outline-brand-700;
   }
 }
 

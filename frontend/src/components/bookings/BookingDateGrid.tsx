@@ -22,11 +22,22 @@ import type { BlockedDate } from '@/lib/vendor-availability'
 /** Prioritas warna bila satu tanggal punya beberapa acara. */
 const STATUS_PRIORITY: BookingStatus[] = ['confirmed', 'tentative', 'completed', 'cancelled']
 
+/*
+ * Warna sel status. Setiap pasangan diverifikasi terhadap WCAG 1.4.3 (teks
+ * 4.5:1), karena sel ini memuat ANGKA tanggal, bukan sekadar bidang warna.
+ *
+ * Nilai lama gagal:
+ *   - confirmed `bg-emerald-500 text-white` hanya 2.47:1
+ *   - cancelled `bg-rose-400 text-white` hanya 2.69:1
+ *
+ * Digelapkan satu-dua langkah sampai lulus. `tentative` dan `completed` sudah
+ * lulus sejak awal (8.97:1 dan 8.83:1) dan tidak diubah.
+ */
 const CELL_CLASS: Record<BookingStatus, string> = {
-  confirmed: 'bg-emerald-500 text-white hover:bg-emerald-600',
+  confirmed: 'bg-emerald-700 text-white hover:bg-emerald-800',
   tentative: 'bg-amber-400 text-amber-950 hover:bg-amber-500',
   completed: 'bg-ink-300 text-ink-900 hover:bg-ink-400',
-  cancelled: 'bg-rose-400 text-white hover:bg-rose-500',
+  cancelled: 'bg-rose-600 text-white hover:bg-rose-700',
 }
 
 const BLOCKED_CLASS = 'bg-ink-100 text-ink-400 line-through hover:bg-ink-200'
