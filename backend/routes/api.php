@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AdminDashboardController;
 use App\Http\Controllers\Api\AdminPlanController;
 use App\Http\Controllers\Api\AdminSubscriptionController;
 use App\Http\Controllers\Api\AdminSubscriptionPaymentController;
@@ -75,6 +76,12 @@ Route::middleware(['auth:sanctum', 'admin.only'])->prefix('admin')->group(functi
     Route::get('plans', [AdminPlanController::class, 'index'])->name('admin.plans.index');
     Route::match(['put', 'patch'], 'plans/{plan}', [AdminPlanController::class, 'update'])
         ->name('admin.plans.update');
+
+    // Dashboard admin: ringkasan angka platform + grafik pendapatan agregat.
+    Route::get('dashboard/summary', [AdminDashboardController::class, 'summary'])
+        ->name('admin.dashboard.summary');
+    Route::get('dashboard/revenue-series', [AdminDashboardController::class, 'revenueSeries'])
+        ->name('admin.dashboard.revenue-series');
 });
 
 /*

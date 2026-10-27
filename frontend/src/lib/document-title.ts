@@ -34,7 +34,7 @@ const STATIC_TITLES: Record<string, string> = {
   '/settings/akun': 'Akun Saya',
   '/upgrade': 'Langganan',
   '/subscription/success': 'Pembayaran Berhasil',
-  '/admin': 'Kelola Vendor',
+  '/admin': 'Dashboard Admin',
   '/admin/vendors': 'Kelola Vendor',
   '/admin/vendors/new': 'Tambah Vendor',
   '/admin/plans': 'Konfigurasi Paket',

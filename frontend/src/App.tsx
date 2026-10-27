@@ -13,6 +13,7 @@ import { ManageVendorsPage } from '@/pages/admin/ManageVendorsPage'
 import { VendorCreatePage } from '@/pages/admin/VendorCreatePage'
 import { VendorDetailPage } from '@/pages/admin/VendorDetailPage'
 import { VendorEditPage } from '@/pages/admin/VendorEditPage'
+import { AdminDashboardPage } from '@/pages/admin/AdminDashboardPage'
 import { PlanConfigPage } from '@/pages/admin/PlanConfigPage'
 import { BookingCreateRoute } from '@/pages/routes/BookingCreateRoute'
 import { BookingDetailRoute, BookingEditRoute } from '@/pages/routes/BookingDetailRoutes'
@@ -111,7 +112,7 @@ export function App() {
           </RoleGate>
         }
       >
-        <Route index element={<Navigate to="vendors" replace />} />
+        <Route index element={<AdminDashboardPage />} />
         <Route path="vendors" element={<ManageVendorsPage />} />
         <Route path="vendors/new" element={<VendorCreatePage />} />
         <Route path="vendors/:vendorId" element={<VendorDetailPage />} />

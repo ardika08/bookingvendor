@@ -1,6 +1,7 @@
 import {
   BarChart3,
   CreditCard,
+  LayoutDashboard,
   LifeBuoy,
   Settings2,
   UserRound,
@@ -44,6 +45,7 @@ interface AdminNavItem {
 }
 
 const ADMIN_NAV: AdminNavItem[] = [
+  { label: 'Dashboard', to: '/admin', icon: LayoutDashboard },
   { label: 'Kelola Vendor', to: '/admin/vendors', icon: Users },
   { label: 'Paket Langganan', to: '/admin/plans', icon: CreditCard },
   { label: 'Laporan', to: '/admin/reports', icon: BarChart3, soon: true },
@@ -53,6 +55,7 @@ const ADMIN_NAV: AdminNavItem[] = [
 
 /** Judul topbar untuk route admin. */
 function resolveTitle(pathname: string): string {
+  if (pathname === '/admin') return 'Dashboard'
   if (/^\/admin\/vendors(\/|$)/.test(pathname)) {
     if (pathname === '/admin/vendors/new') return 'Tambah Vendor'
     if (/^\/admin\/vendors\/[^/]+\/edit$/.test(pathname)) return 'Edit Vendor'
@@ -216,7 +219,7 @@ function AdminNavRow({
       <NavLink
         to={item.to}
         onClick={onNavigate}
-        end={item.to === '/admin/vendors'}
+        end={item.to === '/admin' || item.to === '/admin/vendors'}
         className={({ isActive }) =>
           cn(
             /*
