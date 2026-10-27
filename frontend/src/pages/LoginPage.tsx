@@ -1,7 +1,6 @@
 import { LoaderCircle, ShieldCheck, X } from '@/components/ui/icons'
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { clearAuthRole, readAuthRole, saveAuthRole, type AuthRole } from '@/lib/auth-session'
+import { clearAuthRole, readAuthRole, type AuthRole } from '@/lib/auth-session'
 import { GoogleMark } from '@/components/auth/GoogleMark'
 
 /**
@@ -48,9 +47,15 @@ export function LoginPage() {
     window.history.replaceState(null, '', '/login')
   }, [])
 
-  /** Login dev: langsung redirect ke /auth/dev-login (server membuat sesi). */
-  function handleDevLogin() {
-    window.location.href = '/auth/dev-login'
+  /**
+   * Login dev: langsung ke `/auth/dev-login` (server membuat sesi).
+   *
+   * `?as=admin` memilih akun admin, tanpa parameter tetap vendor seperti
+   * sebelumnya. Tanpa ini tidak ada jalan masuk ke panel admin sama sekali:
+   * OAuth belum dikonfigurasi dan tidak ada login kata sandi.
+   */
+  function handleDevLogin(role: 'vendor' | 'admin') {
+    window.location.href = `/auth/dev-login?as=${role}`
   }
 
   /** Hapus sesi aktif lalu segarkan tampilan halaman masuk. */
@@ -133,25 +138,37 @@ export function LoginPage() {
             </p>
             <button
               type="button"
-              onClick={handleDevLogin}
+              onClick={() => handleDevLogin('vendor')}
               className="mt-2 flex h-9 w-full items-center justify-center gap-2 rounded-lg bg-ink-100 text-meta font-medium text-ink-700 transition-colors hover:bg-ink-200"
             >
               <LoaderCircle className="size-3.5" />
               Masuk sebagai vendor uji
+            </button>
+            <button
+              type="button"
+              onClick={() => handleDevLogin('admin')}
+              className="mt-2 flex h-9 w-full items-center justify-center gap-2 rounded-lg bg-ink-100 text-meta font-medium text-ink-700 transition-colors hover:bg-ink-200"
+            >
+              <ShieldCheck className="size-3.5" />
+              Masuk sebagai admin uji
             </button>
           </div>
         </div>
 
         <p className="mt-6 text-center text-meta text-ink-400">
           Mengelola platform?{' '}
-          <Link
-            to="/admin"
-            onClick={() => saveAuthRole('admin')}
+          {/* Sebelumnya tautan ini hanya menulis role 'admin' ke localStorage
+              tanpa membuat sesi server, sehingga RoleGate langsung memantul
+              kembali ke /login. Sekarang ia memakai jalur login dev yang
+              benar-benar membuat sesi. */}
+          <button
+            type="button"
+            onClick={() => handleDevLogin('admin')}
             className="inline-flex items-center gap-1 font-medium text-ink-600 hover:text-ink-900"
           >
             <ShieldCheck className="size-3.5" />
             Panel admin
-          </Link>
+          </button>
         </p>
       </div>
     </div>

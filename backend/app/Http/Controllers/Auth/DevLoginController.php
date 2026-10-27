@@ -55,26 +55,69 @@ class DevLoginController extends Controller
             abort(404);
         }
 
-        $user = User::query()
-            ->where('role', User::ROLE_VENDOR)
-            ->whereHas('vendor')
-            ->orderBy('id')
-            ->first();
+        // Pilih akun sesuai peran yang diminta lewat `?as=admin|vendor`.
+        // Tanpa parameter, perilaku lama dipertahankan (vendor) agar tautan
+        // lama dan tes yang sudah ada tidak berubah.
+        $as = (string) $request->query('as', 'vendor');
+        $as = $as === 'admin' ? 'admin' : 'vendor';
+
+        $user = $this->pickUser($as);
 
         if ($user === null) {
-            // Bedakan "belum ada akun" dari "akun ada tapi profil vendor belum
-            // dibuat" supaya penanganannya jelas: yang kedua butuh seeder.
-            $adaAkunVendor = User::query()->where('role', User::ROLE_VENDOR)->exists();
+            /*
+             * Bedakan tiga penyebab supaya penanganannya jelas:
+             * - akun ada tetapi nonaktif -> account_inactive (bukan "belum terdaftar")
+             * - akun vendor ada tetapi baris `vendors` belum dibuat -> butuh seeder
+             * - tidak ada akun sama sekali -> account_not_registered
+             *
+             * Sebelumnya kasus "nonaktif" dilaporkan sebagai "belum terdaftar",
+             * sehingga admin mengira akunnya hilang padahal hanya dinonaktifkan.
+             */
+            $role = $as === 'admin' ? User::ROLE_ADMIN : User::ROLE_VENDOR;
+            $akunRole = User::query()->where('role', $role);
 
-            return FrontendRedirect::to(
-                '/login?error=' . ($adaAkunVendor ? 'vendor_profile_missing' : 'account_not_registered'),
-            );
+            if ((clone $akunRole)->where('is_active', false)->exists()) {
+                $error = 'account_inactive';
+            } elseif ((clone $akunRole)->exists()) {
+                $error = 'vendor_profile_missing';
+            } else {
+                $error = 'account_not_registered';
+            }
+
+            return FrontendRedirect::to('/login?error=' . $error);
         }
 
         Auth::login($user, true);
         $request->session()->regenerate();
 
         return FrontendRedirect::to($this->access->destinationFor($user));
+    }
+
+    /**
+     * Ambil akun yang akan dipakai untuk login dev.
+     *
+     * Vendor: harus punya profil usaha, karena tanpa baris `vendors` semua
+     * endpoint vendor menjawab 403 `vendor_not_linked` dan dashboard tampak
+     * rusak padahal datanya memang belum ada.
+     *
+     * Admin: tidak butuh profil apa pun — panel admin justru mengelola vendor
+     * lain, jadi akun admin selalu berdiri sendiri.
+     */
+    private function pickUser(string $as): ?User
+    {
+        if ($as === 'admin') {
+            return User::query()
+                ->where('role', User::ROLE_ADMIN)
+                ->where('is_active', true)
+                ->orderBy('id')
+                ->first();
+        }
+
+        return User::query()
+            ->where('role', User::ROLE_VENDOR)
+            ->whereHas('vendor')
+            ->orderBy('id')
+            ->first();
     }
 
     /**

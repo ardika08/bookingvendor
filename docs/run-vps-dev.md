@@ -47,10 +47,19 @@ karena proxy tidak menemukan target.
 
 ## 3. Masuk tanpa Google
 
-Klik **"Masuk sebagai vendor uji"** di `/login`. Server membuat sesi sebagai
-vendor pertama yang punya profil usaha.
+Di `/login` ada dua tombol dev:
 
-Endpoint: `GET /auth/dev-login` → aktif hanya bila `APP_ENV=local`.
+| Tombol | Akun yang dipakai | Mendarat di |
+|---|---|---|
+| **Masuk sebagai vendor uji** | vendor pertama yang punya profil usaha | `/dashboard` |
+| **Masuk sebagai admin uji** | admin aktif pertama | `/admin/vendors` |
+
+Tautan **"Panel admin"** di bawah kartu login juga memakai jalur admin yang
+sama. Sebelumnya tautan itu hanya menulis `role=admin` ke localStorage tanpa
+membuat sesi server, sehingga selalu memantul kembali ke `/login`.
+
+Endpoint: `GET /auth/dev-login` (vendor) dan `?as=admin` (admin) — aktif hanya
+bila `APP_ENV=local`.
 
 ### Pembatasan jaringan
 
@@ -100,7 +109,7 @@ php artisan migrate:fresh --seed
 |---|---|
 | HTTPS | tidak ada — trafik tidak terenkripsi |
 | Dev-login | terbuka bila `DEV_LOGIN_ALLOW_PUBLIC=true` |
-| Akun admin | ada (`admin@example.com`), tapi tidak ada jalan masuk lewat UI |
+| Akun admin | ada (`admin@example.com`), masuk lewat tombol "Masuk sebagai admin uji" |
 | Google OAuth | belum aktif — `GOOGLE_CLIENT_ID` kosong |
 | Duitku | sandbox, callback tidak bisa mencapai IP ini tanpa HTTPS |
 | Hot reload | aktif, bundle tidak di-minify |
