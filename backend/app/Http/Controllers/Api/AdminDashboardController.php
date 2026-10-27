@@ -3,65 +3,69 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Booking;
-use App\Models\Payment;
+use App\Models\Subscription;
 use App\Models\SubscriptionPayment;
 use App\Models\Vendor;
-use App\Services\RevenueSeries;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 /**
- * Dashboard admin: ringkasan angka platform + grafik pendapatan agregat.
+ * Dashboard admin: jumlah vendor + pendapatan langganan aplikasi.
  *
- * Berbeda dari `RevenueController` vendor yang hanya melihat datanya sendiri,
- * controller ini menggabungkan seluruh vendor. Dipakai di halaman utama panel
- * admin untuk memberi gambaran kesehatan platform secara cepat.
+ * CAKUPAN SENGAJA DIBATASI
+ * Admin hanya perlu tahu berapa vendor yang aktif dan berapa uang yang masuk
+ * dari langganan aplikasi. Data operasional vendor — booking, klien, invoice,
+ * dan pembayaran klien — **tidak** dihitung di sini. Itu urusan masing-masing
+ * vendor dan tidak diperlukan untuk mengelola platform.
+ *
+ * Karena itu endpoint ini tidak menyentuh tabel `bookings`, `invoices`, atau
+ * `payments` sama sekali. Satu-satunya sumber uang adalah
+ * `subscription_payments` (status `paid`), yaitu pembayaran paket langganan
+ * vendor ke platform.
  */
 class AdminDashboardController extends Controller
 {
-    public function __construct(private readonly RevenueSeries $series)
-    {
-    }
-
     /**
      * GET /api/admin/dashboard/summary
      *
-     * Angka ringkas: total vendor, vendor aktif, total booking, total
-     * pembayaran tercatat, total uang masuk, dan total pendapatan langganan.
+     * Angka ringkas: jumlah vendor (total/aktif/nonaktif) dan pendapatan
+     * langganan aplikasi (total, bulan ini, jumlah transaksi lunas).
      */
     public function summary(): JsonResponse
     {
         $totalVendors = Vendor::count();
         $activeVendors = Vendor::where('is_active', true)->count();
-        $totalBookings = Booking::count();
-        $totalPayments = Payment::count();
-        $totalPaidIn = (float) Payment::sum('amount');
-        $totalSubscriptionRevenue = (float) SubscriptionPayment::where('status', 'paid')->sum('amount');
 
-        // Vendor baru bulan ini.
-        $monthStart = now()->startOfMonth()->toDateString();
-        $newVendorsThisMonth = Vendor::whereDate('created_at', '>=', $monthStart)->count();
+        $monthStart = now()->startOfMonth();
 
-        // Booking baru bulan ini.
-        $newBookingsThisMonth = Booking::whereDate('created_at', '>=', $monthStart)->count();
+        // Hanya transaksi berstatus `paid` yang dihitung sebagai pendapatan.
+        // `pending` belum tentu dibayar, `failed`/`expired` tidak pernah masuk.
+        $paid = SubscriptionPayment::query()->where('status', 'paid');
+
+        $revenueTotal = (float) (clone $paid)->sum('amount');
+        $revenueThisMonth = (float) (clone $paid)
+            ->where('paid_at', '>=', $monthStart)
+            ->sum('amount');
+        $paidCount = (clone $paid)->count();
+
+        // Sebaran langganan dipakai sebagai konteks: berapa yang berbayar,
+        // berapa yang masih trial. Angka ini soal status akun, bukan uang.
+        $activeSubscriptions = Subscription::query()->where('status', 'active')->count();
+        $trialSubscriptions = Subscription::query()->where('status', 'trial')->count();
 
         return response()->json([
             'vendors' => [
                 'total' => $totalVendors,
                 'active' => $activeVendors,
-                'newThisMonth' => $newVendorsThisMonth,
-            ],
-            'bookings' => [
-                'total' => $totalBookings,
-                'newThisMonth' => $newBookingsThisMonth,
-            ],
-            'payments' => [
-                'total' => $totalPayments,
-                'paidIn' => $totalPaidIn,
+                'inactive' => $totalVendors - $activeVendors,
             ],
             'subscription' => [
-                'revenue' => $totalSubscriptionRevenue,
+                'revenueTotal' => $revenueTotal,
+                'revenueThisMonth' => $revenueThisMonth,
+                'paidCount' => $paidCount,
+                'activeCount' => $activeSubscriptions,
+                'trialCount' => $trialSubscriptions,
             ],
         ]);
     }
@@ -69,9 +73,12 @@ class AdminDashboardController extends Controller
     /**
      * GET /api/admin/dashboard/revenue-series?months=6
      *
-     * Grafik pendapatan platform agregat — gabungan semua vendor.
-     * Memakai `RevenueSeries` yang sama dengan dashboard vendor, tetapi
-     * data booking & payment diambil tanpa filter `vendor_id`.
+     * Pendapatan langganan aplikasi per bulan — hanya dari
+     * `subscription_payments` berstatus `paid`.
+     *
+     * Pengelompokan bulan dilakukan di PHP, bukan SQL: `strftime()` hanya ada
+     * di SQLite dan `DATE_FORMAT()` hanya di MySQL. Satu query + loop membuat
+     * hasilnya sama di kedua driver tanpa cabang kode.
      */
     public function revenueSeries(Request $request): JsonResponse
     {
@@ -80,63 +87,68 @@ class AdminDashboardController extends Controller
         ]);
 
         $months = (int) $request->query('months', 6);
-        $endMonthKey = now()->format('Y-m');
-        $fromMonth = $this->firstMonthOf($endMonthKey, $months);
-        $since = $fromMonth.'-01';
+        $endMonth = now()->copy()->startOfMonth();
+        $startMonth = $endMonth->copy()->subMonths($months - 1);
 
-        $bookings = Booking::query()
-            ->whereDate('event_date', '>=', $since)
-            ->get(['event_date', 'total_price', 'status']);
+        $rows = SubscriptionPayment::query()
+            ->where('status', 'paid')
+            ->where('paid_at', '>=', $startMonth)
+            ->get(['amount', 'paid_at']);
 
-        $paidRows = Payment::query()
-            ->join('invoices', 'invoices.id', '=', 'payments.invoice_id')
-            ->join('bookings', 'bookings.id', '=', 'invoices.booking_id')
-            ->whereDate('payments.paid_at', '>=', $since)
-            ->get(['payments.amount', 'payments.paid_at']);
-
-        $paidByMonth = [];
-        foreach ($paidRows as $row) {
-            $month = $row->paid_at?->format('Y-m');
-            if ($month === null) {
+        $byMonth = [];
+        foreach ($rows as $row) {
+            $key = $row->paid_at?->format('Y-m');
+            if ($key === null) {
                 continue;
             }
-            $paidByMonth[$month] = ($paidByMonth[$month] ?? 0.0) + (float) $row->amount;
+            $byMonth[$key] = ($byMonth[$key] ?? 0.0) + (float) $row->amount;
         }
 
-        $payments = collect($paidByMonth)
-            ->map(fn (float $total, string $month): Payment => new Payment([
-                'amount' => $total,
-                'paid_at' => $month.'-01',
-            ]))
-            ->values()
-            ->all();
+        // Kerangka bulan dibuat lengkap agar grafik tidak bolong saat ada
+        // bulan tanpa transaksi.
+        $series = [];
+        for ($i = 0; $i < $months; $i++) {
+            $month = $startMonth->copy()->addMonths($i);
+            $key = $month->format('Y-m');
+            $series[] = [
+                'month' => $key,
+                'label' => $this->monthLabel($month),
+                'revenue' => $byMonth[$key] ?? 0.0,
+                'paymentCount' => 0,
+            ];
+        }
 
-        $series = $this->series->build(
-            $bookings,
-            $payments,
-            $endMonthKey,
-            $months,
-        );
+        // Hitung jumlah transaksi per bulan untuk tooltip.
+        foreach ($rows as $row) {
+            $key = $row->paid_at?->format('Y-m');
+            if ($key === null) {
+                continue;
+            }
+            foreach ($series as $index => $point) {
+                if ($point['month'] === $key) {
+                    $series[$index]['paymentCount'] += 1;
+                    break;
+                }
+            }
+        }
+
+        $total = array_sum(array_column($series, 'revenue'));
 
         return response()->json([
             'series' => $series,
-            'totals' => [
-                'contractValue' => $this->series->totalContractValue($series),
-                'paid' => $this->series->totalPaid($series),
-            ],
+            'totals' => ['revenue' => (float) $total],
             'months' => $months,
         ]);
     }
 
-    /** Bulan pertama dari jendela `months` mundur dari `endMonthKey`. */
-    private function firstMonthOf(string $endMonthKey, int $months): string
+    /** Label pendek bulan untuk sumbu X, mis. "Okt". */
+    private function monthLabel(Carbon $month): string
     {
-        [$year, $month] = array_map('intval', explode('-', $endMonthKey));
-        $totalMonths = $year * 12 + $month - 1;
-        $startTotal = $totalMonths - ($months - 1);
-        $startYear = intdiv($startTotal, 12);
-        $startMonth = ($startTotal % 12) + 1;
+        $labels = [
+            1 => 'Jan', 2 => 'Feb', 3 => 'Mar', 4 => 'Apr', 5 => 'Mei', 6 => 'Jun',
+            7 => 'Jul', 8 => 'Agu', 9 => 'Sep', 10 => 'Okt', 11 => 'Nov', 12 => 'Des',
+        ];
 
-        return sprintf('%04d-%02d', $startYear, $startMonth);
+        return $labels[(int) $month->format('n')] ?? $month->format('M');
     }
 }

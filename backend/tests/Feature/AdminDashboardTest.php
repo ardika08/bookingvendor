@@ -2,16 +2,17 @@
 
 namespace Tests\Feature;
 
-use App\Models\{Booking, Client, Invoice, Payment, User, Vendor};
+use App\Models\{Subscription, SubscriptionPayment, User, Vendor};
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
- * Dashboard admin: ringkasan angka + grafik pendapatan agregat.
+ * Dashboard admin: jumlah vendor + pendapatan langganan aplikasi.
  *
- * Memastikan endpoint mengembalikan angka yang benar untuk seluruh vendor
- * (bukan hanya vendor yang login), dan bahwa grafik agregat menggabungkan
- * data semua vendor — berbeda dari endpoint revenue vendor yang terfilter.
+ * Cakupan sengaja dibatasi — admin tidak butuh data booking atau pemasukan
+ * vendor. Tes di bawah juga memastikan angka itu TIDAK ikut terhitung:
+ * booking dan pembayaran klien dibuat besar, lalu dipastikan pendapatan
+ * langganan tetap hanya berasal dari `subscription_payments`.
  */
 class AdminDashboardTest extends TestCase
 {
@@ -25,113 +26,183 @@ class AdminDashboardTest extends TestCase
         ]);
     }
 
-    private function buatVendorDenganData(string $namaVendor): array
+    private function buatVendor(string $nama, bool $aktif = true): Vendor
     {
         $user = User::factory()->create([
             'role' => User::ROLE_VENDOR,
             'is_active' => true,
         ]);
-        $vendor = Vendor::create([
+
+        return Vendor::create([
             'user_id' => $user->id,
-            'name' => $namaVendor,
-            'slug' => str()->slug($namaVendor),
-            'is_active' => true,
+            'name' => $nama,
+            'slug' => str()->slug($nama),
+            'is_active' => $aktif,
         ]);
-        $client = Client::create([
-            'vendor_id' => $vendor->id,
-            'name' => 'Klien '.$namaVendor,
-            'phone' => '0812',
-        ]);
-
-        return [$user, $vendor, $client];
     }
 
-    private function buatBookingDenganPayment(Vendor $vendor, Client $client, string $tanggal, int $harga, int $dibayar): void
+    /** Buat langganan + transaksi lunas pada bulan tertentu. */
+    private function buatPembayaranLangganan(Vendor $vendor, float $jumlah, ?string $paidAt = null): void
     {
-        $booking = Booking::create([
+        $plan = \App\Models\Plan::query()->firstOrCreate(
+            ['code' => 'monthly'],
+            ['name' => 'Bulanan', 'duration_months' => 1, 'price' => 50_000, 'is_active' => true],
+        );
+
+        $subscription = Subscription::create([
             'vendor_id' => $vendor->id,
-            'client_id' => $client->id,
-            'event_date' => $tanggal,
-            'status' => 'confirmed',
-            'total_price' => $harga,
+            'plan_id' => $plan->id,
+            'status' => 'active',
+            'starts_at' => now()->subMonth()->toDateString(),
+            'ends_at' => now()->addMonth()->toDateString(),
         ]);
-        $invoice = Invoice::create([
-            'booking_id' => $booking->id,
-            'invoice_number' => 'INV-TEST-'.$booking->id,
-            'public_token' => 'tok-'.$booking->id,
-            'type' => 'dp',
-            'amount' => $harga,
-            'paid_amount' => $dibayar,
-            'status' => $dibayar >= $harga ? 'paid' : 'partial',
-            'due_date' => now()->addDays(7)->toDateString(),
-            'link_active' => true,
+
+        SubscriptionPayment::create([
+            'subscription_id' => $subscription->id,
+            'vendor_id' => $vendor->id,
+            'plan_id' => $plan->id,
+            'order_id' => 'ORD-'.uniqid(),
+            'gateway' => 'duitku',
+            'amount' => $jumlah,
+            'status' => 'paid',
+            'paid_at' => $paidAt ?? now(),
         ]);
-        if ($dibayar > 0) {
-            Payment::create([
-                'invoice_id' => $invoice->id,
-                'amount' => $dibayar,
-                'method' => 'transfer',
-                'paid_at' => $tanggal.' 12:00:00',
-                'created_by' => $vendor->user_id,
-            ]);
-        }
     }
 
-    public function test_summary_mengembalikan_angka_semua_vendor(): void
+    public function test_summary_menghitung_vendor_dan_pendapatan_langganan(): void
     {
         $admin = $this->buatAdmin();
 
-        [$user1, $vendor1, $client1] = $this->buatVendorDenganData('Vendor Alpha');
-        [$user2, $vendor2, $client2] = $this->buatVendorDenganData('Vendor Beta');
+        $v1 = $this->buatVendor('Vendor Alpha', true);
+        $v2 = $this->buatVendor('Vendor Beta', true);
+        $this->buatVendor('Vendor Gamma', false);
 
-        $this->buatBookingDenganPayment($vendor1, $client1, now()->startOfMonth()->toDateString(), 10_000_000, 4_000_000);
-        $this->buatBookingDenganPayment($vendor2, $client2, now()->startOfMonth()->toDateString(), 5_000_000, 5_000_000);
+        $this->buatPembayaranLangganan($v1, 50_000, now()->toDateTimeString());
+        $this->buatPembayaranLangganan($v2, 150_000, now()->subMonths(2)->toDateTimeString());
 
         $response = $this->actingAs($admin)->getJson('/api/admin/dashboard/summary');
 
         $response->assertOk()
-            ->assertJsonPath('vendors.total', 2)
+            ->assertJsonPath('vendors.total', 3)
             ->assertJsonPath('vendors.active', 2)
-            ->assertJsonPath('bookings.total', 2)
-            ->assertJsonPath('payments.total', 2)
-            ->assertJsonPath('payments.paidIn', 9000000);
+            ->assertJsonPath('vendors.inactive', 1)
+            ->assertJsonPath('subscription.revenueTotal', 200000)
+            ->assertJsonPath('subscription.revenueThisMonth', 50000)
+            ->assertJsonPath('subscription.paidCount', 2);
+    }
+
+    public function test_pendapatan_tidak_menghitung_booking_atau_pembayaran_klien(): void
+    {
+        $admin = $this->buatAdmin();
+        $vendor = $this->buatVendor('Vendor Alpha');
+
+        // Data operasional vendor dalam jumlah besar — TIDAK boleh masuk
+        // hitungan pendapatan aplikasi.
+        $client = \App\Models\Client::create([
+            'vendor_id' => $vendor->id,
+            'name' => 'Klien Uji',
+            'phone' => '0812',
+        ]);
+        $booking = \App\Models\Booking::create([
+            'vendor_id' => $vendor->id,
+            'client_id' => $client->id,
+            'event_date' => now()->toDateString(),
+            'status' => 'confirmed',
+            'total_price' => 99_000_000,
+        ]);
+        $invoice = \App\Models\Invoice::create([
+            'booking_id' => $booking->id,
+            'invoice_number' => 'INV-X',
+            'public_token' => 'tok-x',
+            'type' => 'dp',
+            'amount' => 99_000_000,
+            'paid_amount' => 99_000_000,
+            'status' => 'paid',
+            'due_date' => now()->addDays(7)->toDateString(),
+            'link_active' => true,
+        ]);
+        \App\Models\Payment::create([
+            'invoice_id' => $invoice->id,
+            'amount' => 99_000_000,
+            'method' => 'transfer',
+            'paid_at' => now(),
+            'created_by' => $vendor->user_id,
+        ]);
+
+        $this->buatPembayaranLangganan($vendor, 50_000, now()->toDateTimeString());
+
+        $response = $this->actingAs($admin)->getJson('/api/admin/dashboard/summary');
+
+        // Hanya 50rb dari langganan; 99jt dari booking klien diabaikan.
+        $response->assertOk()->assertJsonPath('subscription.revenueTotal', 50000);
     }
 
     public function test_summary_menolak_vendor(): void
     {
-        [$user] = $this->buatVendorDenganData('Vendor Biasa');
+        $vendor = $this->buatVendor('Vendor Biasa');
 
-        $this->actingAs($user)->getJson('/api/admin/dashboard/summary')->assertForbidden();
+        $this->actingAs($vendor->user)
+            ->getJson('/api/admin/dashboard/summary')
+            ->assertForbidden();
     }
 
-    public function test_revenue_series_agregat_semua_vendor(): void
+    public function test_revenue_series_hanya_pendapatan_langganan(): void
     {
         $admin = $this->buatAdmin();
+        $v1 = $this->buatVendor('Vendor Alpha');
+        $v2 = $this->buatVendor('Vendor Beta');
 
-        [$user1, $vendor1, $client1] = $this->buatVendorDenganData('Vendor Alpha');
-        [$user2, $vendor2, $client2] = $this->buatVendorDenganData('Vendor Beta');
+        $this->buatPembayaranLangganan($v1, 50_000, now()->toDateTimeString());
+        $this->buatPembayaranLangganan($v2, 100_000, now()->toDateTimeString());
 
-        // Vendor 1: kontrak 10jt, dibayar 4jt bulan ini
-        $this->buatBookingDenganPayment($vendor1, $client1, now()->startOfMonth()->toDateString(), 10_000_000, 4_000_000);
-        // Vendor 2: kontrak 5jt, dibayar 5jt bulan ini
-        $this->buatBookingDenganPayment($vendor2, $client2, now()->startOfMonth()->toDateString(), 5_000_000, 5_000_000);
+        $response = $this->actingAs($admin)
+            ->getJson('/api/admin/dashboard/revenue-series?months=6');
 
-        $response = $this->actingAs($admin)->getJson('/api/admin/dashboard/revenue-series?months=6');
+        $response->assertOk()->assertJsonStructure(['series', 'totals', 'months']);
 
-        $response->assertOk()
-            ->assertJsonStructure(['series', 'totals', 'months']);
+        $this->assertEquals(150_000.0, $response->json('totals.revenue'));
 
-        $totals = $response->json('totals');
-        // Kontrak: 10jt + 5jt = 15jt; Masuk: 4jt + 5jt = 9jt
-        $this->assertEquals(15_000_000.0, $totals['contractValue']);
-        $this->assertEquals(9_000_000.0, $totals['paid']);
+        // Bulan berjalan harus memuat kedua transaksi.
+        $currentMonth = now()->format('Y-m');
+        $point = collect($response->json('series'))->firstWhere('month', $currentMonth);
+        $this->assertNotNull($point);
+        $this->assertEquals(150_000.0, $point['revenue']);
+        $this->assertSame(2, $point['paymentCount']);
+    }
+
+    public function test_revenue_series_transaksi_belum_lunas_tidak_dihitung(): void
+    {
+        $admin = $this->buatAdmin();
+        $vendor = $this->buatVendor('Vendor Alpha');
+
+        $plan = \App\Models\Plan::query()->firstOrCreate(
+            ['code' => 'monthly'],
+            ['name' => 'Bulanan', 'duration_months' => 1, 'price' => 50_000, 'is_active' => true],
+        );
+        SubscriptionPayment::create([
+            'vendor_id' => $vendor->id,
+            'plan_id' => $plan->id,
+            'order_id' => 'ORD-PENDING',
+            'gateway' => 'duitku',
+            'amount' => 500_000,
+            'status' => 'pending',
+            'paid_at' => null,
+        ]);
+
+        $response = $this->actingAs($admin)
+            ->getJson('/api/admin/dashboard/revenue-series?months=6');
+
+        $response->assertOk();
+        $this->assertEquals(0.0, $response->json('totals.revenue'));
     }
 
     public function test_revenue_series_menolak_vendor(): void
     {
-        [$user] = $this->buatVendorDenganData('Vendor Biasa');
+        $vendor = $this->buatVendor('Vendor Biasa');
 
-        $this->actingAs($user)->getJson('/api/admin/dashboard/revenue-series')->assertForbidden();
+        $this->actingAs($vendor->user)
+            ->getJson('/api/admin/dashboard/revenue-series')
+            ->assertForbidden();
     }
 
     public function test_revenue_series_tanpa_login_menolak(): void

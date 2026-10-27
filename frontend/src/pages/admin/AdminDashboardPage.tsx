@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Users, CalendarDays, Wallet, TrendingUp, RefreshCw } from '@/components/ui/icons'
+import { Users, Wallet, RefreshCw, ShieldCheck, CreditCard } from '@/components/ui/icons'
 import { AdminRevenueChart } from '@/components/admin/AdminRevenueChart'
 import { ApiError } from '@/lib/api/client'
 import { fetchAdminSummary, type AdminDashboardSummary } from '@/lib/api/admin-dashboard'
@@ -9,9 +9,12 @@ import { cn } from '@/lib/cn'
 /**
  * Dashboard admin (`/admin`).
  *
- * Halaman utama panel admin: ringkasan angka platform + grafik pendapatan
- * agregat seluruh vendor. Berbeda dari dashboard vendor yang hanya menampilkan
- * datanya sendiri, di sini angka menggabungkan semua vendor di platform.
+ * Hanya menampilkan hal yang relevan untuk mengelola platform:
+ * berapa vendor yang aktif, dan berapa pendapatan langganan aplikasi.
+ *
+ * Data operasional vendor — booking, klien, invoice, dan pemasukan vendor
+ * dari kliennya — sengaja TIDAK ditampilkan. Itu urusan masing-masing vendor
+ * dan bukan bagian dari pekerjaan admin.
  */
 export function AdminDashboardPage() {
   const [summary, setSummary] = useState<AdminDashboardSummary | null>(null)
@@ -50,8 +53,8 @@ export function AdminDashboardPage() {
   if (loading) {
     return (
       <div className="space-y-4">
-        <div className="h-20 animate-pulse rounded-xl bg-white" />
-        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+        <div className="h-16 animate-pulse rounded-xl bg-white" />
+        <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="h-24 animate-pulse rounded-xl bg-white" />
           ))}
@@ -84,41 +87,45 @@ export function AdminDashboardPage() {
     )
   }
 
+  const { vendors, subscription } = summary
+
   return (
     <div className="space-y-4">
       <div>
         <h1 className="text-title tracking-tight text-ink-900">Dashboard</h1>
         <p className="mt-0.5 text-body text-ink-500">
-          Ringkasan kesehatan platform: vendor, booking, dan pendapatan.
+          Ringkasan vendor dan pendapatan langganan platform.
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-4">
         <AdminStatTile
           icon={<Users className="size-4" />}
-          label="Total Vendor"
-          value={String(summary.vendors.total)}
-          hint={`${summary.vendors.active} aktif · ${summary.vendors.newThisMonth} baru bulan ini`}
+          label="Vendor Aktif"
+          value={String(vendors.active)}
+          hint={
+            vendors.inactive > 0
+              ? `dari ${vendors.total} terdaftar · ${vendors.inactive} nonaktif`
+              : `dari ${vendors.total} terdaftar`
+          }
         />
         <AdminStatTile
-          icon={<CalendarDays className="size-4" />}
-          label="Total Booking"
-          value={String(summary.bookings.total)}
-          hint={`${summary.bookings.newThisMonth} baru bulan ini`}
+          icon={<CreditCard className="size-4" />}
+          label="Langganan Berbayar"
+          value={String(subscription.activeCount)}
+          hint={`${subscription.trialCount} masih trial`}
         />
         <AdminStatTile
           icon={<Wallet className="size-4" />}
-          label="Uang Masuk"
-          value={formatCurrency(summary.payments.paidIn)}
-          hint={`${summary.payments.total} transaksi · total semua waktu`}
-          tone="emerald"
+          label="Pendapatan Bulan Ini"
+          value={formatCurrency(subscription.revenueThisMonth)}
+          hint={`${subscription.paidCount} transaksi lunas total`}
         />
         <AdminStatTile
-          icon={<TrendingUp className="size-4" />}
-          label="Pendapatan Langganan"
-          value={formatCurrency(summary.subscription.revenue)}
-          hint="Dari pembayaran paket vendor"
-          tone="emerald"
+          icon={<ShieldCheck className="size-4" />}
+          label="Total Pendapatan"
+          value={formatCurrency(subscription.revenueTotal)}
+          hint="Sejak awal, dari langganan"
         />
       </div>
 

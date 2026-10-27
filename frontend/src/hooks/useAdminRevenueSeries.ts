@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react'
 import {
   fetchAdminRevenueSeries,
+  type AdminRevenuePoint,
   type AdminRevenueSeriesResult,
 } from '@/lib/api/admin-dashboard'
-import type { RevenuePoint } from '@/lib/api/revenue'
 
 /**
- * Seri pendapatan platform untuk grafik dashboard admin.
+ * Seri pendapatan langganan aplikasi untuk grafik dashboard admin.
  *
- * Sama seperti `useRevenueSeries` vendor, tetapi memanggil endpoint admin yang
- * menggabungkan seluruh vendor — bukan hanya vendor yang login.
+ * Hanya berisi pendapatan langganan (vendor membayar paket ke platform),
+ * bukan pemasukan vendor dari kliennya.
  */
 export function useAdminRevenueSeries(months = 6) {
   const [data, setData] = useState<AdminRevenueSeriesResult | null>(null)
@@ -31,7 +31,9 @@ export function useAdminRevenueSeries(months = 6) {
       .catch((cause: unknown) => {
         if (!active) return
         if (cause instanceof DOMException && cause.name === 'AbortError') return
-        setError(cause instanceof Error ? cause : new Error('Gagal memuat grafik pendapatan platform.'))
+        setError(
+          cause instanceof Error ? cause : new Error('Gagal memuat grafik pendapatan langganan.'),
+        )
       })
       .finally(() => {
         if (!active) return
@@ -44,11 +46,11 @@ export function useAdminRevenueSeries(months = 6) {
     }
   }, [range])
 
-  const points: RevenuePoint[] = data?.series ?? []
+  const points: AdminRevenuePoint[] = data?.series ?? []
 
   return {
     points,
-    totals: data?.totals ?? { contractValue: 0, paid: 0 },
+    total: data?.totals.revenue ?? 0,
     range,
     setRange,
     loading,

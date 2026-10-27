@@ -1,40 +1,48 @@
 import { apiRequest } from './client'
-import type { RevenuePoint } from './revenue'
 
 /**
  * Lapisan API dashboard admin.
  *
- * Berbeda dari `/revenue/series` vendor yang terfilter ke vendor yang login,
- * endpoint admin menggabungkan seluruh vendor.
+ * CAKUPAN: hanya jumlah vendor dan pendapatan langganan aplikasi.
+ * Data operasional vendor (booking, klien, invoice, pembayaran klien) tidak
+ * diambil di sini — admin tidak membutuhkannya untuk mengelola platform.
  */
 
 export interface AdminDashboardSummary {
   vendors: {
     total: number
     active: number
-    newThisMonth: number
-  }
-  bookings: {
-    total: number
-    newThisMonth: number
-  }
-  payments: {
-    total: number
-    /** Total uang masuk dari seluruh vendor. */
-    paidIn: number
+    inactive: number
   }
   subscription: {
-    /** Total pendapatan langganan yang sudah dibayar. */
-    revenue: number
+    /** Total pendapatan langganan sepanjang waktu. */
+    revenueTotal: number
+    /** Pendapatan langganan bulan berjalan. */
+    revenueThisMonth: number
+    /** Jumlah transaksi langganan berstatus lunas. */
+    paidCount: number
+    /** Vendor dengan langganan aktif (berbayar). */
+    activeCount: number
+    /** Vendor yang masih dalam masa trial. */
+    trialCount: number
   }
 }
 
+/** Satu titik grafik: pendapatan langganan pada satu bulan. */
+export interface AdminRevenuePoint {
+  /** `YYYY-MM`. */
+  month: string
+  /** Label pendek sumbu X, mis. "Okt". */
+  label: string
+  /** Pendapatan langganan bulan itu. */
+  revenue: number
+  /** Jumlah transaksi lunas bulan itu. */
+  paymentCount: number
+}
+
 export interface AdminRevenueSeriesResult {
-  series: RevenuePoint[]
-  totals: {
-    contractValue: number
-    paid: number
-  }
+  series: AdminRevenuePoint[]
+  totals: { revenue: number }
   months: number
 }
 
