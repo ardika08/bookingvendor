@@ -21,6 +21,8 @@ export interface AdminPlan {
   normalPrice: number | null
   description: string | null
   isActive: boolean
+  /** Daftar manfaat — sama dengan yang dilihat vendor di halaman /upgrade. */
+  benefits: string[]
 }
 
 export interface PlanPayload {

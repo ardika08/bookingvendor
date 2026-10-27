@@ -1,6 +1,6 @@
 import { CreditCard, Plus, X, Pencil, Trash2, AlertTriangle, Info } from '@/components/ui/icons'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Badge } from '@/components/ui/Badge'
+import { PlanCard } from '@/components/subscription/PlanCard'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -143,13 +143,40 @@ export function PlanConfigPage() {
           />
         </Card>
       ) : (
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {plans.map((plan) => (
             <PlanCard
               key={plan.id}
-              plan={plan}
-              onEdit={() => setEditing(plan)}
-              onDelete={() => setConfirmDelete(plan)}
+              plan={{
+                ...plan,
+                // Paket 12 bulan disorot sebagai pilihan paling hemat.
+                highlight: plan.durationMonths >= 12,
+              }}
+              inactive={!plan.isActive}
+              action={
+                <div className="flex items-center gap-1.5">
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    className="flex-1"
+                    onClick={() => setEditing(plan)}
+                    aria-label={`Edit ${plan.name}`}
+                  >
+                    <Pencil className="size-3.5" />
+                    Edit
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="danger"
+                    className="flex-1"
+                    onClick={() => setConfirmDelete(plan)}
+                    aria-label={`Hapus ${plan.name}`}
+                  >
+                    <Trash2 className="size-3.5" />
+                    Hapus
+                  </Button>
+                </div>
+              }
             />
           ))}
         </div>
@@ -174,79 +201,6 @@ export function PlanConfigPage() {
           onConfirm={handleDelete}
         />
       ) : null}
-    </div>
-  )
-}
-
-function PlanCard({
-  plan,
-  onEdit,
-  onDelete,
-}: {
-  plan: AdminPlan
-  onEdit: () => void
-  onDelete: () => void
-}) {
-  const unpriced = plan.price === null
-  const hasDiscount = plan.normalPrice !== null && plan.price !== null && plan.normalPrice > plan.price
-
-  return (
-    <div
-      className={cn(
-        'flex flex-col rounded-xl border bg-white p-4',
-        unpriced ? 'border-dashed border-ink-300 bg-ink-50/40' : 'border-ink-200/80',
-      )}
-    >
-      <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0">
-          <h3 className="truncate text-lead font-semibold text-ink-900">{plan.name}</h3>
-          <p className="mt-0.5 text-meta text-ink-500">Masa aktif {plan.durationMonths} bulan</p>
-        </div>
-        {!plan.isActive ? (
-          <Badge className="shrink-0 bg-ink-100 text-ink-500">Nonaktif</Badge>
-        ) : unpriced ? (
-          <Badge className="shrink-0 bg-ink-100 text-ink-500">Segera</Badge>
-        ) : null}
-      </div>
-
-      <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-        <span
-          className={cn(
-            'text-lead font-semibold tabular-nums',
-            unpriced ? 'text-ink-400' : 'text-ink-900',
-          )}
-        >
-          {unpriced ? 'Segera' : formatCurrency(plan.price!)}
-        </span>
-        {hasDiscount ? (
-          <span className="text-meta tabular-nums text-ink-400 line-through">
-            {formatCurrency(plan.normalPrice!)}
-          </span>
-        ) : null}
-      </div>
-
-      <p className="mt-1.5 text-caption leading-relaxed text-ink-500">
-        {plan.description ||
-          (unpriced
-            ? 'Harga belum ditetapkan — vendor melihat "Segera" dan tidak bisa membeli.'
-            : 'Langganan aktif tanpa batas booking & invoice selama masa paket.')}
-      </p>
-
-      <div className="mt-auto flex items-center justify-end gap-1.5 pt-3">
-        <Button size="sm" variant="secondary" onClick={onEdit} aria-label={`Edit ${plan.name}`}>
-          <Pencil className="size-3.5" />
-          Edit
-        </Button>
-        <Button
-          size="sm"
-          variant="danger"
-          onClick={onDelete}
-          aria-label={`Hapus ${plan.name}`}
-        >
-          <Trash2 className="size-3.5" />
-          Hapus
-        </Button>
-      </div>
     </div>
   )
 }

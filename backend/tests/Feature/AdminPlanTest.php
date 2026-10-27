@@ -52,6 +52,31 @@ class AdminPlanTest extends TestCase
             ->assertJsonPath('0.durationMonths', 1);
     }
 
+    /**
+     * Kartu katalog admin dan vendor memakai komponen yang sama, jadi admin
+     * harus menerima daftar manfaat yang sama dengan yang dilihat vendor.
+     * Tanpa ini, pratinjau di panel admin tidak mencerminkan kenyataan.
+     */
+    public function test_index_menyertakan_manfaat_sama_seperti_katalog_vendor(): void
+    {
+        $admin = $this->buatAdmin();
+        $plan = $this->buatPaket('Paket Tiga Bulan', 3);
+
+        $adminBenefits = $this->actingAs($admin)
+            ->getJson('/api/admin/plans')
+            ->assertOk()
+            ->json('0.benefits');
+
+        $vendorBenefits = $this->actingAs($admin)
+            ->getJson('/api/plans')
+            ->assertOk()
+            ->json('0.benefits');
+
+        $this->assertSame($vendorBenefits, $adminBenefits);
+        $this->assertContains('Aktif 3 bulan', $adminBenefits);
+        $this->assertSame($plan->duration_months, 3);
+    }
+
     public function test_admin_bisa_tambah_paket_baru(): void
     {
         $admin = $this->buatAdmin();

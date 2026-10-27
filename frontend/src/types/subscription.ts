@@ -20,6 +20,10 @@ export interface Plan {
   durationMonths: number
   /** null = harga belum ditetapkan (tampil "Segera", tidak bisa dibeli). */
   price: number | null
+  /** Harga sebelum diskon, ditampilkan dicoret. null = tanpa diskon. */
+  normalPrice?: number | null
+  /** Deskripsi singkat paket dari admin. */
+  description?: string | null
   /** null = tanpa batas. */
   maxBookings: number | null
   maxInvoices: number | null

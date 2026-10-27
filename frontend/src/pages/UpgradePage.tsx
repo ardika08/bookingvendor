@@ -1,4 +1,4 @@
-import { Lock } from '@/components/ui/icons'
+import { Clock3, Lock } from '@/components/ui/icons'
 import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { PlanCard } from '@/components/subscription/PlanCard'
@@ -145,6 +145,27 @@ export function UpgradePage() {
             key={plan.id}
             plan={plan}
             current={subscription.status === 'active' && plan.code === 'monthly'}
+            action={
+              subscription.status === 'active' && plan.code === 'monthly' ? (
+                <span className="flex h-10 items-center justify-center rounded-lg bg-ink-100 text-body font-medium text-ink-500">
+                  Paket kamu saat ini
+                </span>
+              ) : plan.price !== null ? (
+                <ButtonLink to={`/upgrade/checkout/${plan.id}`} className="w-full">
+                  Pilih {plan.name}
+                </ButtonLink>
+              ) : (
+                <button
+                  type="button"
+                  disabled
+                  title="Harga paket ini belum ditetapkan"
+                  className="flex h-10 w-full cursor-not-allowed items-center justify-center gap-1.5 rounded-lg bg-ink-50 text-body font-medium text-ink-400"
+                >
+                  <Clock3 className="size-3.5" />
+                  Segera
+                </button>
+              )
+            }
           />
         ))}
       </div>
