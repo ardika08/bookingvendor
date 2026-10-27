@@ -1,4 +1,9 @@
-import { ArrowRight, Check, Lock, Sparkles } from '@/components/ui/icons'
+import {
+  ArrowRight,
+  Check,
+  CreditCard,
+  Lock,
+} from '@/components/ui/icons'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Button, ButtonLink } from '@/components/ui/Button'
 import { cn } from '@/lib/cn'
@@ -167,7 +172,7 @@ export function UpgradeModal({
           </fieldset>
 
           <p className="mt-3 flex items-start gap-1.5 text-caption leading-relaxed text-ink-500">
-            <Sparkles className="mt-0.5 size-3.5 shrink-0 text-amber-500" />
+            <CreditCard className="mt-0.5 size-3.5 shrink-0 text-amber-500" />
             Pembayaran lewat payment gateway. Jatah trial tidak direset — langganan berlaku
             sampai masa paket berakhir.
           </p>

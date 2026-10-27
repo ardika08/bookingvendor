@@ -1,4 +1,9 @@
-import { CalendarCheck, ReceiptText, ShieldCheck, Sparkles } from '@/components/ui/icons'
+import {
+  CalendarCheck,
+  ReceiptText,
+  ShieldCheck,
+  Ticket,
+} from '@/components/ui/icons'
 import { GoogleSignInCta } from '@/components/promo/GoogleSignInCta'
 import { BenefitHighlights } from '@/components/promo/BenefitHighlights'
 import { WorkflowSteps } from '@/components/promo/WorkflowSteps'
@@ -24,7 +29,7 @@ export function PromoHomePage() {
         <div className="relative mx-auto max-w-6xl px-4 pb-16 pt-16 sm:px-6 sm:pb-20 sm:pt-24">
           <div className="mx-auto max-w-2xl text-center">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-3 py-1 text-caption font-medium text-brand-700 ring-1 ring-inset ring-brand-200">
-              <Sparkles className="size-3.5" />
+              <Ticket className="size-3.5" />
               Trial 2 booking + 2 invoice — tanpa kartu kredit
             </span>
 

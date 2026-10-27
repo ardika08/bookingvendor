@@ -4,7 +4,7 @@ import {
   LayoutDashboard,
   Link2,
   Search,
-  Sparkles,
+  Ticket,
   type IconComponent,
 } from '@/components/ui/icons'
 
@@ -55,7 +55,7 @@ const BENEFITS: Benefit[] = [
       'Pesanan masuk, jadwal terdekat, dan tagihan yang perlu ditindaklanjuti ada di satu layar.',
   },
   {
-    icon: Sparkles,
+    icon: Ticket,
     title: 'Trial tanpa kartu kredit',
     description:
       'Mulai dengan 2 booking + 2 invoice. Berlangganan hanya saat operasional sudah berjalan.',

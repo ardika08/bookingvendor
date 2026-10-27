@@ -1,4 +1,7 @@
-import { ArrowRight, Sparkles } from '@/components/ui/icons'
+import {
+  ArrowRight,
+  Clock,
+} from '@/components/ui/icons'
 import { ButtonLink } from '@/components/ui/Button'
 import type { SubscriptionSummary } from '@/types/booking'
 
@@ -44,7 +47,7 @@ export function SubscriptionBar({ subscription }: { subscription: SubscriptionSu
   return (
     <div className="flex flex-col gap-2 rounded-xl border border-amber-200 bg-amber-50/70 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-start gap-2.5">
-        <Sparkles className="mt-0.5 size-4 shrink-0 text-amber-600" />
+        <Clock className="mt-0.5 size-4 shrink-0 text-amber-600" />
         <p className="text-body leading-relaxed text-amber-900">
           <span className="font-semibold">Masa trial:</span> tersisa {bookingLeft} booking &amp;{' '}
           {invoiceLeft} invoice. Jatah tidak direset — berlangganan untuk akses tanpa batas.

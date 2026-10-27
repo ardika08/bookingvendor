@@ -1,4 +1,6 @@
-import { Sparkles } from '@/components/ui/icons'
+import {
+  Clock,
+} from '@/components/ui/icons'
 import { ButtonLink } from '@/components/ui/Button'
 import { cn } from '@/lib/cn'
 import type { SubscriptionSummary } from '@/types/booking'
@@ -50,7 +52,7 @@ export function TrialQuotaCard({ subscription }: { subscription: SubscriptionSum
               exhausted ? 'text-rose-700' : urgent ? 'text-amber-800' : 'text-ink-800',
             )}
           >
-            <Sparkles className="size-3.5 shrink-0" />
+            <Clock className="size-3.5 shrink-0" />
             {exhausted ? 'Jatah trial habis' : 'Sisa jatah masa trial'}
           </p>
           <div className="mt-2 space-y-2">

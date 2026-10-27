@@ -1,13 +1,13 @@
 import {
   AlertTriangle,
   Building2,
+  CheckCircle2,
   CreditCard,
   Info,
   Mail,
   MapPin,
   Phone,
   Save,
-  Sparkles,
   Store,
 } from '@/components/ui/icons'
 import { useMemo, useRef, useState } from 'react'
@@ -170,7 +170,7 @@ export function VendorProfilePage({
 
       {notice ? (
         <div className="flex items-start gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-meta text-emerald-800">
-          <Sparkles className="mt-0.5 size-4 shrink-0" />
+          <CheckCircle2 className="mt-0.5 size-4 shrink-0" />
           {notice}
         </div>
       ) : null}

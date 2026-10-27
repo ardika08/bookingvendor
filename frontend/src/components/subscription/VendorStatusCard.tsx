@@ -1,4 +1,9 @@
-import { ArrowRight, CalendarClock, Lock, Sparkles } from '@/components/ui/icons'
+import {
+  ArrowRight,
+  CalendarClock,
+  Clock,
+  Lock,
+} from '@/components/ui/icons'
 import type { ReactNode } from 'react'
 import { ButtonLink } from '@/components/ui/Button'
 import { cn } from '@/lib/cn'
@@ -104,7 +109,7 @@ export function VendorStatusCard({ subscription }: { subscription: SubscriptionS
       )}
     >
       <CardHeader
-        icon={<Sparkles className={cn('size-5', nearlyUsed ? 'text-rose-600' : 'text-amber-600')} />}
+        icon={<Clock className={cn('size-5', nearlyUsed ? 'text-rose-600' : 'text-amber-600')} />}
         label={nearlyUsed ? 'Jatah trial hampir habis' : 'Masa trial'}
         tone={nearlyUsed ? 'rose' : 'amber'}
       />

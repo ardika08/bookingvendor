@@ -27,11 +27,16 @@ export function Topbar({
   }
 
   return (
-    <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-ink-200/80 bg-white/90 px-4 backdrop-blur sm:px-6">
+    // `h-[65px]` bukan `h-16`. Tailwind memakai box-border, jadi h-16 (64px)
+    // SUDAH termasuk border-b 1px, menyisakan isi 63px. Dengan tombol ikon
+    // 36px, sisa vertikal jadi 63-36 = 27px, dibagi dua = 13.5px — setengah
+    // piksel. Itu yang membuat ikon Topbar selalu kabur meski ukurannya benar.
+    // 65px membuat isi 64px, sehingga (64-36)/2 = 14px, bilangan bulat.
+    <header className="sticky top-0 z-20 flex h-[65px] items-center gap-3 border-b border-ink-200/80 bg-white/90 px-4 leading-none backdrop-blur sm:px-6">
       <button
         type="button"
         onClick={onOpenSidebar}
-        className="inline-flex size-9 items-center justify-center rounded-lg text-ink-600 hover:bg-ink-100 lg:hidden"
+        className="inline-flex size-9 items-center justify-center rounded-lg text-ink-600 leading-none hover:bg-ink-100 lg:hidden"
         aria-label="Buka menu"
       >
         <Menu className="size-5" />
@@ -66,13 +71,13 @@ export function Topbar({
 
       <button
         type="button"
-        className="hidden size-9 items-center justify-center rounded-lg text-ink-500 hover:bg-ink-100 sm:inline-flex"
+        className="hidden size-9 items-center justify-center rounded-lg text-ink-500 leading-none hover:bg-ink-100 sm:inline-flex"
         aria-label="Notifikasi"
       >
-        <Bell className="size-4.5" />
+        <Bell className="size-4" />
       </button>
 
-      <div className="flex items-center gap-2 rounded-lg py-1 pl-1 pr-1.5 hover:bg-ink-50">
+      <div className="flex h-10 items-center gap-2 rounded-lg pl-1 pr-1.5 hover:bg-ink-50">
         <span className="flex size-8 items-center justify-center overflow-hidden rounded-full bg-ink-200 text-caption font-semibold text-ink-700">
           {user.avatarUrl ? (
             <img src={user.avatarUrl} alt="" className="size-full object-cover" />
@@ -84,13 +89,13 @@ export function Topbar({
           <p className="max-w-[10rem] truncate text-meta font-medium text-ink-800">{user.name}</p>
           <p className="text-caption text-ink-400">{user.role === 'admin' ? 'Admin' : 'Vendor'}</p>
         </div>
-        <ChevronDown className="hidden size-3.5 text-ink-400 sm:block" />
+        <ChevronDown className="hidden size-4 text-ink-400 sm:block" />
       </div>
 
       <button
         type="button"
         onClick={handleLogout}
-        className="inline-flex size-9 items-center justify-center rounded-lg text-ink-500 hover:bg-ink-100 hover:text-ink-800"
+        className="inline-flex size-9 items-center justify-center rounded-lg text-ink-500 leading-none hover:bg-ink-100 hover:text-ink-800"
         aria-label="Keluar"
         title="Keluar"
       >

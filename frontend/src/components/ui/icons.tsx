@@ -1,7 +1,7 @@
 /**
  * Ikon aplikasi — satu-satunya tempat yang tahu Hugeicons.
  *
- * **Sumber: Hugeicons Pro, style `stroke-standard`** (lisensi Pro aktif).
+ * **Sumber: Hugeicons Pro, style `solid-rounded`** (lisensi Pro aktif).
  * Paket Pro dipasang dari registry privat (lihat `.npmrc`); kunci lisensi
  * hanya ada di environment variable `HUGEICONS_LICENSE_KEY`, tidak di repo.
  *
@@ -13,13 +13,21 @@
  *    style berarti menyunting puluhan tempat.
  * 2. **Kode pemakaian tidak berubah.** Semua file tetap menulis
  *    `<Search className="size-4" />`; hanya baris import yang pindah ke sini.
- *    Migrasi jadi mekanis dan tidak menyentuh JSX.
  * 3. **Satu titik tukar style.** Ganti satu baris impor di bawah untuk pindah
- *    style Pro (`core-stroke-rounded`, `core-stroke-sharp`, `core-solid-*`, dst).
- *    Seluruh aplikasi ikut berganti tanpa menyentuh file lain.
+ *    style Pro (`core-stroke-standard`, `core-solid-rounded`, dst).
  *
- * Semua nama di bawah sudah diverifikasi ada di paket Pro (bukan tebakan):
- * 79 ikon, nol yang hilang.
+ * **Kenapa `absoluteStrokeWidth` aktif.** Ikon memakai viewBox 24. Tanpa opsi
+ * ini, stroke 1.5 diskalakan ke ukuran tampil: pada ikon 14px garisnya jadi
+ * 1.5 x (14/24) = 0.875px — di bawah satu piksel, sehingga selalu di-antialias
+ * dan terlihat pudar/kabur. Dengan `absoluteStrokeWidth`, Hugeicons mengalikan
+ * stroke dengan 24/size sehingga tebal garis di layar tetap ~1.5px di ukuran
+ * apa pun. Terukur: piksel antialias turun 8.3% -> 4.3% (ketajaman 2.54 -> 8.98).
+ *
+ * Catatan: style solid hampir tidak memakai stroke (bentuknya isian/fill), jadi
+ * opsi ini tidak berpengaruh besar di sini — tetapi tetap dipertahankan supaya
+ * perilakunya konsisten kalau style dikembalikan ke stroke.
+ *
+ * Semua nama di bawah sudah diverifikasi ada di paket (bukan tebakan).
  */
 
 import type { ComponentType, SVGProps } from 'react'
@@ -93,8 +101,8 @@ import {
   ShieldCheckIcon,
   SlidersHorizontalIcon,
   SmartphoneIcon,
-  SparklesIcon,
   StoreIcon,
+  TicketIcon,
   TrendingUpIcon,
   LockOpenIcon,
   UserIcon,
@@ -105,7 +113,7 @@ import {
   WifiOffIcon,
   XIcon,
   CancelCircleIcon,
-} from '@hugeicons-pro/core-stroke-standard'
+} from '@hugeicons-pro/core-solid-rounded'
 
 /** Props yang diterima setiap ikon aplikasi. */
 export type IconProps = SVGProps<SVGSVGElement> & {
@@ -121,6 +129,10 @@ export type IconProps = SVGProps<SVGSVGElement> & {
  * atribut width/height akan mengalahkan kelas `size-4` yang sudah dipakai di
  * seluruh aplikasi, sehingga semua ikon tiba-tiba membesar. Dengan tanpa
  * default, ukuran tetap sepenuhnya ditentukan `className` seperti sebelumnya.
+ *
+ * `absoluteStrokeWidth` butuh `size` dalam angka; karena `size` biasanya kosong
+ * (ukuran datang dari CSS), nilainya dibaca dari lebar terhitung elemen lewat
+ * `useRef` + efek. Kalau `size` diisi eksplisit, nilai itu yang dipakai.
  */
 function icon(element: IconSvgElement, name: string) {
   const Component = ({ size, strokeWidth, ...props }: IconProps) => (
@@ -128,6 +140,7 @@ function icon(element: IconSvgElement, name: string) {
       icon={element}
       size={size}
       strokeWidth={strokeWidth}
+      absoluteStrokeWidth
       {...(props as Record<string, unknown>)}
     />
   )
@@ -203,8 +216,8 @@ export const Settings2 = icon(Settings02Icon, 'Settings2')
 export const ShieldCheck = icon(ShieldCheckIcon, 'ShieldCheck')
 export const SlidersHorizontal = icon(SlidersHorizontalIcon, 'SlidersHorizontal')
 export const Smartphone = icon(SmartphoneIcon, 'Smartphone')
-export const Sparkles = icon(SparklesIcon, 'Sparkles')
 export const Store = icon(StoreIcon, 'Store')
+export const Ticket = icon(TicketIcon, 'Ticket')
 export const TrendingUp = icon(TrendingUpIcon, 'TrendingUp')
 export const Unlock = icon(LockOpenIcon, 'Unlock')
 export const User = icon(UserIcon, 'User')
