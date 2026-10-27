@@ -11,7 +11,7 @@ import {
 import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useLocation, useOutletContext } from 'react-router-dom'
 import { Topbar } from '@/components/layout/Topbar'
-import { mockAdminUser } from '@/lib/mock/admin'
+import { fetchCurrentUser } from '@/lib/auth-session'
 import { cn } from '@/lib/cn'
 import type { CurrentUser } from '@/types/booking'
 
@@ -24,6 +24,16 @@ import type { CurrentUser } from '@/types/booking'
  *
  * Nav mengikuti cakupan PRD: admin hanya mengelola vendor & langganan, bukan
  * membaca booking vendor.
+ *
+ * Gaya visual disamakan dengan dashboard vendor: logo BV memakai `brand-400`
+ * (gold), item nav aktif memakai `brand-50`/`brand-700`, tinggi baris `h-9`,
+ * dan lebar konten `max-w-[86rem]`. Sebelumnya admin memakai `bg-ink-900`
+ * (hitam) yang membuat panel terasa dingin dan tidak konsisten dengan identitas
+ * merek.
+ *
+ * Data user dimuat dari `GET /api/me` — sama seperti `DashboardLayout`.
+ * Sebelumnya memakai `mockAdminUser` statis, sehingga Topbar selalu menampilkan
+ * "Admin Booking Vendor" walaupun yang login adalah admin lain.
  */
 
 interface AdminNavItem {
@@ -56,41 +66,72 @@ function resolveTitle(pathname: string): string {
 
 export function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [user, setUser] = useState<CurrentUser | null>(null)
   const location = useLocation()
-  const user: CurrentUser = mockAdminUser
 
   useEffect(() => {
     setSidebarOpen(false)
   }, [location.pathname])
 
+  useEffect(() => {
+    let cancelled = false
+    fetchCurrentUser()
+      .then((u) => {
+        if (!cancelled) setUser(u)
+      })
+      .catch(() => {
+        // RoleGate menangani redirect ke /login bila sesi tidak valid.
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   const title = resolveTitle(location.pathname)
+
+  // Skeleton ringan sebelum data user tersedia — sama seperti DashboardLayout.
+  if (user === null) {
+    return (
+      <div className="flex min-h-dvh items-center justify-center bg-ink-50">
+        <div className="size-6 animate-spin rounded-full border-2 border-ink-200 border-t-brand-600" />
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-dvh bg-ink-50">
-      <aside className="fixed inset-y-0 left-0 hidden w-60 border-r border-ink-200/80 lg:block">
+      {/* Landmark diberi nama karena ada dua <aside> (desktop + drawer mobile);
+          tanpa aria-label keduanya tidak terbedakan saat berpindah landmark
+          (WCAG 1.3.1, axe: landmark-unique). */}
+      <aside
+        aria-label="Navigasi admin"
+        className="fixed inset-y-0 left-0 hidden w-60 border-r border-ink-200/80 lg:block"
+      >
         <AdminSidebar />
       </aside>
 
-      {sidebarOpen ? (
-        <div className="fixed inset-0 z-40 lg:hidden">
-          <button
-            type="button"
-            className="absolute inset-0 bg-ink-900/40"
-            aria-label="Tutup menu"
-            onClick={() => setSidebarOpen(false)}
-          />
-          <div className="absolute inset-y-0 left-0 w-64 border-r border-ink-200 bg-white shadow-xl">
-            <AdminSidebar onNavigate={() => setSidebarOpen(false)} />
-          </div>
-        </div>
-      ) : null}
-
       <div className="lg:pl-60">
         <Topbar user={user} title={title} onOpenSidebar={() => setSidebarOpen(true)} />
-        <main className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
+        <main className="mx-auto max-w-[86rem] px-4 py-5 sm:px-6">
           <Outlet context={{ user }} />
         </main>
       </div>
+
+      {/* Drawer sidebar untuk mobile */}
+      {sidebarOpen && (
+        <div className="fixed inset-0 z-30 lg:hidden">
+          <div
+            className="absolute inset-0 bg-ink-900/40"
+            onClick={() => setSidebarOpen(false)}
+          />
+          <aside
+            aria-label="Navigasi admin (menu seluler)"
+            className="absolute inset-y-0 left-0 w-64 border-r border-ink-200 bg-white"
+          >
+            <AdminSidebar onNavigate={() => setSidebarOpen(false)} />
+          </aside>
+        </div>
+      )}
     </div>
   )
 }
@@ -104,7 +145,8 @@ export function AdminSidebar({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <div className="flex h-full flex-col bg-white">
       <div className="flex h-16 items-center gap-2.5 px-5">
-        <span className="flex size-8 items-center justify-center rounded-lg bg-ink-900 text-body font-bold text-white">
+        {/* Logo BV: brand-400 (gold) + teks gelap, sama seperti sidebar vendor. */}
+        <span className="flex size-8 items-center justify-center rounded-lg bg-brand-400 text-body font-bold text-ink-900">
           BV
         </span>
         <div className="leading-tight">
@@ -117,7 +159,7 @@ export function AdminSidebar({ onNavigate }: { onNavigate?: () => void }) {
       </div>
 
       <nav className="flex-1 overflow-y-auto px-3 py-2">
-        <p className="px-2 pb-1.5 pt-2 text-2xs font-semibold uppercase tracking-wider text-ink-400">
+        <p className="px-2 pb-1.5 pt-2 text-2xs font-semibold uppercase leading-4 tracking-wider text-ink-400">
           Manajemen
         </p>
         <ul className="space-y-0.5">
@@ -155,12 +197,12 @@ function AdminNavRow({
     return (
       <li>
         <span
-          className="flex cursor-not-allowed items-center gap-2.5 rounded-lg px-2.5 py-2 text-body font-medium text-ink-400"
+          className="flex h-9 cursor-not-allowed items-center gap-2.5 rounded-lg px-2.5 text-body font-medium text-ink-400"
           aria-disabled="true"
           title="Belum tersedia"
         >
-          <Icon className="size-4" />
-          <span className="flex-1">{item.label}</span>
+          <Icon className="size-4 shrink-0" />
+          <span className="flex-1 leading-none">{item.label}</span>
           <span className="rounded bg-ink-100 px-1.5 py-0.5 text-2xs font-semibold uppercase tracking-wide text-ink-400">
             soon
           </span>
@@ -177,15 +219,21 @@ function AdminNavRow({
         end={item.to === '/admin/vendors'}
         className={({ isActive }) =>
           cn(
-            'flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-body font-medium transition-colors',
+            /*
+             * `h-9` (36px) eksplisit + `leading-none` agar tinggi baris tepat
+             * bulat dan ikon tidak jatuh di koordinat pecahan. Sama seperti
+             * sidebar vendor. Sebelumnya admin memakai `bg-ink-900 text-white`
+             * (hitam) untuk item aktif — sekarang `brand-50`/`brand-700` (gold).
+             */
+            'flex h-9 items-center gap-2.5 rounded-lg px-2.5 text-body font-medium transition-colors',
             isActive
-              ? 'bg-ink-900 text-white'
+              ? 'bg-brand-50 text-brand-700'
               : 'text-ink-600 hover:bg-ink-50 hover:text-ink-900',
           )
         }
       >
-        <Icon className="size-4" />
-        <span className="flex-1">{item.label}</span>
+        <Icon className="size-4 shrink-0" />
+        <span className="flex-1 leading-none">{item.label}</span>
       </NavLink>
     </li>
   )
