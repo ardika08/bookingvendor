@@ -8,6 +8,7 @@ import { Card, CardBody, CardHeader } from '@/components/ui/Card'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { TableSkeleton } from '@/components/ui/TableSkeleton'
 import { useDashboardUser } from '@/pages/DashboardHomePage'
+import { RevenueChart } from '@/components/dashboard/RevenueChart'
 import { ApiError } from '@/lib/api/client'
 import { fetchAllBookings } from '@/lib/api/bookings'
 import { fetchInvoices } from '@/lib/api/invoices'
@@ -222,6 +223,8 @@ export function DashboardPage() {
           tone={summary.money.outstanding > 0 ? 'amber' : 'neutral'}
         />
       </div>
+
+      <RevenueChart />
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_20rem]">
         <div className="space-y-4">

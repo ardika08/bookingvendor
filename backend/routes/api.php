@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\PublicInvoiceController;
 use App\Http\Controllers\Api\PublicScheduleController;
+use App\Http\Controllers\Api\RevenueController;
 use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\UserProfileController;
 use App\Http\Controllers\Api\VendorProfileController;
@@ -117,6 +118,14 @@ Route::middleware(['auth:sanctum', 'vendor.active'])->group(function () {
      */
     Route::get('clients', [ClientController::class, 'index'])->name('clients.index');
     Route::get('clients/{client}', [ClientController::class, 'show'])->name('clients.show');
+
+    /*
+     * Seri pendapatan bulanan untuk grafik dashboard.
+     *
+     * Rentang dibatasi 12 bulan agar satu vendor tidak bisa meminta seluruh
+     * riwayat usahanya sekaligus.
+     */
+    Route::get('revenue/series', [RevenueController::class, 'series'])->name('revenue.series');
 
     Route::prefix('invoices')->group(function () {
         Route::get('/', [InvoiceController::class, 'index'])->name('invoices.index');
