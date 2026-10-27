@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Users, Wallet, RefreshCw, ShieldCheck, CreditCard } from '@/components/ui/icons'
 import { AdminRevenueChart } from '@/components/admin/AdminRevenueChart'
+import { AdminTransactionHistory } from '@/components/admin/AdminTransactionHistory'
 import { ApiError } from '@/lib/api/client'
 import { fetchAdminSummary, type AdminDashboardSummary } from '@/lib/api/admin-dashboard'
 import { formatCurrency } from '@/lib/format'
@@ -130,6 +131,8 @@ export function AdminDashboardPage() {
       </div>
 
       <AdminRevenueChart />
+
+      <AdminTransactionHistory />
     </div>
   )
 }

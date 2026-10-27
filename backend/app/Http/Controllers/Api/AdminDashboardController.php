@@ -151,4 +151,57 @@ class AdminDashboardController extends Controller
 
         return $labels[(int) $month->format('n')] ?? $month->format('M');
     }
+
+    /**
+     * GET /api/admin/dashboard/transactions?page=1
+     *
+     * Riwayat transaksi langganan, 10 per halaman.
+     *
+     * Semua status ikut ditampilkan — bukan hanya yang lunas — supaya admin
+     * bisa melihat transaksi yang masih pending atau gagal. Tetapi angka
+     * pendapatan di kartu dan grafik tetap hanya menghitung `paid`.
+     *
+     * Urutan: yang paling baru dibayar lebih dulu; transaksi yang belum lunas
+     * (paid_at null) diurutkan menurut waktu dibuat agar tidak hilang di
+     * bawah.
+     */
+    public function transactions(Request $request): JsonResponse
+    {
+        $request->validate([
+            'page' => ['nullable', 'integer', 'min:1'],
+            'status' => ['nullable', 'in:pending,paid,failed,expired,refunded,all'],
+        ]);
+
+        $query = SubscriptionPayment::query()->with(['vendor:id,name', 'plan:id,name']);
+
+        $status = $request->query('status', 'all');
+        if ($status !== 'all' && $status !== null) {
+            $query->where('status', $status);
+        }
+
+        $paginator = $query
+            ->orderByRaw('COALESCE(paid_at, created_at) DESC')
+            ->orderByDesc('id')
+            ->paginate(10);
+
+        $items = collect($paginator->items())->map(fn (SubscriptionPayment $payment) => [
+            'id' => $payment->id,
+            'orderId' => $payment->order_id,
+            'vendorName' => $payment->vendor?->name ?? 'Vendor terhapus',
+            'planName' => $payment->plan?->name ?? '—',
+            'amount' => (float) $payment->amount,
+            'status' => $payment->status,
+            'method' => $payment->payment_method,
+            'paidAt' => $payment->paid_at?->toIso8601String(),
+            'createdAt' => $payment->created_at?->toIso8601String(),
+        ])->all();
+
+        return response()->json([
+            'items' => $items,
+            'total' => $paginator->total(),
+            'page' => $paginator->currentPage(),
+            'perPage' => $paginator->perPage(),
+            'totalPages' => $paginator->lastPage(),
+        ]);
+    }
 }

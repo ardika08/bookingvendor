@@ -46,6 +46,28 @@ export interface AdminRevenueSeriesResult {
   months: number
 }
 
+/** Satu baris riwayat transaksi langganan. */
+export interface AdminTransaction {
+  id: number
+  orderId: string
+  vendorName: string
+  planName: string
+  amount: number
+  status: 'pending' | 'paid' | 'failed' | 'expired' | 'refunded'
+  method: string | null
+  /** Waktu lunas; `null` bila transaksi belum dibayar. */
+  paidAt: string | null
+  createdAt: string | null
+}
+
+export interface AdminTransactionPage {
+  items: AdminTransaction[]
+  total: number
+  page: number
+  perPage: number
+  totalPages: number
+}
+
 export async function fetchAdminSummary(
   signal?: AbortSignal,
 ): Promise<AdminDashboardSummary> {
@@ -58,6 +80,17 @@ export async function fetchAdminRevenueSeries(
 ): Promise<AdminRevenueSeriesResult> {
   return apiRequest<AdminRevenueSeriesResult>('/admin/dashboard/revenue-series', {
     query: { months },
+    signal,
+  })
+}
+
+/** Riwayat transaksi langganan — 10 per halaman (dipatok di server). */
+export async function fetchAdminTransactions(
+  page = 1,
+  signal?: AbortSignal,
+): Promise<AdminTransactionPage> {
+  return apiRequest<AdminTransactionPage>('/admin/dashboard/transactions', {
+    query: { page },
     signal,
   })
 }

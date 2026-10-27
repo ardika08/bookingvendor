@@ -209,4 +209,114 @@ class AdminDashboardTest extends TestCase
     {
         $this->getJson('/api/admin/dashboard/revenue-series')->assertUnauthorized();
     }
+
+    public function test_riwayat_transaksi_dipaginasi_10_per_halaman(): void
+    {
+        $admin = $this->buatAdmin();
+        $vendor = $this->buatVendor('Vendor Alpha');
+
+        // 23 transaksi -> 3 halaman (10 + 10 + 3).
+        for ($i = 1; $i <= 23; $i++) {
+            $this->buatPembayaranLangganan(
+                $vendor,
+                50_000,
+                now()->subDays(23 - $i)->toDateTimeString(),
+            );
+        }
+
+        $page1 = $this->actingAs($admin)
+            ->getJson('/api/admin/dashboard/transactions?page=1');
+
+        $page1->assertOk()
+            ->assertJsonPath('total', 23)
+            ->assertJsonPath('perPage', 10)
+            ->assertJsonPath('page', 1)
+            ->assertJsonPath('totalPages', 3);
+
+        $this->assertCount(10, $page1->json('items'));
+
+        $page3 = $this->actingAs($admin)
+            ->getJson('/api/admin/dashboard/transactions?page=3');
+
+        $page3->assertOk()->assertJsonPath('page', 3);
+        $this->assertCount(3, $page3->json('items'));
+
+        // Halaman 1 dan 3 tidak boleh memuat transaksi yang sama.
+        $ids1 = array_column($page1->json('items'), 'id');
+        $ids3 = array_column($page3->json('items'), 'id');
+        $this->assertEmpty(array_intersect($ids1, $ids3));
+    }
+
+    public function test_riwayat_transaksi_terbaru_di_atas(): void
+    {
+        $admin = $this->buatAdmin();
+        $vendor = $this->buatVendor('Vendor Alpha');
+
+        $this->buatPembayaranLangganan($vendor, 10_000, now()->subMonths(3)->toDateTimeString());
+        $this->buatPembayaranLangganan($vendor, 20_000, now()->subMonth()->toDateTimeString());
+        $this->buatPembayaranLangganan($vendor, 30_000, now()->toDateTimeString());
+
+        $response = $this->actingAs($admin)
+            ->getJson('/api/admin/dashboard/transactions');
+
+        $response->assertOk();
+        $amounts = array_column($response->json('items'), 'amount');
+
+        // Terbaru (30rb) harus paling atas.
+        $this->assertEquals([30000.0, 20000.0, 10000.0], $amounts);
+    }
+
+    public function test_riwayat_transaksi_menampilkan_nama_vendor_dan_paket(): void
+    {
+        $admin = $this->buatAdmin();
+        $vendor = $this->buatVendor('Vendor Alpha');
+        $this->buatPembayaranLangganan($vendor, 50_000, now()->toDateTimeString());
+
+        $response = $this->actingAs($admin)
+            ->getJson('/api/admin/dashboard/transactions');
+
+        $response->assertOk()
+            ->assertJsonPath('items.0.vendorName', 'Vendor Alpha')
+            ->assertJsonPath('items.0.planName', 'Bulanan')
+            ->assertJsonPath('items.0.status', 'paid');
+
+        $this->assertNotNull($response->json('items.0.orderId'));
+        $this->assertNotNull($response->json('items.0.paidAt'));
+    }
+
+    public function test_riwayat_transaksi_transaksi_pending_ikut_tampil(): void
+    {
+        $admin = $this->buatAdmin();
+        $vendor = $this->buatVendor('Vendor Alpha');
+
+        $plan = \App\Models\Plan::query()->firstOrCreate(
+            ['code' => 'monthly'],
+            ['name' => 'Bulanan', 'duration_months' => 1, 'price' => 50_000, 'is_active' => true],
+        );
+        SubscriptionPayment::create([
+            'vendor_id' => $vendor->id,
+            'plan_id' => $plan->id,
+            'order_id' => 'ORD-PENDING-1',
+            'gateway' => 'duitku',
+            'amount' => 75_000,
+            'status' => 'pending',
+        ]);
+
+        $response = $this->actingAs($admin)
+            ->getJson('/api/admin/dashboard/transactions');
+
+        // Riwayat menampilkan semua status, termasuk yang belum lunas.
+        $response->assertOk()->assertJsonPath('total', 1);
+        $this->assertSame('pending', $response->json('items.0.status'));
+        $this->assertNull($response->json('items.0.paidAt'));
+    }
+
+    public function test_riwayat_transaksi_menolak_vendor(): void
+    {
+        $vendor = $this->buatVendor('Vendor Biasa');
+
+        $this->actingAs($vendor->user)
+            ->getJson('/api/admin/dashboard/transactions')
+            ->assertForbidden();
+    }
 }

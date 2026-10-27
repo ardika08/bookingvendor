@@ -82,6 +82,8 @@ Route::middleware(['auth:sanctum', 'admin.only'])->prefix('admin')->group(functi
         ->name('admin.dashboard.summary');
     Route::get('dashboard/revenue-series', [AdminDashboardController::class, 'revenueSeries'])
         ->name('admin.dashboard.revenue-series');
+    Route::get('dashboard/transactions', [AdminDashboardController::class, 'transactions'])
+        ->name('admin.dashboard.transactions');
 });
 
 /*
