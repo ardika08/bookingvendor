@@ -60,19 +60,38 @@ class RevenueController extends Controller
          * `invoices.paid_amount`. Kolom itu hanya akumulasi terakhir; kalau
          * suatu invoice lunas lalu dikoreksi, riwayat pembayaran tetap
          * mencatat kapan uangnya benar-benar masuk.
+         *
+         * PORTABILITAS DATABASE
+         * Sebelumnya di sini dipakai `strftime('%Y-%m', payments.paid_at)`.
+         * Itu fungsi SQLite; MySQL tidak mengenalnya sehingga endpoint ini
+         * gagal 500 di hosting MySQL (cPanel) walaupun lolos di lokal.
+         * Pengelompokan sekarang dilakukan di PHP agar hasilnya sama di
+         * SQLite maupun MySQL tanpa cabang kode per driver.
+         *
+         * Biayanya kecil: satu vendor hanya punya ratusan pembayaran dalam
+         * rentang maksimal 12 bulan, sedangkan jumlah titik grafik tetap
+         * dibatasi 12.
          */
-        $paidByMonth = Payment::query()
+        $paidRows = Payment::query()
             ->join('invoices', 'invoices.id', '=', 'payments.invoice_id')
             ->join('bookings', 'bookings.id', '=', 'invoices.booking_id')
             ->where('bookings.vendor_id', $vendor->id)
             ->whereDate('payments.paid_at', '>=', $since)
-            ->selectRaw("strftime('%Y-%m', payments.paid_at) as month, SUM(payments.amount) as total")
-            ->groupBy('month')
-            ->pluck('total', 'month');
+            ->get(['payments.amount', 'payments.paid_at']);
 
-        $payments = $paidByMonth
-            ->map(fn ($total, string $month): Payment => new Payment([
-                'amount' => (float) $total,
+        /** @var array<string, float> $paidByMonth */
+        $paidByMonth = [];
+        foreach ($paidRows as $row) {
+            $month = $row->paid_at?->format('Y-m');
+            if ($month === null) {
+                continue;
+            }
+            $paidByMonth[$month] = ($paidByMonth[$month] ?? 0.0) + (float) $row->amount;
+        }
+
+        $payments = collect($paidByMonth)
+            ->map(fn (float $total, string $month): Payment => new Payment([
+                'amount' => $total,
                 'paid_at' => $month.'-01',
             ]))
             ->values()

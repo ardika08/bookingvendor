@@ -141,9 +141,28 @@ class AdminVendorSchemaTest extends TestCase
 
     public function test_indeks_admin_tersedia(): void
     {
-        $indexes = collect(DB::select('PRAGMA index_list(vendors)'))
-            ->pluck('name')
-            ->all();
+        /*
+         * Query daftar indeks berbeda per driver:
+         *   SQLite : PRAGMA index_list(tabel)
+         *   MySQL  : SHOW INDEX FROM tabel
+         *
+         * Versi sebelumnya hanya memakai PRAGMA, sehingga tes ini gagal dengan
+         * "syntax error near PRAGMA" begitu dijalankan di MySQL — termasuk di
+         * hosting produksi. Cabang di bawah membuat tes ini sah di keduanya.
+         */
+        $driver = DB::connection()->getDriverName();
+
+        $indexes = match ($driver) {
+            'sqlite' => collect(DB::select('PRAGMA index_list(vendors)'))
+                ->pluck('name')
+                ->all(),
+            'mysql', 'mariadb' => collect(DB::select('SHOW INDEX FROM vendors'))
+                ->pluck('Key_name')
+                ->unique()
+                ->values()
+                ->all(),
+            default => $this->markTestSkipped("Driver {$driver} tidak didukung tes ini."),
+        };
 
         // Indeks nama mengikuti konvensi Laravel: {table}_{column}_index.
         $this->assertContains('vendors_is_active_index', $indexes);
