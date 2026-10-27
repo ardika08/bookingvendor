@@ -158,7 +158,12 @@ function AdminStatTile({
   return (
     <div className="rounded-xl border border-ink-200/80 bg-white px-3.5 py-3">
       <div className="flex items-center gap-2">
-        <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-700">
+        {/*
+          Wadah 32px (size-8), sama dengan wadah ikon di dashboard vendor
+          (`RevenueChart`, `PaymentHistory`). Sebelumnya 28px (size-7),
+          sehingga ikon 16px terlihat sesak dan kurang tegas.
+        */}
+        <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-700">
           {icon}
         </span>
         <p className="text-caption font-medium uppercase tracking-wide text-ink-400">{label}</p>

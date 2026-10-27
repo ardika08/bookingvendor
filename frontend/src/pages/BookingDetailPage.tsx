@@ -130,18 +130,18 @@ export function BookingDetailPage({
               <DetailGrid>
                 <DetailItem
                   label="Tanggal"
-                  icon={<CalendarDays className="size-3" />}
+                  icon={<CalendarDays className="size-3.5" />}
                   value={formatLongDate(booking.eventDate)}
                 />
                 <DetailItem
                   label="Jam"
-                  icon={<Clock className="size-3" />}
+                  icon={<Clock className="size-3.5" />}
                   value={formatTime(booking.eventTime) ?? 'Belum ditentukan'}
                   muted={!booking.eventTime}
                 />
                 <DetailItem
                   label="Lokasi"
-                  icon={<MapPin className="size-3" />}
+                  icon={<MapPin className="size-3.5" />}
                   value={booking.eventLocation ?? 'Belum diisi'}
                   muted={!booking.eventLocation}
                   className="sm:col-span-2"
@@ -156,18 +156,18 @@ export function BookingDetailPage({
               <DetailGrid>
                 <DetailItem
                   label="Nama"
-                  icon={<User className="size-3" />}
+                  icon={<User className="size-3.5" />}
                   value={booking.client.name}
                 />
                 <DetailItem
                   label="WhatsApp"
-                  icon={<Phone className="size-3" />}
+                  icon={<Phone className="size-3.5" />}
                   value={booking.client.phone}
                   href={waLink}
                 />
                 <DetailItem
                   label="Email"
-                  icon={<Mail className="size-3" />}
+                  icon={<Mail className="size-3.5" />}
                   value={booking.client.email ?? 'Tidak ada'}
                   muted={!booking.client.email}
                   className="sm:col-span-2"

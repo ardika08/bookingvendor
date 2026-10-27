@@ -155,7 +155,8 @@ export function AdminSidebar({ onNavigate }: { onNavigate?: () => void }) {
         <div className="leading-tight">
           <p className="text-body font-semibold text-ink-900">Booking Vendor</p>
           <p className="inline-flex items-center gap-1 text-caption text-ink-400">
-            <ShieldCheck className="size-3" />
+            {/* 14px: di bawah ini ikon perisai terlihat kabur (garis < 1px). */}
+            <ShieldCheck className="size-3.5" />
             Panel Admin
           </p>
         </div>

@@ -36,8 +36,15 @@ export function DetailItem({
 
   return (
     <div className={cn('min-w-0', className)}>
+      {/*
+        Ikon diberi warna lebih gelap (`ink-600`) daripada labelnya
+        (`ink-400`). Sebelumnya ikon mewarisi warna label sehingga tampak
+        pudar — pada bentuk solid tipis seperti amplop dan telepon, abu terang
+        membuat detailnya hilang. Label tetap redup supaya hierarki
+        label-nilai tidak terbalik.
+      */}
       <dt className="flex items-center gap-1.5 text-caption font-medium uppercase tracking-wide text-ink-400">
-        {icon}
+        {icon ? <span className="shrink-0 text-ink-600">{icon}</span> : null}
         {label}
       </dt>
       <dd className="mt-0.5 flex items-start gap-1.5">

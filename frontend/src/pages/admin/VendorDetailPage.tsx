@@ -207,18 +207,18 @@ export function VendorDetailPage() {
               <DetailGrid>
                 <DetailItem
                   label="Pemilik"
-                  icon={<User className="size-3" />}
+                  icon={<User className="size-3.5" />}
                   value={vendor.ownerName}
                 />
                 <DetailItem
                   label="Email akun"
-                  icon={<Mail className="size-3" />}
+                  icon={<Mail className="size-3.5" />}
                   value={vendor.email}
                   href={`mailto:${vendor.email}`}
                 />
                 <DetailItem
                   label="Kategori"
-                  icon={<Store className="size-3" />}
+                  icon={<Store className="size-3.5" />}
                   value={vendor.category ?? 'Belum dipilih'}
                   muted={!vendor.category}
                 />
@@ -229,14 +229,14 @@ export function VendorDetailPage() {
                 />
                 <DetailItem
                   label="Kontak / WA"
-                  icon={<Phone className="size-3" />}
+                  icon={<Phone className="size-3.5" />}
                   value={vendor.contact ?? 'Belum diisi'}
                   href={waLink ?? undefined}
                   muted={!vendor.contact}
                 />
                 <DetailItem
                   label="Bergabung"
-                  icon={<CalendarDays className="size-3" />}
+                  icon={<CalendarDays className="size-3.5" />}
                   value={formatLongDate(vendor.createdAt)}
                 />
               </DetailGrid>

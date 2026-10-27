@@ -254,23 +254,23 @@ export function InvoiceDetailPage({
               <DetailGrid>
                 <DetailItem
                   label="Klien"
-                  icon={<User className="size-3" />}
+                  icon={<User className="size-3.5" />}
                   value={invoice.clientName}
                 />
                 <DetailItem
                   label="WhatsApp"
-                  icon={<Phone className="size-3" />}
+                  icon={<Phone className="size-3.5" />}
                   value={invoice.clientPhone}
                   href={waLink}
                 />
                 <DetailItem
                   label="Tanggal acara"
-                  icon={<CalendarDays className="size-3" />}
+                  icon={<CalendarDays className="size-3.5" />}
                   value={formatLongDate(invoice.eventDate)}
                 />
                 <DetailItem
                   label="Paket"
-                  icon={<Receipt className="size-3" />}
+                  icon={<Receipt className="size-3.5" />}
                   value={invoice.packageName ?? 'Tanpa paket'}
                   muted={!invoice.packageName}
                 />
