@@ -1,22 +1,24 @@
 /**
  * Ikon aplikasi — satu-satunya tempat yang tahu Hugeicons.
  *
+ * **Sumber: Hugeicons Pro, style `stroke-standard`** (lisensi Pro aktif).
+ * Paket Pro dipasang dari registry privat (lihat `.npmrc`); kunci lisensi
+ * hanya ada di environment variable `HUGEICONS_LICENSE_KEY`, tidak di repo.
+ *
  * Kenapa ada lapisan ini, bukan impor Hugeicons langsung di 62 file:
  *
- * 1. **Nama ikon Hugeicons berbeda dari Lucide.** `CalendarDays` jadi
- *    `CalendarDays`, tapi `AlertTriangle` jadi `TriangleAlert` dan `XCircle`
- *    jadi `CancelCircle`. Kalau nama Hugeicons ditulis langsung di tiap file,
- *    setiap penggantian style/ikon berarti menyunting puluhan tempat.
+ * 1. **Nama ikon Hugeicons berbeda dari Lucide.** `AlertTriangle` jadi
+ *    `TriangleAlert`, `XCircle` jadi `CancelCircle`, `Unlock` jadi `LockOpen`.
+ *    Kalau nama Hugeicons ditulis langsung di tiap file, setiap penggantian
+ *    style berarti menyunting puluhan tempat.
  * 2. **Kode pemakaian tidak berubah.** Semua file tetap menulis
  *    `<Search className="size-4" />`; hanya baris import yang pindah ke sini.
  *    Migrasi jadi mekanis dan tidak menyentuh JSX.
- * 3. **Satu titik tukar paket.** Modul ini mengimpor dari paket ikon gratis
- *    (`@hugeicons/core-free-icons`). Saat lisensi Pro aktif, cukup ganti
- *    sumber impor di bawah ke `@hugeicons-pro/core-stroke-rounded` dan ubah
- *    akhiran `FreeIcons` -> `Icon`; seluruh aplikasi ikut berganti tanpa
- *    menyentuh file lain.
+ * 3. **Satu titik tukar style.** Ganti satu baris impor di bawah untuk pindah
+ *    style Pro (`core-stroke-rounded`, `core-stroke-sharp`, `core-solid-*`, dst).
+ *    Seluruh aplikasi ikut berganti tanpa menyentuh file lain.
  *
- * Semua nama di bawah sudah diverifikasi ada di paket (bukan tebakan):
+ * Semua nama di bawah sudah diverifikasi ada di paket Pro (bukan tebakan):
  * 79 ikon, nol yang hilang.
  */
 
@@ -24,86 +26,86 @@ import type { ComponentType, SVGProps } from 'react'
 import { HugeiconsIcon } from '@hugeicons/react'
 import type { IconSvgElement } from '@hugeicons/react'
 import {
-  AlertCircleFreeIcons,
-  TriangleAlertFreeIcons,
-  ArrowLeftFreeIcons,
-  ArrowRightFreeIcons,
-  ArrowUpDownFreeIcons,
-  ArrowUpRightFreeIcons,
-  BanFreeIcons,
-  BanknoteFreeIcons,
-  BarChartFreeIcons,
-  BellFreeIcons,
-  BookOpenCheckFreeIcons,
-  Building02FreeIcons,
-  CalendarCheckFreeIcons,
-  CalendarCheckInFreeIcons,
-  CalendarClockFreeIcons,
-  CalendarDaysFreeIcons,
-  CalendarPlusFreeIcons,
-  CheckFreeIcons,
-  CheckmarkCircle02FreeIcons,
-  ChevronDownFreeIcons,
-  ChevronLeftFreeIcons,
-  ChevronRightFreeIcons,
-  CircleCheckFreeIcons,
-  CircleDashedFreeIcons,
-  CircleXFreeIcons,
-  ClockFreeIcons,
-  Clock03FreeIcons,
-  ConstructionFreeIcons,
-  CopyFreeIcons,
-  CreditCardFreeIcons,
-  CrownFreeIcons,
-  DownloadFreeIcons,
-  ExternalLinkFreeIcons,
-  FileTextFreeIcons,
-  FileXFreeIcons,
-  HourglassFreeIcons,
-  IdCardFreeIcons,
-  InfoFreeIcons,
-  LandmarkFreeIcons,
-  LayoutDashboardFreeIcons,
-  LifebuoyFreeIcons,
-  Link02FreeIcons,
-  Loading03FreeIcons,
-  LockFreeIcons,
-  LoginFreeIcons,
-  LogoutFreeIcons,
-  MailFreeIcons,
-  MapPinFreeIcons,
-  MenuFreeIcons,
-  MessageCircleFreeIcons,
-  PackageFreeIcons,
-  PencilFreeIcons,
-  PhoneFreeIcons,
-  PlusFreeIcons,
-  QrCodeFreeIcons,
-  ReceiptFreeIcons,
-  ReceiptTextFreeIcons,
-  RefreshCwFreeIcons,
-  RotateCcwFreeIcons,
-  RotateCwFreeIcons,
-  SaveFreeIcons,
-  SearchFreeIcons,
-  SearchXFreeIcons,
-  Settings02FreeIcons,
-  ShieldCheckFreeIcons,
-  SlidersHorizontalFreeIcons,
-  SmartphoneFreeIcons,
-  SparklesFreeIcons,
-  StoreFreeIcons,
-  TrendingUpFreeIcons,
-  LockOpenFreeIcons,
-  UserFreeIcons,
-  UserAddFreeIcons,
-  UserRoundFreeIcons,
-  UsersFreeIcons,
-  WalletFreeIcons,
-  WifiOffFreeIcons,
-  XFreeIcons,
-  CancelCircleFreeIcons,
-} from '@hugeicons/core-free-icons'
+  AlertCircleIcon,
+  TriangleAlertIcon,
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  ArrowUpDownIcon,
+  ArrowUpRightIcon,
+  BanIcon,
+  BanknoteIcon,
+  BarChartIcon,
+  BellIcon,
+  BookOpenCheckIcon,
+  Building02Icon,
+  CalendarCheckIcon,
+  CalendarCheckInIcon,
+  CalendarClockIcon,
+  CalendarDaysIcon,
+  CalendarPlusIcon,
+  CheckIcon,
+  CheckmarkCircle02Icon,
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  CircleCheckIcon,
+  CircleDashedIcon,
+  CircleXIcon,
+  ClockIcon,
+  Clock03Icon,
+  ConstructionIcon,
+  CopyIcon,
+  CreditCardIcon,
+  CrownIcon,
+  DownloadIcon,
+  ExternalLinkIcon,
+  FileTextIcon,
+  FileXIcon,
+  HourglassIcon,
+  IdCardIcon,
+  InfoIcon,
+  LandmarkIcon,
+  LayoutDashboardIcon,
+  LifebuoyIcon,
+  Link02Icon,
+  Loading03Icon,
+  LockIcon,
+  LoginIcon,
+  LogoutIcon,
+  MailIcon,
+  MapPinIcon,
+  MenuIcon,
+  MessageCircleIcon,
+  PackageIcon,
+  PencilIcon,
+  PhoneIcon,
+  PlusIcon,
+  QrCodeIcon,
+  ReceiptIcon,
+  ReceiptTextIcon,
+  RefreshCwIcon,
+  RotateCcwIcon,
+  RotateCwIcon,
+  SaveIcon,
+  SearchIcon,
+  SearchXIcon,
+  Settings02Icon,
+  ShieldCheckIcon,
+  SlidersHorizontalIcon,
+  SmartphoneIcon,
+  SparklesIcon,
+  StoreIcon,
+  TrendingUpIcon,
+  LockOpenIcon,
+  UserIcon,
+  UserAddIcon,
+  UserRoundIcon,
+  UsersIcon,
+  WalletIcon,
+  WifiOffIcon,
+  XIcon,
+  CancelCircleIcon,
+} from '@hugeicons-pro/core-stroke-standard'
 
 /** Props yang diterima setiap ikon aplikasi. */
 export type IconProps = SVGProps<SVGSVGElement> & {
@@ -134,85 +136,85 @@ function icon(element: IconSvgElement, name: string) {
 }
 
 // Diekspor dengan nama Lucide supaya kode pemakaian tidak perlu diubah.
-export const AlertCircle = icon(AlertCircleFreeIcons, 'AlertCircle')
-export const AlertTriangle = icon(TriangleAlertFreeIcons, 'AlertTriangle')
-export const ArrowLeft = icon(ArrowLeftFreeIcons, 'ArrowLeft')
-export const ArrowRight = icon(ArrowRightFreeIcons, 'ArrowRight')
-export const ArrowUpDown = icon(ArrowUpDownFreeIcons, 'ArrowUpDown')
-export const ArrowUpRight = icon(ArrowUpRightFreeIcons, 'ArrowUpRight')
-export const Ban = icon(BanFreeIcons, 'Ban')
-export const Banknote = icon(BanknoteFreeIcons, 'Banknote')
-export const BarChart3 = icon(BarChartFreeIcons, 'BarChart3')
-export const Bell = icon(BellFreeIcons, 'Bell')
-export const BookOpenCheck = icon(BookOpenCheckFreeIcons, 'BookOpenCheck')
-export const Building2 = icon(Building02FreeIcons, 'Building2')
-export const CalendarCheck = icon(CalendarCheckFreeIcons, 'CalendarCheck')
-export const CalendarCheck2 = icon(CalendarCheckInFreeIcons, 'CalendarCheck2')
-export const CalendarClock = icon(CalendarClockFreeIcons, 'CalendarClock')
-export const CalendarDays = icon(CalendarDaysFreeIcons, 'CalendarDays')
-export const CalendarPlus = icon(CalendarPlusFreeIcons, 'CalendarPlus')
-export const Check = icon(CheckFreeIcons, 'Check')
-export const CheckCircle2 = icon(CheckmarkCircle02FreeIcons, 'CheckCircle2')
-export const ChevronDown = icon(ChevronDownFreeIcons, 'ChevronDown')
-export const ChevronLeft = icon(ChevronLeftFreeIcons, 'ChevronLeft')
-export const ChevronRight = icon(ChevronRightFreeIcons, 'ChevronRight')
-export const CircleCheck = icon(CircleCheckFreeIcons, 'CircleCheck')
-export const CircleDashed = icon(CircleDashedFreeIcons, 'CircleDashed')
-export const CircleX = icon(CircleXFreeIcons, 'CircleX')
-export const Clock = icon(ClockFreeIcons, 'Clock')
-export const Clock3 = icon(Clock03FreeIcons, 'Clock3')
-export const Construction = icon(ConstructionFreeIcons, 'Construction')
-export const Copy = icon(CopyFreeIcons, 'Copy')
-export const CreditCard = icon(CreditCardFreeIcons, 'CreditCard')
-export const Crown = icon(CrownFreeIcons, 'Crown')
-export const Download = icon(DownloadFreeIcons, 'Download')
-export const ExternalLink = icon(ExternalLinkFreeIcons, 'ExternalLink')
-export const FileText = icon(FileTextFreeIcons, 'FileText')
-export const FileX2 = icon(FileXFreeIcons, 'FileX2')
-export const Hourglass = icon(HourglassFreeIcons, 'Hourglass')
-export const IdCard = icon(IdCardFreeIcons, 'IdCard')
-export const Info = icon(InfoFreeIcons, 'Info')
-export const Landmark = icon(LandmarkFreeIcons, 'Landmark')
-export const LayoutDashboard = icon(LayoutDashboardFreeIcons, 'LayoutDashboard')
-export const LifeBuoy = icon(LifebuoyFreeIcons, 'LifeBuoy')
-export const Link2 = icon(Link02FreeIcons, 'Link2')
-export const LoaderCircle = icon(Loading03FreeIcons, 'LoaderCircle')
-export const Lock = icon(LockFreeIcons, 'Lock')
-export const LogIn = icon(LoginFreeIcons, 'LogIn')
-export const LogOut = icon(LogoutFreeIcons, 'LogOut')
-export const Mail = icon(MailFreeIcons, 'Mail')
-export const MapPin = icon(MapPinFreeIcons, 'MapPin')
-export const Menu = icon(MenuFreeIcons, 'Menu')
-export const MessageCircle = icon(MessageCircleFreeIcons, 'MessageCircle')
-export const Package = icon(PackageFreeIcons, 'Package')
-export const Pencil = icon(PencilFreeIcons, 'Pencil')
-export const Phone = icon(PhoneFreeIcons, 'Phone')
-export const Plus = icon(PlusFreeIcons, 'Plus')
-export const QrCode = icon(QrCodeFreeIcons, 'QrCode')
-export const Receipt = icon(ReceiptFreeIcons, 'Receipt')
-export const ReceiptText = icon(ReceiptTextFreeIcons, 'ReceiptText')
-export const RefreshCw = icon(RefreshCwFreeIcons, 'RefreshCw')
-export const RotateCcw = icon(RotateCcwFreeIcons, 'RotateCcw')
-export const RotateCw = icon(RotateCwFreeIcons, 'RotateCw')
-export const Save = icon(SaveFreeIcons, 'Save')
-export const Search = icon(SearchFreeIcons, 'Search')
-export const SearchX = icon(SearchXFreeIcons, 'SearchX')
-export const Settings2 = icon(Settings02FreeIcons, 'Settings2')
-export const ShieldCheck = icon(ShieldCheckFreeIcons, 'ShieldCheck')
-export const SlidersHorizontal = icon(SlidersHorizontalFreeIcons, 'SlidersHorizontal')
-export const Smartphone = icon(SmartphoneFreeIcons, 'Smartphone')
-export const Sparkles = icon(SparklesFreeIcons, 'Sparkles')
-export const Store = icon(StoreFreeIcons, 'Store')
-export const TrendingUp = icon(TrendingUpFreeIcons, 'TrendingUp')
-export const Unlock = icon(LockOpenFreeIcons, 'Unlock')
-export const User = icon(UserFreeIcons, 'User')
-export const UserPlus = icon(UserAddFreeIcons, 'UserPlus')
-export const UserRound = icon(UserRoundFreeIcons, 'UserRound')
-export const Users = icon(UsersFreeIcons, 'Users')
-export const Wallet = icon(WalletFreeIcons, 'Wallet')
-export const WifiOff = icon(WifiOffFreeIcons, 'WifiOff')
-export const X = icon(XFreeIcons, 'X')
-export const XCircle = icon(CancelCircleFreeIcons, 'XCircle')
+export const AlertCircle = icon(AlertCircleIcon, 'AlertCircle')
+export const AlertTriangle = icon(TriangleAlertIcon, 'AlertTriangle')
+export const ArrowLeft = icon(ArrowLeftIcon, 'ArrowLeft')
+export const ArrowRight = icon(ArrowRightIcon, 'ArrowRight')
+export const ArrowUpDown = icon(ArrowUpDownIcon, 'ArrowUpDown')
+export const ArrowUpRight = icon(ArrowUpRightIcon, 'ArrowUpRight')
+export const Ban = icon(BanIcon, 'Ban')
+export const Banknote = icon(BanknoteIcon, 'Banknote')
+export const BarChart3 = icon(BarChartIcon, 'BarChart3')
+export const Bell = icon(BellIcon, 'Bell')
+export const BookOpenCheck = icon(BookOpenCheckIcon, 'BookOpenCheck')
+export const Building2 = icon(Building02Icon, 'Building2')
+export const CalendarCheck = icon(CalendarCheckIcon, 'CalendarCheck')
+export const CalendarCheck2 = icon(CalendarCheckInIcon, 'CalendarCheck2')
+export const CalendarClock = icon(CalendarClockIcon, 'CalendarClock')
+export const CalendarDays = icon(CalendarDaysIcon, 'CalendarDays')
+export const CalendarPlus = icon(CalendarPlusIcon, 'CalendarPlus')
+export const Check = icon(CheckIcon, 'Check')
+export const CheckCircle2 = icon(CheckmarkCircle02Icon, 'CheckCircle2')
+export const ChevronDown = icon(ChevronDownIcon, 'ChevronDown')
+export const ChevronLeft = icon(ChevronLeftIcon, 'ChevronLeft')
+export const ChevronRight = icon(ChevronRightIcon, 'ChevronRight')
+export const CircleCheck = icon(CircleCheckIcon, 'CircleCheck')
+export const CircleDashed = icon(CircleDashedIcon, 'CircleDashed')
+export const CircleX = icon(CircleXIcon, 'CircleX')
+export const Clock = icon(ClockIcon, 'Clock')
+export const Clock3 = icon(Clock03Icon, 'Clock3')
+export const Construction = icon(ConstructionIcon, 'Construction')
+export const Copy = icon(CopyIcon, 'Copy')
+export const CreditCard = icon(CreditCardIcon, 'CreditCard')
+export const Crown = icon(CrownIcon, 'Crown')
+export const Download = icon(DownloadIcon, 'Download')
+export const ExternalLink = icon(ExternalLinkIcon, 'ExternalLink')
+export const FileText = icon(FileTextIcon, 'FileText')
+export const FileX2 = icon(FileXIcon, 'FileX2')
+export const Hourglass = icon(HourglassIcon, 'Hourglass')
+export const IdCard = icon(IdCardIcon, 'IdCard')
+export const Info = icon(InfoIcon, 'Info')
+export const Landmark = icon(LandmarkIcon, 'Landmark')
+export const LayoutDashboard = icon(LayoutDashboardIcon, 'LayoutDashboard')
+export const LifeBuoy = icon(LifebuoyIcon, 'LifeBuoy')
+export const Link2 = icon(Link02Icon, 'Link2')
+export const LoaderCircle = icon(Loading03Icon, 'LoaderCircle')
+export const Lock = icon(LockIcon, 'Lock')
+export const LogIn = icon(LoginIcon, 'LogIn')
+export const LogOut = icon(LogoutIcon, 'LogOut')
+export const Mail = icon(MailIcon, 'Mail')
+export const MapPin = icon(MapPinIcon, 'MapPin')
+export const Menu = icon(MenuIcon, 'Menu')
+export const MessageCircle = icon(MessageCircleIcon, 'MessageCircle')
+export const Package = icon(PackageIcon, 'Package')
+export const Pencil = icon(PencilIcon, 'Pencil')
+export const Phone = icon(PhoneIcon, 'Phone')
+export const Plus = icon(PlusIcon, 'Plus')
+export const QrCode = icon(QrCodeIcon, 'QrCode')
+export const Receipt = icon(ReceiptIcon, 'Receipt')
+export const ReceiptText = icon(ReceiptTextIcon, 'ReceiptText')
+export const RefreshCw = icon(RefreshCwIcon, 'RefreshCw')
+export const RotateCcw = icon(RotateCcwIcon, 'RotateCcw')
+export const RotateCw = icon(RotateCwIcon, 'RotateCw')
+export const Save = icon(SaveIcon, 'Save')
+export const Search = icon(SearchIcon, 'Search')
+export const SearchX = icon(SearchXIcon, 'SearchX')
+export const Settings2 = icon(Settings02Icon, 'Settings2')
+export const ShieldCheck = icon(ShieldCheckIcon, 'ShieldCheck')
+export const SlidersHorizontal = icon(SlidersHorizontalIcon, 'SlidersHorizontal')
+export const Smartphone = icon(SmartphoneIcon, 'Smartphone')
+export const Sparkles = icon(SparklesIcon, 'Sparkles')
+export const Store = icon(StoreIcon, 'Store')
+export const TrendingUp = icon(TrendingUpIcon, 'TrendingUp')
+export const Unlock = icon(LockOpenIcon, 'Unlock')
+export const User = icon(UserIcon, 'User')
+export const UserPlus = icon(UserAddIcon, 'UserPlus')
+export const UserRound = icon(UserRoundIcon, 'UserRound')
+export const Users = icon(UsersIcon, 'Users')
+export const Wallet = icon(WalletIcon, 'Wallet')
+export const WifiOff = icon(WifiOffIcon, 'WifiOff')
+export const X = icon(XIcon, 'X')
+export const XCircle = icon(CancelCircleIcon, 'XCircle')
 
 /**
  * Tipe untuk ikon yang disimpan di variabel/peta (sidebar, status booking,
