@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Services\UserAccessResolver;
+use App\Support\FrontendRedirect;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
@@ -28,22 +29,20 @@ class GoogleAuthController extends Controller
 
     public function callback(): RedirectResponse
     {
-        $frontend = rtrim((string) config('app.frontend_url'), '/');
-
         try {
             $google = Socialite::driver('google')->stateless()->user();
         } catch (\Throwable) {
-            return redirect()->away($frontend . '/login?error=oauth_failed');
+            return FrontendRedirect::to('/login?error=oauth_failed');
         }
 
         $result = $this->access->resolve($google->getId(), $google->getEmail());
 
         if ($result['status'] === UserAccessResolver::STATUS_NOT_REGISTERED) {
-            return redirect()->away($frontend . '/login?error=account_not_registered');
+            return FrontendRedirect::to('/login?error=account_not_registered');
         }
 
         if ($result['status'] === UserAccessResolver::STATUS_INACTIVE) {
-            return redirect()->away($frontend . '/login?error=account_inactive');
+            return FrontendRedirect::to('/login?error=account_inactive');
         }
 
         /** @var \App\Models\User $user */
@@ -59,6 +58,6 @@ class GoogleAuthController extends Controller
         Auth::login($user, true);
         request()->session()->regenerate();
 
-        return redirect()->away($frontend . $this->access->destinationFor($user));
+        return FrontendRedirect::to($this->access->destinationFor($user));
     }
 }

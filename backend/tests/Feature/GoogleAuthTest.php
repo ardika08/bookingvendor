@@ -47,7 +47,7 @@ class GoogleAuthTest extends TestCase
         $this->mockSocialite($this->googleUser());
 
         $this->get('/auth/google/callback')
-            ->assertRedirect('http://localhost:5173/dashboard');
+            ->assertRedirect('/dashboard');
 
         $this->assertAuthenticatedAs($user->fresh());
         $this->assertSame('google-123', $user->fresh()->google_id);
@@ -58,7 +58,7 @@ class GoogleAuthTest extends TestCase
         User::create(['name' => 'Admin', 'email' => 'admin@gmail.com', 'role' => 'admin']);
         $this->mockSocialite($this->googleUser('admin-google', 'admin@gmail.com'));
 
-        $this->get('/auth/google/callback')->assertRedirect('http://localhost:5173/admin');
+        $this->get('/auth/google/callback')->assertRedirect('/admin');
     }
 
     public function test_akun_belum_didaftarkan_ditolak(): void
@@ -66,7 +66,7 @@ class GoogleAuthTest extends TestCase
         $this->mockSocialite($this->googleUser());
 
         $this->get('/auth/google/callback')
-            ->assertRedirect('http://localhost:5173/login?error=account_not_registered');
+            ->assertRedirect('/login?error=account_not_registered');
         $this->assertGuest();
     }
 
@@ -76,7 +76,7 @@ class GoogleAuthTest extends TestCase
         $this->mockSocialite($this->googleUser());
 
         $this->get('/auth/google/callback')
-            ->assertRedirect('http://localhost:5173/login?error=account_inactive');
+            ->assertRedirect('/login?error=account_inactive');
         $this->assertGuest();
     }
 
@@ -88,7 +88,7 @@ class GoogleAuthTest extends TestCase
         Socialite::shouldReceive('driver')->with('google')->andReturn($driver);
 
         $this->get('/auth/google/callback')
-            ->assertRedirect('http://localhost:5173/login?error=oauth_failed');
+            ->assertRedirect('/login?error=oauth_failed');
         $this->assertGuest();
     }
 }

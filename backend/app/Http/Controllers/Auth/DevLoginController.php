@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\UserAccessResolver;
+use App\Support\FrontendRedirect;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 
@@ -31,8 +32,6 @@ class DevLoginController extends Controller
     {
         abort_unless(app()->environment('local', 'testing'), 404);
 
-        $frontend = rtrim((string) config('app.frontend_url'), '/');
-
         $user = User::query()
             ->where('role', User::ROLE_VENDOR)
             ->whereHas('vendor')
@@ -44,14 +43,14 @@ class DevLoginController extends Controller
             // dibuat" supaya penanganannya jelas: yang kedua butuh seeder.
             $adaAkunVendor = User::query()->where('role', User::ROLE_VENDOR)->exists();
 
-            return redirect()->away(
-                $frontend . '/login?error=' . ($adaAkunVendor ? 'vendor_profile_missing' : 'account_not_registered'),
+            return FrontendRedirect::to(
+                '/login?error=' . ($adaAkunVendor ? 'vendor_profile_missing' : 'account_not_registered'),
             );
         }
 
         Auth::login($user, true);
         request()->session()->regenerate();
 
-        return redirect()->away($frontend . $this->access->destinationFor($user));
+        return FrontendRedirect::to($this->access->destinationFor($user));
     }
 }
