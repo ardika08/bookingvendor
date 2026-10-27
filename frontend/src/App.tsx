@@ -1,4 +1,6 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import { applyDocumentTitle } from '@/lib/document-title'
 import { DashboardLayout } from '@/components/layout/DashboardLayout'
 import { AdminLayout } from '@/components/admin/AdminLayout'
 import { RoleGate } from '@/components/auth/RoleGate'
@@ -38,6 +40,19 @@ import { PromoHomePage } from '@/pages/promo/PromoHomePage'
  * layout sendiri (panel admin terpisah dari dashboard vendor).
  */
 export function App() {
+  const location = useLocation()
+
+  /*
+   * Judul dokumen dipasang di level aplikasi, bukan di masing-masing layout.
+   * Alasannya: route publik (`/login`, `/invoice/:token`, `/jadwal/:slug`,
+   * `/subscription/success`) TIDAK memakai DashboardLayout maupun AdminLayout,
+   * jadi kalau dipasang di layout, halaman-halaman itu tetap memakai judul
+   * default dari `index.html`.
+   */
+  useEffect(() => {
+    applyDocumentTitle(location.pathname)
+  }, [location.pathname])
+
   return (
     <Routes>
       <Route path="/" element={<PromoLayout />}>
