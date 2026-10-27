@@ -278,7 +278,83 @@ antrean.
 
 ---
 
-## 9. Duitku
+## 9. Masuk dengan Google (OAuth)
+
+Login satu-satunya di produksi adalah Google. Tanpa langkah ini, tombol
+"Masuk dengan Google" selalu berakhir `oauth_failed`.
+
+### 9.1 Buat OAuth client
+
+1. Buka [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
+   → *Create Credentials* → *OAuth client ID*.
+2. Jenis aplikasi: **Web application**.
+3. Isi **Authorized redirect URIs** dengan path callback Laravel:
+
+   ```
+   https://vendotkit.my.id/auth/google/callback
+   ```
+
+   Harus **persis** sama dengan `GOOGLE_REDIRECT_URI` — beda satu karakter
+   (garis miring di akhir, `http` vs `https`, `www`) menghasilkan
+   `redirect_uri_mismatch`.
+4. *Authorized JavaScript origins* **tidak diperlukan** — aplikasi ini memakai
+   redirect flow server-side, bukan Google Sign-In di browser.
+5. Salin *Client ID* dan *Client secret*.
+
+### 9.2 Isi `.env`
+
+```dotenv
+GOOGLE_CLIENT_ID=xxxxxxxx.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=GOCSPX-xxxxxxxx
+GOOGLE_REDIRECT_URI="https://vendotkit.my.id/auth/google/callback"
+```
+
+> Perhatikan: `GOOGLE_REDIRECT_URI` **tidak boleh** dibiarkan memakai
+> `${APP_URL}/...` bila `APP_URL` diawali `http://`. Nilai itu yang dikirim ke
+> Google, jadi skemanya harus `https` dan hostnya harus domain final.
+
+Lalu muat ulang konfigurasi:
+
+```bash
+cd ~/bookingvendor
+php artisan config:cache
+```
+
+### 9.3 Akun harus sudah terdaftar
+
+Tidak ada registrasi publik. `UserAccessResolver` mencocokkan akun Google
+dengan baris `users` lewat `google_id`, lalu lewat **email** bila `google_id`
+masih kosong. Jadi:
+
+- email Google kamu harus sama dengan `users.email` di database;
+- bila belum ada, buat lewat Terminal:
+
+```bash
+php artisan tinker --execute="
+App\Models\User::create([
+  'name' => 'Nama Kamu',
+  'email' => 'email-kamu@gmail.com',
+  'role' => 'admin',
+  'is_active' => true,
+]);
+"
+```
+
+Akun admin akan diarahkan ke `/admin`, vendor ke `/dashboard`.
+
+### 9.4 Yang sering gagal
+
+| Gejala | Penyebab | Solusi |
+|---|---|---|
+| `redirect_uri_mismatch` | URI di Console ≠ `GOOGLE_REDIRECT_URI` | Samakan persis, termasuk skema & tanpa garis miring akhir |
+| `oauth_failed` | Client ID/secret kosong atau salah | Isi `.env`, lalu `config:cache` |
+| `account_not_registered` | Email Google tidak ada di `users` | Buat user (lihat 9.3) |
+| `account_inactive` | `is_active = false` | Set `is_active = true` |
+| Login sukses lalu balik ke `/login` | Cookie sesi tidak tersimpan | `SESSION_SECURE_COOKIE` harus sesuai skema situs; `SESSION_DOMAIN` harus domain final tanpa `https://` |
+
+---
+
+## 10. Duitku
 
 1. Masuk dashboard Duitku → *Pengaturan → Callback URL*:
    `https://vendotkit.my.id/api/webhooks/duitku`
@@ -294,7 +370,7 @@ set `DUITKU_CALLBACK_URL` ke URL tunnel.
 
 ---
 
-## 10. Daftar periksa setelah deploy
+## 11. Daftar periksa setelah deploy
 
 ```bash
 # 1. Halaman utama & SPA
@@ -320,7 +396,7 @@ tidak berubah.
 
 ---
 
-## 11. Masalah yang sering muncul
+## 12. Masalah yang sering muncul
 
 | Gejala | Penyebab | Solusi |
 |---|---|---|
@@ -337,7 +413,7 @@ tidak berubah.
 
 ---
 
-## 12. Memperbarui aplikasi
+## 13. Memperbarui aplikasi
 
 ```bash
 cd ~/bookingvendor
