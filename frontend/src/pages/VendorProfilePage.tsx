@@ -133,9 +133,17 @@ export function VendorProfilePage({
               {initials(values.businessName || profile.businessName)}
             </span>
             <div className="min-w-0">
-              <h2 className="text-title tracking-tight text-ink-900">
+              {/*
+                Halaman ini sebelumnya tanpa `<h1>`: satu-satunya heading adalah
+                `<h2>` nama usaha, sementara `<h2>` lain datang dari CardHeader.
+                Akibatnya semua seksi jadi saudara dari judul halaman, bukan
+                anaknya — hierarki datar dan tanpa penanda halaman (WCAG 2.4.6,
+                1.3.1). Nama usaha diangkat jadi `<h1>`; CardHeader tetap `<h2>`
+                sehingga seksi kini benar-benar berada di bawahnya.
+              */}
+              <h1 className="text-title tracking-tight text-ink-900">
                 {values.businessName || 'Nama usaha'}
-              </h2>
+              </h1>
               <p className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-meta text-ink-500">
                 <span className="inline-flex items-center gap-1">
                   <Store className="size-3.5" />

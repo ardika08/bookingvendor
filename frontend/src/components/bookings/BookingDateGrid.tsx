@@ -134,19 +134,31 @@ export function BookingDateGrid({
       <div className="grid grid-cols-7 gap-1.5 sm:grid-cols-11">
         {days.map((day) => {
           const isActive = activeDate === day.iso
+          /*
+           * Teks yang TERLIHAT di sel ini adalah angka dua digit ("01"), bukan
+           * "1". Sebelumnya `aria-label={`Tanggal ${day.day}`}` menghasilkan
+           * "Tanggal 1" yang TIDAK memuat "01" — melanggar WCAG 2.5.3
+           * (label-content-name-mismatch) di 9 tombol, sehingga pengguna
+           * kontrol suara mengucapkan "01" dan tidak ada yang cocok.
+           *
+           * Perbaikannya: nama aksesibel dibangun dari `display` (teks yang
+           * benar-benar dirender) lalu ditambah konteks tanggal penuh dan
+           * status. Dengan begitu "01" selalu menjadi bagian dari nama, dan
+           * screen reader tetap mendapat informasi lengkap.
+           */
+          const display = String(day.day).padStart(2, '0')
+          const statusLabel = day.status
+            ? BOOKING_STATUS_META[day.status].label
+            : day.isBlocked
+              ? 'diblokir'
+              : 'kosong'
           return (
             <button
               key={day.iso}
               type="button"
               onClick={() => onSelectDate?.(day.iso)}
-              title={
-                day.status
-                  ? `${day.iso} — ${BOOKING_STATUS_META[day.status].label}`
-                  : day.isBlocked
-                    ? `${day.iso} — diblokir`
-                    : `${day.iso} — kosong`
-              }
-              aria-label={`Tanggal ${day.day}`}
+              title={`${day.iso} — ${statusLabel}`}
+              aria-label={`${display} ${day.iso} — ${statusLabel}`}
               className={cn(
                 'flex h-8 items-center justify-center rounded-lg text-meta font-semibold tabular-nums transition-colors',
                 day.status

@@ -94,9 +94,16 @@ export function BookingDetailPage({
               {initials(booking.client.name)}
             </span>
             <div>
-              <h2 className="text-title tracking-tight text-ink-900">
+              {/*
+                Halaman ini sebelumnya tidak punya `<h1>` sama sekali — satu-
+                satunya heading adalah `<h2>` nama klien, sehingga pengguna
+                screen reader tidak punya penanda halaman (WCAG 2.4.6, 1.3.1).
+                Topbar sengaja memakai `<p>` karena itu label chrome, bukan
+                judul dokumen, jadi `<h1>` harus ada di sini.
+              */}
+              <h1 className="text-title tracking-tight text-ink-900">
                 {booking.client.name}
-              </h2>
+              </h1>
               <div className="mt-1 flex flex-wrap items-center gap-2">
                 <StatusBadge status={status} variant="pill" />
                 <span className="text-meta text-ink-500">{meta.description}</span>

@@ -69,7 +69,13 @@ export function DashboardLayout() {
 
   return (
     <div className="min-h-dvh bg-ink-50">
-      <aside className="fixed inset-y-0 left-0 hidden w-60 border-r border-ink-200/80 lg:block">
+      {/* Landmark diberi nama karena ada dua <aside> (desktop + drawer mobile);
+          tanpa aria-label keduanya tidak terbedakan saat berpindah landmark
+          (WCAG 1.3.1, axe: landmark-unique). */}
+      <aside
+        aria-label="Navigasi utama"
+        className="fixed inset-y-0 left-0 hidden w-60 border-r border-ink-200/80 lg:block"
+      >
         <Sidebar />
       </aside>
 
@@ -97,7 +103,10 @@ export function DashboardLayout() {
             className="absolute inset-0 bg-ink-900/40"
             onClick={() => setSidebarOpen(false)}
           />
-          <aside className="absolute inset-y-0 left-0 w-64 border-r border-ink-200 bg-white">
+              <aside
+            aria-label="Navigasi utama (menu seluler)"
+            className="absolute inset-y-0 left-0 w-64 border-r border-ink-200 bg-white"
+          >
             <Sidebar />
           </aside>
         </div>
