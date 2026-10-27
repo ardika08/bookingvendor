@@ -9,7 +9,7 @@ import { cn } from '@/lib/cn'
  * tombol di dalam form memakai gaya yang sama tanpa duplikasi kelas.
  */
 
-type Variant = 'primary' | 'secondary' | 'ghost'
+type Variant = 'primary' | 'secondary' | 'ghost' | 'danger'
 type Size = 'sm' | 'md' | 'lg'
 
 const VARIANT_CLASS: Record<Variant, string> = {
@@ -18,6 +18,18 @@ const VARIANT_CLASS: Record<Variant, string> = {
   secondary:
     'bg-white text-ink-700 ring-1 ring-ink-200 shadow-sm hover:bg-ink-50 hover:text-ink-900 disabled:text-ink-400',
   ghost: 'text-ink-600 hover:bg-ink-100 hover:text-ink-900 disabled:text-ink-300',
+  /*
+   * `danger` untuk aksi merusak (hapus/nonaktifkan) yang berdiri sendiri di
+   * atas latar putih. Sengaja diberi latar + garis + bayangan: `ghost` pada
+   * kartu putih tidak punya bentuk sama sekali sehingga tombolnya menyatu
+   * dengan kartu dan sulit dikenali sebagai tombol.
+   *
+   * Garis memakai `rose-300` (bukan `rose-200`): pada `rose-200` tepinya
+   * nyaris tak terlihat di atas putih, sehingga tombolnya kembali terasa
+   * seperti teks biasa.
+   */
+  danger:
+    'bg-white text-rose-700 ring-1 ring-rose-300 shadow-sm hover:bg-rose-50 hover:text-rose-800 hover:ring-rose-400 active:bg-rose-100 disabled:text-rose-300 disabled:ring-rose-100',
 }
 
 const SIZE_CLASS: Record<Size, string> = {

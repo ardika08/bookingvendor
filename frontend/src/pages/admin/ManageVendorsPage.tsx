@@ -383,7 +383,7 @@ function VendorCard({
             <ButtonLink
               to={`/admin/vendors/${vendor.id}/edit`}
               size="sm"
-              variant="ghost"
+              variant="secondary"
               aria-label={`Edit ${vendor.name}`}
             >
               <Pencil className="size-3.5" />
@@ -391,11 +391,10 @@ function VendorCard({
             </ButtonLink>
             <Button
               size="sm"
-              variant="ghost"
+              variant="danger"
               onClick={onRequestDeactivate}
               disabled={busy}
               aria-label={`Hapus ${vendor.name}`}
-              className="text-rose-600 hover:bg-rose-50 hover:text-rose-700"
             >
               <Trash2 className="size-3.5" />
               Hapus
@@ -404,7 +403,7 @@ function VendorCard({
         ) : (
           <Button
             size="sm"
-            variant="ghost"
+            variant="secondary"
             onClick={onReactivate}
             disabled={busy}
             aria-label={`Aktifkan ${vendor.name}`}

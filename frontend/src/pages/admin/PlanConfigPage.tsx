@@ -232,17 +232,16 @@ function PlanCard({
             : 'Langganan aktif tanpa batas booking & invoice selama masa paket.')}
       </p>
 
-      <div className="mt-auto flex items-center justify-end gap-1 pt-3">
-        <Button size="sm" variant="ghost" onClick={onEdit} aria-label={`Edit ${plan.name}`}>
+      <div className="mt-auto flex items-center justify-end gap-1.5 pt-3">
+        <Button size="sm" variant="secondary" onClick={onEdit} aria-label={`Edit ${plan.name}`}>
           <Pencil className="size-3.5" />
           Edit
         </Button>
         <Button
           size="sm"
-          variant="ghost"
+          variant="danger"
           onClick={onDelete}
           aria-label={`Hapus ${plan.name}`}
-          className="text-rose-600 hover:bg-rose-50 hover:text-rose-700"
         >
           <Trash2 className="size-3.5" />
           Hapus
