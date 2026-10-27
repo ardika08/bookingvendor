@@ -1,11 +1,16 @@
 import { ArrowLeft, AlertTriangle, ShieldCheck } from '@/components/ui/icons'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Button } from '@/components/ui/Button'
 import { Card, CardBody, CardFooter, CardHeader } from '@/components/ui/Card'
 import { Field, FormSection, inputClass, textareaClass } from '@/components/ui/Field'
 import { useToast } from '@/components/ui/Toast'
-import { getMockAdminVendor, setMockAdminVendorActive, updateMockAdminVendor } from '@/lib/mock/admin'
+import {
+  fetchAdminVendor,
+  setAdminVendorActive,
+  updateAdminVendor,
+  type AdminVendorSummary,
+} from '@/lib/api/admin-vendors'
 import { VENDOR_CATEGORIES } from '@/lib/vendor-profile'
 
 /**
@@ -17,6 +22,8 @@ import { VENDOR_CATEGORIES } from '@/lib/vendor-profile'
  *
  * Zona nonaktif ada di halaman ini (bukan detail) karena keputusan
  * menonaktifkan biasanya diambil saat meninjau lalu memperbaiki data vendor.
+ *
+ * Data diambil dari API nyata (`/api/admin/vendors/{id}`), bukan data contoh.
  */
 
 interface VendorEditValues {
@@ -36,26 +43,73 @@ export function VendorEditPage() {
   const { notify } = useToast()
   const formRef = useRef<HTMLFormElement>(null)
 
-  const [current, setCurrent] = useState(() => getMockAdminVendor(vendorId))
-  const [values, setValues] = useState<VendorEditValues>(() => ({
-    name: current?.name ?? '',
-    ownerName: current?.ownerName ?? '',
-    category: current?.category ?? '',
-    city: current?.city ?? '',
-    description: current?.description ?? '',
-    contact: current?.contact ?? '',
-  }))
+  const [current, setCurrent] = useState<AdminVendorSummary | null>(null)
+  const [values, setValues] = useState<VendorEditValues>({
+    name: '',
+    ownerName: '',
+    category: '',
+    city: '',
+    description: '',
+    contact: '',
+  })
+  const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState<Error | null>(null)
   const [errors, setErrors] = useState<VendorEditErrors>({})
   const [submitted, setSubmitted] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [toggling, setToggling] = useState(false)
 
-  if (current === null) {
+  useEffect(() => {
+    const controller = new AbortController()
+    let active = true
+
+    fetchAdminVendor(vendorId, controller.signal)
+      .then((vendor) => {
+        if (!active) return
+        setCurrent(vendor)
+        setValues({
+          name: vendor.name ?? '',
+          ownerName: vendor.ownerName ?? '',
+          category: vendor.category ?? '',
+          city: vendor.city ?? '',
+          description: vendor.description ?? '',
+          contact: vendor.contact ?? '',
+        })
+        setLoadError(null)
+      })
+      .catch((cause: unknown) => {
+        if (!active) return
+        if (cause instanceof DOMException && cause.name === 'AbortError') return
+        setLoadError(cause instanceof Error ? cause : new Error('Gagal memuat data vendor.'))
+      })
+      .finally(() => {
+        if (!active) return
+        setLoading(false)
+      })
+
+    return () => {
+      active = false
+      controller.abort()
+    }
+  }, [vendorId])
+
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        <div className="h-8 w-40 animate-pulse rounded bg-ink-100" aria-hidden />
+        <div className="h-64 animate-pulse rounded-xl bg-white" aria-hidden />
+        <div className="h-32 animate-pulse rounded-xl bg-white" aria-hidden />
+      </div>
+    )
+  }
+
+  if (loadError !== null || current === null) {
     return (
       <div className="rounded-xl border border-dashed border-ink-300 bg-white px-6 py-16 text-center">
         <ShieldCheck className="mx-auto size-6 text-ink-400" />
         <h2 className="mt-3 text-lead text-ink-900">Vendor tidak ditemukan</h2>
         <p className="mx-auto mt-1 max-w-sm text-body text-ink-500">
-          Vendor mungkin sudah dihapus atau tautannya tidak berlaku.
+          {loadError?.message ?? 'Vendor mungkin sudah dihapus atau tautannya tidak berlaku.'}
         </p>
         <Link
           to="/admin/vendors"
@@ -108,33 +162,44 @@ export function VendorEditPage() {
 
     setSaving(true)
     try {
-      const updated = updateMockAdminVendor(vendorId, {
+      const updated = await updateAdminVendor(vendorId, {
         name: values.name.trim(),
-        ownerName: values.ownerName.trim(),
+        owner_name: values.ownerName.trim(),
         category: values.category,
-        city: values.city.trim(),
-        description: values.description.trim(),
-        contact: values.contact.trim(),
+        city: values.city.trim() || null,
+        description: values.description.trim() || null,
+        contact: values.contact.trim() || null,
       })
 
-      if (updated) setCurrent(updated)
+      setCurrent(updated)
       notify('Perubahan profil vendor tersimpan.', { tone: 'success' })
+    } catch (cause) {
+      notify(cause instanceof Error ? cause.message : 'Gagal menyimpan perubahan.', {
+        tone: 'error',
+      })
     } finally {
       setSaving(false)
     }
   }
 
-  function handleToggleActive() {
-    // Function declaration di-hoist, jadi narrowing `current` tidak berlaku di sini.
-    if (current === null) return
-    const updated = setMockAdminVendorActive(vendorId, !current.isActive)
-    if (updated) setCurrent(updated)
-    notify(
-      updated?.isActive
-        ? `"${updated.name}" diaktifkan kembali.`
-        : `"${updated?.name}" dinonaktifkan — vendor tidak bisa masuk sementara data tetap utuh.`,
-      { tone: 'success' },
-    )
+  async function handleToggleActive() {
+    setToggling(true)
+    try {
+      const updated = await setAdminVendorActive(vendorId, !current!.isActive)
+      setCurrent(updated)
+      notify(
+        updated.isActive
+          ? `"${updated.name}" diaktifkan kembali.`
+          : `"${updated.name}" dinonaktifkan — vendor tidak bisa masuk sementara data tetap utuh.`,
+        { tone: 'success' },
+      )
+    } catch (cause) {
+      notify(cause instanceof Error ? cause.message : 'Gagal mengubah status akun.', {
+        tone: 'error',
+      })
+    } finally {
+      setToggling(false)
+    }
   }
 
   return (
@@ -301,9 +366,10 @@ export function VendorEditPage() {
             type="button"
             variant={current.isActive ? 'secondary' : 'primary'}
             onClick={handleToggleActive}
+            disabled={toggling}
             className="shrink-0"
           >
-            {current.isActive ? 'Nonaktifkan' : 'Aktifkan kembali'}
+            {toggling ? 'Menyimpan…' : current.isActive ? 'Nonaktifkan' : 'Aktifkan kembali'}
           </Button>
         </CardBody>
       </Card>

@@ -86,6 +86,7 @@ import {
   MessageCircleIcon,
   PackageIcon,
   PencilIcon,
+  Delete02Icon,
   PhoneIcon,
   PlusIcon,
   QrCodeIcon,
@@ -201,6 +202,8 @@ export const Menu = icon(MenuIcon, 'Menu')
 export const MessageCircle = icon(MessageCircleIcon, 'MessageCircle')
 export const Package = icon(PackageIcon, 'Package')
 export const Pencil = icon(PencilIcon, 'Pencil')
+/** Hugeicons tidak punya "Trash2"; Delete02 adalah bentuk tempat sampah. */
+export const Trash2 = icon(Delete02Icon, 'Trash2')
 export const Phone = icon(PhoneIcon, 'Phone')
 export const Plus = icon(PlusIcon, 'Plus')
 export const QrCode = icon(QrCodeIcon, 'QrCode')
