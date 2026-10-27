@@ -1,7 +1,7 @@
 import {
+  Area,
+  AreaChart,
   CartesianGrid,
-  Line,
-  LineChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -15,14 +15,14 @@ import type { RevenuePoint } from '@/lib/api/revenue'
 /**
  * Grafik pendapatan vendor.
  *
- * Dua garis, karena menjawab pertanyaan berbeda:
- * - **Nilai kontrak** (oranye) — acara yang sudah pasti berjalan, dihitung dari
+ * Dua kurva, karena menjawab pertanyaan berbeda:
+ * - **Nilai kontrak** (biru) — acara yang sudah pasti berjalan, dihitung dari
  *   tanggal acara. Ini kapasitas kerja vendor.
- * - **Uang masuk** (hijau) — dana yang benar-benar diterima, dihitung dari
+ * - **Uang masuk** (ungu) — dana yang benar-benar diterima, dihitung dari
  *   tanggal pembayaran. Ini arus kas.
  *
- * Jarak antara kedua garis itu sendiri informatif: garis kontrak yang jauh di
- * atas garis pembayaran berarti banyak acara sudah fix tetapi dananya belum
+ * Jarak antara kedua kurva itu sendiri informatif: kurva kontrak yang jauh di
+ * atas kurva pembayaran berarti banyak acara sudah fix tetapi dananya belum
  * tertagih.
  *
  * Rentang default 6 bulan. Enam titik cukup untuk melihat tren tanpa membuat
@@ -35,15 +35,32 @@ const RANGE_OPTIONS = [3, 6, 12] as const
  * Warna garis: nilai hex langsung, BUKAN `var(--color-*)`.
  * Recharts menulis warna ini sebagai presentation attribute (`stroke="..."`),
  * dan browser tidak me-resolve custom property di atribut SVG — akibatnya
- * garis & grid tidak terlihat sama sekali. `#f97316` = `--color-brand-500`.
+ * garis & grid tidak terlihat sama sekali.
+ *
+ * Palet mengikuti referensi desain: biru azure untuk kontrak, ungu violet
+ * untuk uang masuk. Dua hue ini cukup berjauhan di roda warna sehingga area
+ * yang bertumpuk tetap terbaca sebagai dua bidang berbeda.
  */
-const CONTRACT_COLOR = '#f97316'
-const PAID_COLOR = '#059669'
+const CONTRACT_COLOR = '#4a90d9'
+const PAID_COLOR = '#8b5cf6'
 /** Token netral yang dipakai grid/sumbu (lihat `index.css`). */
 const INK_100 = '#eceef0'
-const INK_200 = '#d9dde2'
 const INK_300 = '#b6bdc6'
 const INK_400 = '#8c96a3'
+
+/**
+ * Gradasi area: pekat di dekat garis, luruh ke transparan di dasar plot.
+ * `stopOpacity` sengaja rendah (0.28 → 0) supaya dua bidang yang bertumpuk
+ * tidak menjadi blok warna pekat yang menutupi grid di belakangnya.
+ */
+function AreaGradient({ id, color }: { id: string; color: string }) {
+  return (
+    <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stopColor={color} stopOpacity={0.28} />
+      <stop offset="100%" stopColor={color} stopOpacity={0} />
+    </linearGradient>
+  )
+}
 
 export function RevenueChart() {
   const { points, totals, range, setRange, loading, error, reload } = useRevenueSeries(6)
@@ -85,27 +102,31 @@ export function RevenueChart() {
           </div>
         </div>
 
-        <RangeSelector value={range} onChange={setRange} />
-      </header>
+        <div className="flex shrink-0 flex-wrap items-center gap-x-5 gap-y-2 sm:justify-end">
+          {/* Metrik ringkas di kanan atas, mengikuti tata letak referensi:
+              angka besar jadi jangkar, label kecil di atasnya. */}
+          <dl className="flex items-baseline gap-5">
+            <div>
+              <dt className="flex items-center gap-1.5 text-[10.5px] font-medium uppercase tracking-wide text-ink-400">
+                <LegendDot color={CONTRACT_COLOR} /> Kontrak
+              </dt>
+              <dd className="text-[15px] font-semibold tabular-nums text-ink-900">
+                {formatCurrency(totals.contractValue)}
+              </dd>
+            </div>
+            <div>
+              <dt className="flex items-center gap-1.5 text-[10.5px] font-medium uppercase tracking-wide text-ink-400">
+                <LegendDot color={PAID_COLOR} /> Masuk
+              </dt>
+              <dd className="text-[15px] font-semibold tabular-nums text-ink-900">
+                {formatCurrency(totals.paid)}
+              </dd>
+            </div>
+          </dl>
 
-      <dl className="mt-4 flex flex-wrap items-baseline gap-x-6 gap-y-2">
-        <div>
-          <dt className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wide text-ink-400">
-            <LegendDot className="bg-brand-500" /> Nilai kontrak
-          </dt>
-          <dd className="mt-0.5 text-[15px] font-semibold tabular-nums text-ink-900">
-            {formatCurrency(totals.contractValue)}
-          </dd>
+          <RangeSelector value={range} onChange={setRange} />
         </div>
-        <div>
-          <dt className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wide text-ink-400">
-            <LegendDot className="bg-emerald-600" /> Uang masuk
-          </dt>
-          <dd className="mt-0.5 text-[15px] font-semibold tabular-nums text-emerald-700">
-            {formatCurrency(totals.paid)}
-          </dd>
-        </div>
-      </dl>
+      </header>
 
       <div className="mt-4 h-56">
         {loading && points.length === 0 ? (
@@ -114,13 +135,17 @@ export function RevenueChart() {
           <EmptyChart />
         ) : (
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={points} margin={{ top: 4, right: 6, bottom: 0, left: 6 }}>
+            <AreaChart data={points} margin={{ top: 6, right: 8, bottom: 0, left: 4 }}>
+              <defs>
+                <AreaGradient id="gradContract" color={CONTRACT_COLOR} />
+                <AreaGradient id="gradPaid" color={PAID_COLOR} />
+              </defs>
               <CartesianGrid stroke={INK_100} vertical={false} />
               <XAxis
                 dataKey="label"
                 tick={{ fill: INK_400, fontSize: 11 }}
                 tickLine={false}
-                axisLine={{ stroke: INK_200 }}
+                axisLine={false}
                 /* Titik pertama & terakhir ditarik masuk agar tidak terpotong tepi plot. */
                 padding={{ left: 12, right: 12 }}
               />
@@ -135,29 +160,29 @@ export function RevenueChart() {
                 content={<RevenueTooltip />}
                 cursor={{ stroke: INK_300, strokeDasharray: '3 3' }}
               />
-              <Line
+              <Area
                 type="monotone"
                 dataKey="contractValue"
                 name="Nilai kontrak"
                 stroke={CONTRACT_COLOR}
                 strokeWidth={2.5}
-                /* Tanpa animasi: grafik langsung utuh saat dibuka, dan tidak
-                   sempat terlihat "putus" ketika tata letak berubah/scroll. */
+                fill="url(#gradContract)"
                 isAnimationActive={false}
-                dot={{ r: 3.5, fill: '#fff', stroke: CONTRACT_COLOR, strokeWidth: 2 }}
-                activeDot={{ r: 5, strokeWidth: 0, fill: CONTRACT_COLOR }}
+                dot={false}
+                activeDot={{ r: 4.5, strokeWidth: 2, stroke: '#fff', fill: CONTRACT_COLOR }}
               />
-              <Line
+              <Area
                 type="monotone"
                 dataKey="paid"
                 name="Uang masuk"
                 stroke={PAID_COLOR}
                 strokeWidth={2.5}
+                fill="url(#gradPaid)"
                 isAnimationActive={false}
-                dot={{ r: 3.5, fill: '#fff', stroke: PAID_COLOR, strokeWidth: 2 }}
-                activeDot={{ r: 5, strokeWidth: 0, fill: PAID_COLOR }}
+                dot={false}
+                activeDot={{ r: 4.5, strokeWidth: 2, stroke: '#fff', fill: PAID_COLOR }}
               />
-            </LineChart>
+            </AreaChart>
           </ResponsiveContainer>
         )}
       </div>
@@ -219,10 +244,10 @@ function RevenueTooltip({
   return (
     <div className="rounded-lg border border-ink-200 bg-white px-3 py-2 shadow-md">
       <p className="text-[12px] font-semibold text-ink-900">{label}</p>
-      <p className="mt-1 text-[11.5px] tabular-nums text-brand-700">
+      <p className="mt-1 text-[11.5px] tabular-nums" style={{ color: CONTRACT_COLOR }}>
         Kontrak {formatCurrency(point.contractValue)}
       </p>
-      <p className="text-[11.5px] tabular-nums text-emerald-700">
+      <p className="text-[11.5px] tabular-nums" style={{ color: PAID_COLOR }}>
         Masuk {formatCurrency(point.paid)}
       </p>
       <p className="mt-1 text-[11px] text-ink-400">
@@ -261,6 +286,12 @@ function ChartSkeleton() {
   )
 }
 
-function LegendDot({ className }: { className: string }) {
-  return <span className={`inline-block size-2 rounded-full ${className}`} />
+function LegendDot({ color }: { color: string }) {
+  return (
+    <span
+      className="inline-block size-2 rounded-full"
+      style={{ backgroundColor: color }}
+      aria-hidden
+    />
+  )
 }
