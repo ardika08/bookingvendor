@@ -1,4 +1,4 @@
-import { X } from 'lucide-react'
+import { X } from '@/components/ui/icons'
 import { formatCurrency } from '@/lib/format'
 import type { VendorPackage } from '@/types/booking'
 

@@ -1,4 +1,4 @@
-import { Check, Search, UserPlus, X } from 'lucide-react'
+import { Check, Search, UserPlus, X } from '@/components/ui/icons'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { cn } from '@/lib/cn'
 import { normalizeKey, searchClients, type ClientSummary } from '@/lib/clients'

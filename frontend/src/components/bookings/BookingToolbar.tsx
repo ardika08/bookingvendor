@@ -1,4 +1,4 @@
-import { ArrowUpDown, CalendarDays, Check, ChevronDown, Search, SlidersHorizontal, X } from 'lucide-react'
+import { ArrowUpDown, CalendarDays, Check, ChevronDown, Search, SlidersHorizontal, X } from '@/components/ui/icons'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { cn } from '@/lib/cn'
 import { formatMonthYear } from '@/lib/format'

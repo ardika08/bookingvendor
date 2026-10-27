@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { CalendarPlus, ChevronRight, Clock, RefreshCw, Wallet } from 'lucide-react'
+import { CalendarPlus, ChevronRight, Clock, RefreshCw, Wallet } from '@/components/ui/icons'
 import { Link } from 'react-router-dom'
 import { StatusBadge, StatusMenu } from '@/components/bookings/StatusControls'
 import { VendorStatusCard } from '@/components/subscription/VendorStatusCard'

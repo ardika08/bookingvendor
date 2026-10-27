@@ -9,7 +9,7 @@ import {
   Save,
   Sparkles,
   Store,
-} from 'lucide-react'
+} from '@/components/ui/icons'
 import { useMemo, useRef, useState } from 'react'
 import { SubmitErrorBanner } from '@/components/bookings/SubmitErrorBanner'
 import { Button } from '@/components/ui/Button'

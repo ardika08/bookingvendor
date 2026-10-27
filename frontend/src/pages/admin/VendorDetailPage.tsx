@@ -10,8 +10,8 @@ import {
   Store,
   User,
   XCircle,
-  type LucideIcon,
-} from 'lucide-react'
+  type IconComponent,
+} from '@/components/ui/icons'
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Badge } from '@/components/ui/Badge'
@@ -55,7 +55,7 @@ const SUBSCRIPTION_META: Record<
 
 const PAYMENT_STATUS_META: Record<
   AdminPaymentStatus,
-  { label: string; icon: LucideIcon; badgeClass: string; iconClass: string }
+  { label: string; icon: IconComponent; badgeClass: string; iconClass: string }
 > = {
   paid: {
     label: 'Terbayar',

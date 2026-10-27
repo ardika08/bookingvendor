@@ -1,4 +1,4 @@
-import { ArrowRight, Sparkles } from 'lucide-react'
+import { ArrowRight, Sparkles } from '@/components/ui/icons'
 import { ButtonLink } from '@/components/ui/Button'
 import type { SubscriptionSummary } from '@/types/booking'
 

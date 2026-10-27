@@ -1,4 +1,4 @@
-import { Sparkles } from 'lucide-react'
+import { Sparkles } from '@/components/ui/icons'
 import { ButtonLink } from '@/components/ui/Button'
 import { cn } from '@/lib/cn'
 import type { SubscriptionSummary } from '@/types/booking'

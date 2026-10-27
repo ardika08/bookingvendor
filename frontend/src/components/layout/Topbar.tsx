@@ -1,4 +1,4 @@
-import { Bell, ChevronDown, LogOut, Menu } from 'lucide-react'
+import { Bell, ChevronDown, LogOut, Menu } from '@/components/ui/icons'
 import { formatMonthYear, initials } from '@/lib/format'
 import { clearAuthRole } from '@/lib/auth-session'
 import type { CurrentUser } from '@/types/booking'

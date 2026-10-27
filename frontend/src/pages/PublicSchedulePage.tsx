@@ -8,7 +8,7 @@ import {
   CircleX,
   Clock3,
   RefreshCw,
-} from 'lucide-react'
+} from '@/components/ui/icons'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { ApiError } from '@/lib/api/client'

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Check, Copy, ExternalLink, Link2 } from 'lucide-react'
+import { Check, Copy, ExternalLink, Link2 } from '@/components/ui/icons'
 import { Button } from '@/components/ui/Button'
 import { Card, CardBody, CardHeader } from '@/components/ui/Card'
 

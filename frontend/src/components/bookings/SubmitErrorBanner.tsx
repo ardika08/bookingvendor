@@ -1,4 +1,4 @@
-import { AlertTriangle, RefreshCw, X } from 'lucide-react'
+import { AlertTriangle, RefreshCw, X } from '@/components/ui/icons'
 import { ApiError } from '@/lib/api/client'
 
 /**

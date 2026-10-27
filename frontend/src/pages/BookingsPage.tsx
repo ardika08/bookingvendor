@@ -5,7 +5,7 @@ import {
   RefreshCw,
   SearchX,
   WifiOff,
-} from 'lucide-react'
+} from '@/components/ui/icons'
 import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { BookingDateGrid } from '@/components/bookings/BookingDateGrid'

@@ -1,4 +1,4 @@
-import { ArrowLeft, AlertTriangle, ShieldCheck } from 'lucide-react'
+import { ArrowLeft, AlertTriangle, ShieldCheck } from '@/components/ui/icons'
 import { useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Button } from '@/components/ui/Button'

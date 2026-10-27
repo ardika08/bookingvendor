@@ -1,4 +1,4 @@
-import { Plus, Search, Users, X } from 'lucide-react'
+import { Plus, Search, Users, X } from '@/components/ui/icons'
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button, ButtonLink } from '@/components/ui/Button'

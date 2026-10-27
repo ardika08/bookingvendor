@@ -8,8 +8,8 @@ import {
   Sparkles,
   UserRound,
   Users,
-  type LucideIcon,
-} from 'lucide-react'
+  type IconComponent,
+} from '@/components/ui/icons'
 import { NavLink } from 'react-router-dom'
 import { cn } from '@/lib/cn'
 
@@ -24,7 +24,7 @@ import { cn } from '@/lib/cn'
 interface NavItem {
   label: string
   to: string
-  icon: LucideIcon
+  icon: IconComponent
   badge?: string
   soon?: boolean
 }

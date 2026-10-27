@@ -1,4 +1,4 @@
-import { ArrowRight, Check, Lock, Sparkles } from 'lucide-react'
+import { ArrowRight, Check, Lock, Sparkles } from '@/components/ui/icons'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Button, ButtonLink } from '@/components/ui/Button'
 import { cn } from '@/lib/cn'

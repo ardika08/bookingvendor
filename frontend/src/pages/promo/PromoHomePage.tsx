@@ -1,4 +1,4 @@
-import { CalendarCheck, ReceiptText, ShieldCheck, Sparkles } from 'lucide-react'
+import { CalendarCheck, ReceiptText, ShieldCheck, Sparkles } from '@/components/ui/icons'
 import { GoogleSignInCta } from '@/components/promo/GoogleSignInCta'
 import { BenefitHighlights } from '@/components/promo/BenefitHighlights'
 import { WorkflowSteps } from '@/components/promo/WorkflowSteps'

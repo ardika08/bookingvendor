@@ -7,7 +7,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import { TrendingUp } from 'lucide-react'
+import { TrendingUp } from '@/components/ui/icons'
 import { useRevenueSeries } from '@/hooks/useRevenueSeries'
 import { formatCurrency } from '@/lib/format'
 import type { RevenuePoint } from '@/lib/api/revenue'

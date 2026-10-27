@@ -13,7 +13,7 @@ import {
   Receipt,
   RefreshCw,
   User,
-} from 'lucide-react'
+} from '@/components/ui/icons'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import { Badge } from '@/components/ui/Badge'

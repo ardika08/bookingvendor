@@ -1,4 +1,4 @@
-import { Banknote, CalendarDays, X } from 'lucide-react'
+import { Banknote, CalendarDays, X } from '@/components/ui/icons'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Field, inputClass, textareaClass } from '@/components/ui/Field'

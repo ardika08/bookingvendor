@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Ban, Check, Copy, ExternalLink, Link2, LoaderCircle, RotateCw } from 'lucide-react'
+import { Ban, Check, Copy, ExternalLink, Link2, LoaderCircle, RotateCw } from '@/components/ui/icons'
 import { Button } from '@/components/ui/Button'
 import { Card, CardBody, CardHeader } from '@/components/ui/Card'
 import {

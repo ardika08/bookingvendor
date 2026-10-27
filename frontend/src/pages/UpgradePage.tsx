@@ -1,4 +1,4 @@
-import { Lock } from 'lucide-react'
+import { Lock } from '@/components/ui/icons'
 import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { PlanCard } from '@/components/subscription/PlanCard'

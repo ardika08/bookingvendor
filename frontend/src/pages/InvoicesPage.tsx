@@ -1,4 +1,4 @@
-import { AlertTriangle, ReceiptText, RefreshCw, SearchX } from 'lucide-react'
+import { AlertTriangle, ReceiptText, RefreshCw, SearchX } from '@/components/ui/icons'
 import { useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { InvoiceFiltersBar } from '@/components/invoices/InvoiceFiltersBar'

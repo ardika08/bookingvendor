@@ -1,4 +1,4 @@
-import { ChevronDown, Search, X } from 'lucide-react'
+import { ChevronDown, Search, X } from '@/components/ui/icons'
 import { BOOKING_STATUS_META } from '@/lib/booking-status'
 import { cn } from '@/lib/cn'
 import { currentMonthKey } from '@/lib/format'

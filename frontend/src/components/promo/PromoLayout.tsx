@@ -1,4 +1,4 @@
-import { Menu, X } from 'lucide-react'
+import { Menu, X } from '@/components/ui/icons'
 import { useState } from 'react'
 import { Link, Outlet } from 'react-router-dom'
 import { GoogleSignInCta } from '@/components/promo/GoogleSignInCta'

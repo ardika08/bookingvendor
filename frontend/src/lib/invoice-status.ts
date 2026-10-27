@@ -1,4 +1,4 @@
-import { Banknote, CheckCircle2, CircleDashed, FileX2, type LucideIcon } from 'lucide-react'
+import { Banknote, CheckCircle2, CircleDashed, FileX2, type IconComponent } from '@/components/ui/icons'
 import { toDate } from '@/lib/format'
 import type { InvoiceStatus, InvoiceType } from '@/types/invoice'
 
@@ -12,7 +12,7 @@ import type { InvoiceStatus, InvoiceType } from '@/types/invoice'
 export interface InvoiceStatusMeta {
   label: string
   description: string
-  icon: LucideIcon
+  icon: IconComponent
   /** Kelas badge ringkas untuk tabel & kartu. */
   badgeClass: string
   /** Warna titik pada legenda / indikator. */

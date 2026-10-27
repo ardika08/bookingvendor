@@ -1,4 +1,4 @@
-import { CalendarClock, CheckCircle2, Clock, XCircle, type LucideIcon } from 'lucide-react'
+import { CalendarClock, CheckCircle2, Clock, XCircle, type IconComponent } from '@/components/ui/icons'
 import type { BookingStatus } from '@/types/booking'
 
 /**
@@ -13,7 +13,7 @@ export interface BookingStatusMeta {
   label: string
   /** Kalimat singkat untuk tooltip / keterangan di bawah opsi status. */
   description: string
-  icon: LucideIcon
+  icon: IconComponent
   /** Kelas badge ringkas (tabel & kartu). */
   badgeClass: string
   /** Kelas titik warna. */

@@ -1,4 +1,4 @@
-import { Banknote } from 'lucide-react'
+import { Banknote } from '@/components/ui/icons'
 import { Card, CardBody, CardHeader } from '@/components/ui/Card'
 import { formatCurrency, formatShortDate } from '@/lib/format'
 import type { InvoicePayment, InvoicePaymentMethod } from '@/types/invoice'

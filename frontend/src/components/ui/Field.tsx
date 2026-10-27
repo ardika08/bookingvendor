@@ -1,4 +1,4 @@
-import { AlertCircle, AlertTriangle } from 'lucide-react'
+import { AlertCircle, AlertTriangle } from '@/components/ui/icons'
 import { cn } from '@/lib/cn'
 import type { ReactNode } from 'react'
 

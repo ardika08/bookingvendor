@@ -1,4 +1,4 @@
-import { AlertTriangle, ArrowLeft, Info, Lock } from 'lucide-react'
+import { AlertTriangle, ArrowLeft, Info, Lock } from '@/components/ui/icons'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { BookingFormSidebar } from '@/components/bookings/BookingFormSidebar'

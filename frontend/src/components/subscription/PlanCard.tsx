@@ -1,4 +1,4 @@
-import { Check, Clock3, Crown } from 'lucide-react'
+import { Check, Clock3, Crown } from '@/components/ui/icons'
 import { ButtonLink } from '@/components/ui/Button'
 import { cn } from '@/lib/cn'
 import { formatCurrency } from '@/lib/format'

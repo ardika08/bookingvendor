@@ -1,4 +1,4 @@
-import { FileText, MapPin } from 'lucide-react'
+import { FileText, MapPin } from '@/components/ui/icons'
 import { Link } from 'react-router-dom'
 import { StatusBadge, StatusMenu } from '@/components/bookings/StatusControls'
 import { cn } from '@/lib/cn'

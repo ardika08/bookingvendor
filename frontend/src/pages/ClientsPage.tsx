@@ -1,4 +1,4 @@
-import { Mail, Phone, Search, Users } from 'lucide-react'
+import { Mail, Phone, Search, Users } from '@/components/ui/icons'
 import { useMemo, useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Card, CardBody } from '@/components/ui/Card'

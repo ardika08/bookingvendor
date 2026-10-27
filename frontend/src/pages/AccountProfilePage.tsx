@@ -1,4 +1,4 @@
-import { IdCard, Mail, Phone, User } from 'lucide-react'
+import { IdCard, Mail, Phone, User } from '@/components/ui/icons'
 import { useRef, useMemo, useState } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import { Button } from '@/components/ui/Button'

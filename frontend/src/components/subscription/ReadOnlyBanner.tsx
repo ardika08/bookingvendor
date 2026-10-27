@@ -1,4 +1,4 @@
-import { ArrowRight, BookOpenCheck, Lock } from 'lucide-react'
+import { ArrowRight, BookOpenCheck, Lock } from '@/components/ui/icons'
 import { ButtonLink } from '@/components/ui/Button'
 import {
   readOnlyDescription,

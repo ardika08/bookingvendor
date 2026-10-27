@@ -1,4 +1,4 @@
-import { Check, ChevronDown } from 'lucide-react'
+import { Check, ChevronDown } from '@/components/ui/icons'
 import { useEffect, useRef, useState } from 'react'
 import {
   BOOKING_STATUS_META,

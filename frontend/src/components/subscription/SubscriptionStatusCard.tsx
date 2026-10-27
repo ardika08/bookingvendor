@@ -1,4 +1,4 @@
-import { CalendarClock, Hourglass } from 'lucide-react'
+import { CalendarClock, Hourglass } from '@/components/ui/icons'
 import { cn } from '@/lib/cn'
 import type { SubscriptionState } from '@/types/subscription'
 

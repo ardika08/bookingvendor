@@ -1,4 +1,4 @@
-import { Check } from 'lucide-react'
+import { Check } from '@/components/ui/icons'
 import { GoogleSignInCta } from '@/components/promo/GoogleSignInCta'
 import { formatCurrency } from '@/lib/format'
 import { mockPlans } from '@/lib/mock/subscription'

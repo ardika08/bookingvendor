@@ -1,4 +1,4 @@
-import { Banknote, CheckCircle2, Clock3, XCircle } from 'lucide-react'
+import { Banknote, CheckCircle2, Clock3, XCircle } from '@/components/ui/icons'
 import { ButtonLink } from '@/components/ui/Button'
 import { Card, CardBody, CardHeader } from '@/components/ui/Card'
 import { EmptyState } from '@/components/ui/EmptyState'

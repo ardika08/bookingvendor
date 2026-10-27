@@ -1,4 +1,4 @@
-import { AlertTriangle, ArrowUpRight, FileText } from 'lucide-react'
+import { AlertTriangle, ArrowUpRight, FileText } from '@/components/ui/icons'
 import { Link } from 'react-router-dom'
 import { Badge } from '@/components/ui/Badge'
 import {

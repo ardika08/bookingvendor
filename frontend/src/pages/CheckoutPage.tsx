@@ -13,7 +13,7 @@ import {
   ShieldCheck,
   Smartphone,
   Wallet,
-} from 'lucide-react'
+} from '@/components/ui/icons'
 import { Link } from 'react-router-dom'
 import { Button, ButtonLink } from '@/components/ui/Button'
 import { Card, CardBody, CardHeader } from '@/components/ui/Card'

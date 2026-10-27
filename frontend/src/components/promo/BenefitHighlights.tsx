@@ -5,8 +5,8 @@ import {
   Link2,
   Search,
   Sparkles,
-  type LucideIcon,
-} from 'lucide-react'
+  type IconComponent,
+} from '@/components/ui/icons'
 
 /**
  * Sorotan manfaat utama di halaman promosi (`#fitur`).
@@ -18,7 +18,7 @@ import {
  */
 
 interface Benefit {
-  icon: LucideIcon
+  icon: IconComponent
   title: string
   description: string
 }

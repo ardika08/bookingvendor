@@ -6,8 +6,8 @@ import {
   UserRound,
   Users,
   ShieldCheck,
-  type LucideIcon,
-} from 'lucide-react'
+  type IconComponent,
+} from '@/components/ui/icons'
 import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useLocation, useOutletContext } from 'react-router-dom'
 import { Topbar } from '@/components/layout/Topbar'
@@ -29,7 +29,7 @@ import type { CurrentUser } from '@/types/booking'
 interface AdminNavItem {
   label: string
   to: string
-  icon: LucideIcon
+  icon: IconComponent
   soon?: boolean
 }
 

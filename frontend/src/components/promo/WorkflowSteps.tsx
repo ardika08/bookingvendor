@@ -1,4 +1,4 @@
-import { CalendarPlus, FileText, LogIn, type LucideIcon } from 'lucide-react'
+import { CalendarPlus, FileText, LogIn, type IconComponent } from '@/components/ui/icons'
 
 /**
  * Visualisasi alur kerja tiga langkah di halaman promosi.
@@ -10,7 +10,7 @@ import { CalendarPlus, FileText, LogIn, type LucideIcon } from 'lucide-react'
 
 interface WorkflowStep {
   step: string
-  icon: LucideIcon
+  icon: IconComponent
   title: string
   description: string
 }

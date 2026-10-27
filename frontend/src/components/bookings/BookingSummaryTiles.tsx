@@ -1,4 +1,4 @@
-import { CheckCircle2, Clock, Wallet, XCircle, type LucideIcon } from 'lucide-react'
+import { CheckCircle2, Clock, Wallet, XCircle, type IconComponent } from '@/components/ui/icons'
 import { cn } from '@/lib/cn'
 import { formatCurrency } from '@/lib/format'
 import type { BookingSummary } from '@/lib/api/bookings'
@@ -30,7 +30,7 @@ export function BookingSummaryTiles({
     key: BookingStatus | 'revenue'
     label: string
     value: string
-    icon: LucideIcon
+    icon: IconComponent
     tone: string
     iconTone: string
     status?: BookingStatus

@@ -1,4 +1,4 @@
-import { ArrowRight, CalendarClock, Lock, Sparkles } from 'lucide-react'
+import { ArrowRight, CalendarClock, Lock, Sparkles } from '@/components/ui/icons'
 import type { ReactNode } from 'react'
 import { ButtonLink } from '@/components/ui/Button'
 import { cn } from '@/lib/cn'

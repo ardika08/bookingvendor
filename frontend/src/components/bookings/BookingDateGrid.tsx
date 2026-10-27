@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from '@/components/ui/icons'
 import { Link } from 'react-router-dom'
 import { cn } from '@/lib/cn'
 import { BOOKING_STATUS_META } from '@/lib/booking-status'

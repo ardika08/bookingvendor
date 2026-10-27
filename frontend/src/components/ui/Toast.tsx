@@ -1,4 +1,4 @@
-import { AlertCircle, CheckCircle2, Info, X } from 'lucide-react'
+import { AlertCircle, CheckCircle2, Info, X } from '@/components/ui/icons'
 import {
   createContext,
   useCallback,

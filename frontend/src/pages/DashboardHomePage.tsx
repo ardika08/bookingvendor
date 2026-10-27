@@ -1,4 +1,4 @@
-import { ArrowLeft, Construction } from 'lucide-react'
+import { ArrowLeft, Construction } from '@/components/ui/icons'
 import { Link, useOutletContext } from 'react-router-dom'
 import { cn } from '@/lib/cn'
 import type { CurrentUser } from '@/types/booking'

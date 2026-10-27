@@ -1,4 +1,4 @@
-import { AlertTriangle, CheckCircle2 } from 'lucide-react'
+import { AlertTriangle, CheckCircle2 } from '@/components/ui/icons'
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BookingFormSidebar } from '@/components/bookings/BookingFormSidebar'

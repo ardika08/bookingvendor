@@ -1,4 +1,4 @@
-import { Package, Plus, RefreshCw, Search, X } from 'lucide-react'
+import { Package, Plus, RefreshCw, Search, X } from '@/components/ui/icons'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'

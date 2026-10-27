@@ -6,7 +6,7 @@ import {
   Phone,
   ReceiptText,
   UserRound,
-} from 'lucide-react'
+} from '@/components/ui/icons'
 import { Badge } from '@/components/ui/Badge'
 import { Card, CardBody, CardHeader } from '@/components/ui/Card'
 import {

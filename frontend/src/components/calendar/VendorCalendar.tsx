@@ -9,7 +9,7 @@ import {
   Phone,
   ReceiptText,
   Unlock,
-} from 'lucide-react'
+} from '@/components/ui/icons'
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Badge } from '@/components/ui/Badge'

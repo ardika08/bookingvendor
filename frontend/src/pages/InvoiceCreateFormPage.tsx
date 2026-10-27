@@ -1,4 +1,4 @@
-import { AlertTriangle, ArrowLeft, CalendarDays, FileText, Info, Lock, Receipt } from 'lucide-react'
+import { AlertTriangle, ArrowLeft, CalendarDays, FileText, Info, Lock, Receipt } from '@/components/ui/icons'
 import { useMemo, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { SubmitErrorBanner } from '@/components/bookings/SubmitErrorBanner'

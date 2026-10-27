@@ -1,4 +1,4 @@
-import { LoaderCircle, ShieldCheck, X } from 'lucide-react'
+import { LoaderCircle, ShieldCheck, X } from '@/components/ui/icons'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { clearAuthRole, readAuthRole, saveAuthRole, type AuthRole } from '@/lib/auth-session'

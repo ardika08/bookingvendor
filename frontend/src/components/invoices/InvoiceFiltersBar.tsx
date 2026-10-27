@@ -1,4 +1,4 @@
-import { ChevronDown, Search, X } from 'lucide-react'
+import { ChevronDown, Search, X } from '@/components/ui/icons'
 import { INVOICE_STATUS_DISPLAY_ORDER, INVOICE_STATUS_META, INVOICE_TYPE_META } from '@/lib/invoice-status'
 import { cn } from '@/lib/cn'
 import { INVOICE_TYPES, type InvoiceFilters } from '@/types/invoice'
