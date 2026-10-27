@@ -127,7 +127,12 @@ class AdminPlanApiTest extends TestCase
         $this->putJson('/api/admin/plans/99999', ['price' => 50000])->assertNotFound();
     }
 
-    public function test_code_dan_durasi_tidak_bisa_diubah(): void
+    /**
+     * `code` tetap tidak bisa diubah — itu penanda internal untuk sorotan
+     * katalog. Tetapi `duration_months` SEKARANG bisa diubah, karena modal
+     * edit admin menyediakan field "Masa aktif (bulan)".
+     */
+    public function test_code_tidak_bisa_diubah_tetapi_durasi_bisa(): void
     {
         $this->makePlans();
         $monthly = Plan::query()->where('code', 'monthly')->firstOrFail();
@@ -139,8 +144,13 @@ class AdminPlanApiTest extends TestCase
         ])->assertOk();
 
         $fresh = $monthly->fresh();
+
+        // code diabaikan: tetap monthly.
         $this->assertSame('monthly', $fresh->code);
-        $this->assertSame(1, $fresh->duration_months);
+
+        // durasi berubah sesuai isian admin.
+        $this->assertSame(12, $fresh->duration_months);
+
         $this->assertSame('75000.00', $fresh->price);
     }
 }

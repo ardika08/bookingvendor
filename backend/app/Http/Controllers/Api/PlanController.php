@@ -32,6 +32,17 @@ class PlanController extends Controller
                 'name' => $plan->name,
                 'durationMonths' => $plan->duration_months,
                 'price' => (int) round((float) $plan->price),
+                /*
+                 * Harga normal (sebelum diskon) hanya dikirim bila memang
+                 * lebih tinggi dari harga yang dibayar — kalau tidak, katalog
+                 * akan mencoret angka yang sama atau lebih kecil, dan itu
+                 * menyesatkan.
+                 */
+                'normalPrice' => $plan->normal_price !== null
+                    && (float) $plan->normal_price > (float) $plan->price
+                        ? (int) round((float) $plan->normal_price)
+                        : null,
+                'description' => $plan->description,
                 // Kuota tidak dibatasi untuk semua paket berbayar.
                 'maxBookings' => null,
                 'maxInvoices' => null,

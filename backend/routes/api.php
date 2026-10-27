@@ -74,8 +74,11 @@ Route::middleware(['auth:sanctum', 'admin.only'])->prefix('admin')->group(functi
         ->name('admin.vendors.subscriptions.renew');
 
     Route::get('plans', [AdminPlanController::class, 'index'])->name('admin.plans.index');
+    Route::post('plans', [AdminPlanController::class, 'store'])->name('admin.plans.store');
     Route::match(['put', 'patch'], 'plans/{plan}', [AdminPlanController::class, 'update'])
         ->name('admin.plans.update');
+    Route::delete('plans/{plan}', [AdminPlanController::class, 'destroy'])
+        ->name('admin.plans.destroy');
 
     // Dashboard admin: ringkasan angka platform + grafik pendapatan agregat.
     Route::get('dashboard/summary', [AdminDashboardController::class, 'summary'])

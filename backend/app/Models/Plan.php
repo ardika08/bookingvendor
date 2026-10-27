@@ -20,6 +20,8 @@ class Plan extends Model
         'name',
         'duration_months',
         'price',
+        'normal_price',
+        'description',
         'is_active',
     ];
 
@@ -28,6 +30,7 @@ class Plan extends Model
         return [
             'duration_months' => 'integer',
             'price' => 'decimal:2',
+            'normal_price' => 'decimal:2',
             'is_active' => 'boolean',
         ];
     }

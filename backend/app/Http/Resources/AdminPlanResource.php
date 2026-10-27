@@ -25,7 +25,11 @@ class AdminPlanResource extends JsonResource
             'code' => $this->code,
             'name' => $this->name,
             'durationMonths' => (int) $this->duration_months,
+            // `price` = harga yang dibayar (istilah pemilik produk: "harga coret").
             'price' => $this->price === null ? null : (float) $this->price,
+            // `normalPrice` = harga sebelum diskon, ditampilkan dicoret.
+            'normalPrice' => $this->normal_price === null ? null : (float) $this->normal_price,
+            'description' => $this->description,
             'isActive' => (bool) $this->is_active,
         ];
     }
