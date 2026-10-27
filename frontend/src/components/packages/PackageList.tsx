@@ -55,8 +55,8 @@ export function PackageCard({
     >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <h3 className="truncate text-[14px] font-semibold text-ink-900">{pkg.name}</h3>
-          <p className="mt-0.5 text-[12px] text-ink-500">
+          <h3 className="truncate text-lead font-semibold text-ink-900">{pkg.name}</h3>
+          <p className="mt-0.5 text-meta text-ink-500">
             {pkg.durationHours ? `${pkg.durationHours} jam` : 'Durasi tidak disebutkan'}
           </p>
         </div>
@@ -65,20 +65,20 @@ export function PackageCard({
         )}
       </div>
 
-      <p className="mt-2 text-[17px] font-semibold tabular-nums text-ink-900">
+      <p className="mt-2 text-lead font-semibold tabular-nums text-ink-900">
         {formatCurrency(pkg.price)}
       </p>
 
       {pkg.description ? (
-        <p className="mt-1.5 line-clamp-3 text-[12px] leading-relaxed text-ink-500">
+        <p className="mt-1.5 line-clamp-3 text-meta leading-relaxed text-ink-500">
           {pkg.description}
         </p>
       ) : (
-        <p className="mt-1.5 text-[12px] italic text-ink-400">Belum ada deskripsi.</p>
+        <p className="mt-1.5 text-meta italic text-ink-400">Belum ada deskripsi.</p>
       )}
 
       <div className="mt-auto pt-3">
-        <p className="mb-2 text-[11px] text-ink-400">
+        <p className="mb-2 text-caption text-ink-400">
           {used ? `Dipakai ${pkg.usageCount} booking` : 'Belum pernah dipakai'}
         </p>
         <div className="flex flex-wrap items-center gap-1.5">
@@ -89,7 +89,7 @@ export function PackageCard({
             {pkg.active ? 'Nonaktifkan' : 'Aktifkan'}
           </Button>
           {used ? (
-            <span className="ml-auto text-[11px] text-ink-400" title="Paket sudah dipakai booking">
+            <span className="ml-auto text-caption text-ink-400" title="Paket sudah dipakai booking">
               Arsipkan saja
             </span>
           ) : (
@@ -97,7 +97,7 @@ export function PackageCard({
               type="button"
               onClick={onDelete}
               disabled={busy}
-              className="ml-auto rounded px-1.5 py-1 text-[11.5px] font-medium text-rose-600 hover:bg-rose-50 disabled:opacity-50"
+              className="ml-auto rounded px-1.5 py-1 text-caption font-medium text-rose-600 hover:bg-rose-50 disabled:opacity-50"
             >
               Hapus
             </button>
@@ -130,7 +130,7 @@ export function PackageFiltersBar({
           onChange={(event) => onChange({ ...filters, search: event.target.value })}
           placeholder="Cari nama paket…"
           aria-label="Cari paket"
-          className="h-10 w-full rounded-lg border border-ink-200 bg-white pl-9 pr-9 text-sm text-ink-800 placeholder:text-ink-400 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+          className="h-10 w-full rounded-lg border border-ink-200 bg-white pl-9 pr-9 text-body text-ink-800 placeholder:text-ink-400 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
         />
         {filters.search ? (
           <button
@@ -159,8 +159,8 @@ export function PackageFiltersBar({
             aria-pressed={filters.active === option.value}
             className={
               filters.active === option.value
-                ? 'rounded-full bg-ink-900 px-2.5 py-1 text-[12px] font-medium text-white'
-                : 'rounded-full px-2.5 py-1 text-[12px] font-medium text-ink-500 hover:bg-ink-100 hover:text-ink-800'
+                ? 'rounded-full bg-ink-900 px-2.5 py-1 text-meta font-medium text-white'
+                : 'rounded-full px-2.5 py-1 text-meta font-medium text-ink-500 hover:bg-ink-100 hover:text-ink-800'
             }
           >
             {option.label}
@@ -170,14 +170,14 @@ export function PackageFiltersBar({
           <button
             type="button"
             onClick={() => onChange(EMPTY_PACKAGE_FILTERS)}
-            className="inline-flex h-8 items-center gap-1 rounded-lg px-2 text-[12px] font-medium text-ink-500 hover:bg-ink-100 hover:text-ink-800"
+            className="inline-flex h-8 items-center gap-1 rounded-lg px-2 text-meta font-medium text-ink-500 hover:bg-ink-100 hover:text-ink-800"
           >
             <X className="size-3" /> Reset
           </button>
         ) : null}
       </div>
 
-      <p className="text-[12px] text-ink-500 lg:ml-1 lg:shrink-0">{resultCount} paket</p>
+      <p className="text-meta text-ink-500 lg:ml-1 lg:shrink-0">{resultCount} paket</p>
     </div>
   )
 }
@@ -285,10 +285,10 @@ export function PackageEditorDialog({
             <Package className="size-4" />
           </span>
           <div className="min-w-0 flex-1">
-            <h2 id="package-dialog-title" className="text-[15px] font-semibold text-ink-900">
+            <h2 id="package-dialog-title" className="text-lead font-semibold text-ink-900">
               {editing ? 'Edit paket' : 'Paket baru'}
             </h2>
-            <p className="text-[12px] text-ink-500">
+            <p className="text-meta text-ink-500">
               Paket dipakai ulang saat membuat booking.
             </p>
           </div>
@@ -318,7 +318,7 @@ export function PackageEditorDialog({
             <div className="grid gap-3 sm:grid-cols-2">
               <Field id="packagePrice" label="Harga" required error={errors.price}>
                 <div className="relative">
-                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[13px] text-ink-400">
+                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-body text-ink-400">
                     Rp
                   </span>
                   <input
@@ -364,7 +364,7 @@ export function PackageEditorDialog({
                 onChange={(event) => update('description', event.target.value)}
                 rows={3}
                 placeholder="2 fotografer, liputan 10 jam, album 20 halaman."
-                className="w-full rounded-lg border border-ink-200 bg-white px-3 py-2 text-sm leading-relaxed text-ink-800 placeholder:text-ink-400 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+                className="w-full rounded-lg border border-ink-200 bg-white px-3 py-2 text-body leading-relaxed text-ink-800 placeholder:text-ink-400 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
               />
             </Field>
 
@@ -375,23 +375,23 @@ export function PackageEditorDialog({
                 onChange={(event) => update('active', event.target.checked)}
                 className="mt-0.5 size-4 accent-brand-600"
               />
-              <span className="text-[12.5px]">
+              <span className="text-meta">
                 <span className="block font-medium text-ink-800">Paket aktif</span>
-                <span className="block text-[11.5px] text-ink-500">
+                <span className="block text-caption text-ink-500">
                   Paket nonaktif tidak muncul di pilihan form booking.
                 </span>
               </span>
             </label>
 
             {price > 0 ? (
-              <p className="text-[11.5px] text-ink-500">
+              <p className="text-caption text-ink-500">
                 Harga tampil: <span className="font-medium text-ink-800">{formatCurrency(price)}</span>
               </p>
             ) : null}
           </div>
 
           {submitError ? (
-            <p className="mx-5 mb-3 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-[12px] text-rose-800">
+            <p className="mx-5 mb-3 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-meta text-rose-800">
               {submitError.message}
             </p>
           ) : null}
@@ -421,10 +421,10 @@ export function PackageErrorState({
   const unauthorized = error instanceof ApiError && error.isUnauthorized
   return (
     <div className="flex flex-col items-center justify-center px-6 py-14 text-center">
-      <p className="text-sm font-semibold text-ink-800">
+      <p className="text-lead font-semibold text-ink-800">
         {unauthorized ? 'Sesi kamu berakhir' : 'Gagal memuat paket'}
       </p>
-      <p className="mt-1 max-w-sm text-[13px] leading-relaxed text-ink-500">
+      <p className="mt-1 max-w-sm text-body leading-relaxed text-ink-500">
         {unauthorized
           ? 'Masuk kembali dengan akun Google untuk melanjutkan.'
           : error.message || 'Periksa koneksi internet lalu coba lagi.'}
@@ -469,10 +469,10 @@ export function PackageEmptyState({
       <div className="mb-3 flex size-11 items-center justify-center rounded-full bg-ink-100 text-ink-500">
         <Package className="size-5" />
       </div>
-      <p className="text-sm font-semibold text-ink-800">
+      <p className="text-lead font-semibold text-ink-800">
         {hasFilter ? 'Tidak ada paket yang cocok' : 'Belum ada paket layanan'}
       </p>
-      <p className="mt-1 max-w-sm text-[13px] leading-relaxed text-ink-500">
+      <p className="mt-1 max-w-sm text-body leading-relaxed text-ink-500">
         {hasFilter
           ? 'Coba ubah kata kunci atau filter status.'
           : 'Tambahkan paket supaya saat membuat booking kamu cukup memilih harga, tanpa mengetik ulang.'}

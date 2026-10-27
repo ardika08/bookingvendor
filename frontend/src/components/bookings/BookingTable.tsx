@@ -30,7 +30,7 @@ export function BookingTable({
       <div className="hidden overflow-x-auto scrollbar-slim md:block">
         <table className="w-full border-collapse text-left">
           <thead>
-            <tr className="text-[11px] font-medium text-ink-400">
+            <tr className="text-caption font-medium text-ink-400">
               <th scope="col" className="py-2 pl-5 pr-3 font-medium">Klien</th>
               <th scope="col" className="px-3 py-2 font-medium">Tanggal acara</th>
               <th scope="col" className="px-3 py-2 font-medium">Paket</th>
@@ -53,14 +53,14 @@ export function BookingTable({
                 </td>
                 <td className="px-3 py-3">
                   {booking.packageName ? (
-                    <span className="inline-flex max-w-[11rem] items-center gap-1.5 rounded-full bg-brand-50 px-2.5 py-1 text-[11.5px] font-medium text-brand-700">
+                    <span className="inline-flex max-w-[11rem] items-center gap-1.5 rounded-full bg-brand-50 px-2.5 py-1 text-caption font-medium text-brand-700">
                       <span className="truncate">{booking.packageName}</span>
                     </span>
                   ) : (
-                    <span className="text-[12.5px] text-ink-400">Tanpa paket</span>
+                    <span className="text-meta text-ink-400">Tanpa paket</span>
                   )}
                   {booking.invoiceCount > 0 ? (
-                    <span className="mt-1 flex items-center gap-1 text-[11px] text-ink-500">
+                    <span className="mt-1 flex items-center gap-1 text-caption text-ink-500">
                       <FileText className="size-3" />
                       {booking.invoiceCount} invoice
                     </span>
@@ -70,7 +70,7 @@ export function BookingTable({
                   <StatusBadge status={booking.status} />
                 </td>
                 <td className="px-3 py-3 text-right">
-                  <span className="text-[13px] font-semibold tabular-nums text-ink-900">
+                  <span className="text-body font-semibold tabular-nums text-ink-900">
                     {formatCurrency(booking.totalPrice)}
                   </span>
                 </td>
@@ -97,18 +97,18 @@ export function BookingTable({
               <Avatar name={booking.client.name} />
               <div className="min-w-0 flex-1">
                 <div className="flex items-start justify-between gap-2">
-                  <p className="truncate text-[13.5px] font-semibold text-ink-900">
+                  <p className="truncate text-body font-semibold text-ink-900">
                     {booking.client.name}
                   </p>
                   <StatusBadge status={booking.status} className="shrink-0" />
                 </div>
-                <p className="mt-1 flex items-center gap-1 text-[12px] text-ink-500">
+                <p className="mt-1 flex items-center gap-1 text-meta text-ink-500">
                   <span className="rounded-md bg-ink-50 px-1.5 py-0.5 font-medium text-ink-700">
                     {formatShortDate(booking.eventDate)}
                   </span>
                   {booking.eventTime ? <span>· {formatTime(booking.eventTime)}</span> : null}
                 </p>
-                <p className="mt-1 truncate text-[12px] text-ink-500">
+                <p className="mt-1 truncate text-meta text-ink-500">
                   {booking.packageName ?? 'Tanpa paket'} · {formatCurrency(booking.totalPrice)}
                 </p>
               </div>
@@ -137,11 +137,11 @@ function ClientCell({ booking }: { booking: Booking }) {
       <div className="min-w-0">
         <Link
           to={`/bookings/${booking.id}`}
-          className="block max-w-[12rem] truncate text-[13px] font-semibold text-ink-900 hover:text-brand-700"
+          className="block max-w-[12rem] truncate text-body font-semibold text-ink-900 hover:text-brand-700"
         >
           {booking.client.name}
         </Link>
-        <p className="truncate text-[11.5px] text-ink-400">{booking.client.phone}</p>
+        <p className="truncate text-caption text-ink-400">{booking.client.phone}</p>
       </div>
     </div>
   )
@@ -151,14 +151,14 @@ function EventCell({ booking }: { booking: Booking }) {
   return (
     <div>
       <p className="flex flex-wrap items-center gap-1.5">
-        <span className="rounded-md bg-ink-50 px-2 py-0.5 text-[11.5px] font-medium text-ink-700">
+        <span className="rounded-md bg-ink-50 px-2 py-0.5 text-caption font-medium text-ink-700">
           {formatShortDate(booking.eventDate)}
         </span>
         {booking.eventTime ? (
-          <span className="text-[11.5px] text-ink-400">{formatTime(booking.eventTime)}</span>
+          <span className="text-caption text-ink-400">{formatTime(booking.eventTime)}</span>
         ) : null}
       </p>
-      <p className="mt-1 flex items-center gap-1 text-[11.5px] text-ink-400">
+      <p className="mt-1 flex items-center gap-1 text-caption text-ink-400">
         <MapPin className="size-3 shrink-0" />
         <span className="max-w-[11rem] truncate">{booking.eventLocation ?? 'Lokasi belum diisi'}</span>
       </p>
@@ -170,7 +170,7 @@ function Avatar({ name, className }: { name: string; className?: string }) {
   return (
     <span
       className={cn(
-        'flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-[11px] font-semibold text-brand-700',
+        'flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-caption font-semibold text-brand-700',
         className,
       )}
       aria-hidden

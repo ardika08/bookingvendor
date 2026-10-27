@@ -130,7 +130,7 @@ export function VendorCalendar({
             >
               <ChevronLeft className="size-4" />
             </button>
-            <span className="min-w-[7.5rem] text-center text-[13px] font-medium text-ink-800">
+            <span className="min-w-[7.5rem] text-center text-body font-medium text-ink-800">
               {formatMonthLabel(monthKey)}
             </span>
             <button
@@ -154,7 +154,7 @@ export function VendorCalendar({
       />
 
       <div className="border-b border-ink-100 px-4 py-2.5 sm:px-5">
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[11.5px] text-ink-500">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-caption text-ink-500">
           {(Object.keys(BOOKING_STATUS_META) as BookingStatus[]).map((status) => (
             <span key={status} className="inline-flex items-center gap-1.5">
               <span className={cn('size-2 rounded-full', BOOKING_STATUS_META[status].dotClass)} />
@@ -178,7 +178,7 @@ export function VendorCalendar({
             {CALENDAR_WEEKDAYS.map((label) => (
               <div
                 key={label}
-                className="py-1 text-center text-[10.5px] font-semibold uppercase tracking-wide text-ink-400"
+                className="py-1 text-center text-2xs font-semibold uppercase tracking-wide text-ink-400"
               >
                 {label}
               </div>
@@ -204,28 +204,28 @@ export function VendorCalendar({
         </div>
 
         <aside className="border-t border-ink-100 p-4 lg:border-l lg:border-t-0">
-          <h3 className="text-[12px] font-semibold uppercase tracking-wide text-ink-400">
+          <h3 className="text-meta font-semibold uppercase tracking-wide text-ink-400">
             {selectedDate ? formatSelectedDate(selectedDate) : 'Pilih tanggal'}
           </h3>
 
           {selectedDate === null ? (
-            <p className="mt-2 text-[12.5px] leading-relaxed text-ink-500">
+            <p className="mt-2 text-meta leading-relaxed text-ink-500">
               Klik salah satu tanggal untuk melihat acara pada hari itu.
             </p>
           ) : selectedBookings.length === 0 ? (
             <div className="mt-2 space-y-2">
               {selectedBlock ? (
                 <div className="rounded-lg border border-dashed border-ink-300 bg-ink-100/70 px-3 py-2">
-                  <p className="flex items-center gap-1.5 text-[12.5px] font-medium text-ink-800">
+                  <p className="flex items-center gap-1.5 text-meta font-medium text-ink-800">
                     <Lock className="size-3.5 text-ink-500" />
                     Tanggal diblokir
                   </p>
-                  <p className="mt-0.5 text-[11.5px] text-ink-500">
+                  <p className="mt-0.5 text-caption text-ink-500">
                     {selectedBlock.reason ?? 'Tanpa keterangan'}
                   </p>
                 </div>
               ) : (
-                <p className="text-[12.5px] leading-relaxed text-emerald-800">
+                <p className="text-meta leading-relaxed text-emerald-800">
                   Tanggal ini masih kosong — aman untuk menerima booking baru.
                 </p>
               )}
@@ -259,7 +259,7 @@ export function VendorCalendar({
                   >
                     <label
                       htmlFor={`block-reason-${selectedDate}`}
-                      className="block text-[11.5px] font-medium text-ink-700"
+                      className="block text-caption font-medium text-ink-700"
                     >
                       Keterangan blokir <span className="font-normal text-ink-400">(opsional)</span>
                     </label>
@@ -269,7 +269,7 @@ export function VendorCalendar({
                       onChange={(event) => setBlockReason(event.target.value)}
                       maxLength={120}
                       placeholder="Contoh: acara keluarga"
-                      className="h-9 w-full rounded-md border border-ink-200 px-2.5 text-[12px] text-ink-800 placeholder:text-ink-400 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+                      className="h-9 w-full rounded-md border border-ink-200 px-2.5 text-meta text-ink-800 placeholder:text-ink-400 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
                     />
                     <Button type="submit" size="sm" disabled={savingBlock} className="w-full">
                       <Lock className="size-3.5" />
@@ -289,26 +289,26 @@ export function VendorCalendar({
                   <li key={booking.id}>
                     <div className="rounded-lg border border-ink-200 px-3 py-2.5">
                       <div className="flex items-start justify-between gap-2">
-                        <p className="min-w-0 truncate text-[13px] font-medium text-ink-900">
+                        <p className="min-w-0 truncate text-body font-medium text-ink-900">
                           {booking.client.name}
                         </p>
                         <StatusBadge status={booking.status} className="shrink-0" />
                       </div>
-                      <p className="mt-1 text-[11.5px] text-ink-500">
+                      <p className="mt-1 text-caption text-ink-500">
                         {formatTime(booking.eventTime) ?? 'Jam belum ditentukan'} ·{' '}
                         {booking.packageName ?? 'Tanpa paket'}
                       </p>
                       {booking.eventLocation ? (
-                        <p className="mt-1 flex items-start gap-1 text-[11.5px] text-ink-500">
+                        <p className="mt-1 flex items-start gap-1 text-caption text-ink-500">
                           <MapPin className="mt-0.5 size-3 shrink-0" />
                           <span>{booking.eventLocation}</span>
                         </p>
                       ) : null}
-                      <p className="mt-1 text-[11.5px] font-medium tabular-nums text-ink-700">
+                      <p className="mt-1 text-caption font-medium tabular-nums text-ink-700">
                         {formatCurrency(booking.totalPrice)}
                       </p>
 
-                      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-ink-100 pt-2 text-[11.5px]">
+                      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-ink-100 pt-2 text-caption">
                         <a
                           href={`tel:${booking.client.phone.replace(/[^\d+]/g, '')}`}
                           className="inline-flex items-center gap-1 text-ink-600 hover:text-ink-900"
@@ -336,7 +336,7 @@ export function VendorCalendar({
                         ) : null}
                       </div>
 
-                      <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-[11.5px] font-medium">
+                      <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-caption font-medium">
                         <Link
                           to={`/bookings/${booking.id}`}
                           className="text-brand-700 hover:text-brand-800"
@@ -361,7 +361,7 @@ export function VendorCalendar({
           )}
 
           {summary.total > 0 ? (
-            <div className="mt-4 space-y-1.5 border-t border-ink-100 pt-3 text-[11.5px]">
+            <div className="mt-4 space-y-1.5 border-t border-ink-100 pt-3 text-caption">
               {(Object.keys(BOOKING_STATUS_META) as BookingStatus[]).map((status) =>
                 summary.byStatus[status] > 0 ? (
                   <div key={status} className="flex items-baseline justify-between gap-2">
@@ -382,7 +382,7 @@ export function VendorCalendar({
             {createBookingLocked ? (
               <span
                 title="Booking baru terkunci sampai langganan diperpanjang. Data lama tetap bisa dibaca."
-                className="inline-flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-lg bg-ink-100 px-3 py-2 text-[12.5px] font-medium text-ink-400"
+                className="inline-flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-lg bg-ink-100 px-3 py-2 text-meta font-medium text-ink-400"
               >
                 <Lock className="size-3.5" />
                 Booking baru
@@ -448,7 +448,7 @@ function CalendarDay({
       <span className="flex w-full items-center justify-between gap-1">
         <span
           className={cn(
-            'flex size-5 items-center justify-center rounded-full text-[11px] font-medium tabular-nums',
+            'flex size-5 items-center justify-center rounded-full text-caption font-medium tabular-nums',
             cell.isToday ? 'bg-ink-900 text-white' : 'text-ink-600',
           )}
         >
@@ -461,20 +461,27 @@ function CalendarDay({
         <span className="flex w-full flex-col gap-0.5">
           <span className="flex items-center gap-1">
             <span className={cn('size-1.5 shrink-0 rounded-full', status?.dotClass)} />
-            <span className="truncate text-[10.5px] font-medium text-ink-700">
+            <span className="truncate text-2xs font-medium text-ink-700">
               {primary.client.name}
             </span>
           </span>
           {count > 1 ? (
-            <span className="text-[10px] text-ink-400">+{count - 1} acara lain</span>
+            /*
+             * Sel kalender hanya ~35px di 375px. "+2 acara lain" butuh ~35px pada
+             * 10px, jadi mentok. Dipersingkat jadi "+2 acara" dan dipaksa satu
+             * baris — informasinya tetap utuh tanpa meluber ke sel sebelah.
+             */
+            <span className="truncate whitespace-nowrap text-2xs text-ink-400">
+              +{count - 1} acara
+            </span>
           ) : primary.eventTime ? (
-            <span className="text-[10px] tabular-nums text-ink-400">
+            <span className="text-2xs tabular-nums text-ink-400">
               {formatTime(primary.eventTime)}
             </span>
           ) : null}
         </span>
       ) : isBlocked ? (
-        <span className="w-full truncate text-[10px] font-medium text-ink-500">
+        <span className="w-full truncate text-2xs font-medium text-ink-500">
           {blocked?.reason ?? 'Diblokir'}
         </span>
       ) : null}
@@ -493,7 +500,7 @@ function formatSelectedDate(isoDate: string): string {
 /** Avatar + nama dipakai bila kalender ditempatkan dalam daftar. */
 export function CalendarBookingAvatar({ booking }: { booking: Booking }) {
   return (
-    <span className="flex size-6 items-center justify-center rounded-full bg-ink-200 text-[10px] font-semibold text-ink-700">
+    <span className="flex size-6 items-center justify-center rounded-full bg-ink-200 text-2xs font-semibold text-ink-700">
       {initials(booking.client.name)}
     </span>
   )

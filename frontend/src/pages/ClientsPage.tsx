@@ -1,7 +1,7 @@
 import { Mail, Phone, Search, Users } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Button } from '@/components/ui/Button'
-import { Card, CardBody, CardHeader } from '@/components/ui/Card'
+import { Card, CardBody } from '@/components/ui/Card'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { inputClass } from '@/components/ui/Field'
 import { TableSkeleton } from '@/components/ui/TableSkeleton'
@@ -51,17 +51,32 @@ export function ClientsPage() {
 
   return (
     <div className="space-y-4">
-      <Card>
-        <CardHeader
-          title="Klien"
-          description="Kontak yang pernah booking. Dibuat otomatis dari form booking."
-          action={
-            <Button variant="secondary" size="sm" onClick={reload} disabled={loading}>
-              Muat ulang
-            </Button>
-          }
-        />
+      {/*
+        Halaman ini sebelumnya hanya punya `CardHeader` (h2 15px) tanpa judul
+        dokumen sama sekali — satu-satunya halaman tanpa `<h1>`. Judul halaman
+        sekarang dipisahkan dari kartu agar tingkatnya benar dan tidak
+        bergantung pada komponen kartu. Tombol "Muat ulang" ikut pindah ke
+        baris judul supaya tidak ada header kartu yang mengulang judul yang sama.
+      */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-title tracking-tight text-ink-900">Klien</h1>
+          <p className="mt-0.5 text-body text-ink-500">
+            Kontak yang pernah booking. Dibuat otomatis dari form booking.
+          </p>
+        </div>
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={reload}
+          disabled={loading}
+          className="shrink-0"
+        >
+          Muat ulang
+        </Button>
+      </div>
 
+      <Card>
         <CardBody className="space-y-3">
           <div className="flex flex-col gap-2 sm:flex-row">
             <div className="relative flex-1">
@@ -98,7 +113,7 @@ export function ClientsPage() {
 
           {error ? (
             <div className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2.5">
-              <p className="text-[12.5px] text-rose-800">{error}</p>
+              <p className="text-meta text-rose-800">{error}</p>
               <Button variant="secondary" size="sm" className="mt-2" onClick={reload}>
                 Coba lagi
               </Button>
@@ -135,7 +150,7 @@ export function ClientsPage() {
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[44rem] border-collapse text-left">
                   <thead>
-                    <tr className="border-b border-ink-100 text-[11px] uppercase tracking-wide text-ink-400">
+                    <tr className="border-b border-ink-100 text-caption uppercase tracking-wide text-ink-400">
                       <th className="py-2 pr-3 font-medium">Klien</th>
                       <th className="py-2 pr-3 font-medium">Kontak</th>
                       <th className="py-2 pr-3 text-right font-medium">Booking</th>
@@ -152,27 +167,27 @@ export function ClientsPage() {
                       >
                         <td className="py-2.5 pr-3">
                           <div className="flex items-center gap-2.5">
-                            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-50 text-[11px] font-semibold text-brand-700">
+                            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-50 text-caption font-semibold text-brand-700">
                               {initials(client.name)}
                             </span>
-                            <span className="truncate text-[13px] font-medium text-ink-800">
+                            <span className="truncate text-body font-medium text-ink-800">
                               {client.name}
                             </span>
                           </div>
                         </td>
                         <td className="py-2.5 pr-3">
-                          <p className="text-[12px] tabular-nums text-ink-600">{client.phone}</p>
+                          <p className="text-meta tabular-nums text-ink-600">{client.phone}</p>
                           {client.email ? (
-                            <p className="truncate text-[11px] text-ink-400">{client.email}</p>
+                            <p className="truncate text-caption text-ink-400">{client.email}</p>
                           ) : null}
                         </td>
-                        <td className="py-2.5 pr-3 text-right text-[12.5px] tabular-nums text-ink-700">
+                        <td className="py-2.5 pr-3 text-right text-meta tabular-nums text-ink-700">
                           {client.bookingCount}
                         </td>
-                        <td className="py-2.5 pr-3 text-right text-[12.5px] tabular-nums text-ink-800">
+                        <td className="py-2.5 pr-3 text-right text-meta tabular-nums text-ink-800">
                           {client.totalValue > 0 ? formatCurrency(client.totalValue) : '—'}
                         </td>
-                        <td className="py-2.5 text-right text-[12px] text-ink-500">
+                        <td className="py-2.5 text-right text-meta text-ink-500">
                           {client.lastEventDate ? formatDate(client.lastEventDate) : '—'}
                         </td>
                       </tr>
@@ -182,7 +197,7 @@ export function ClientsPage() {
               </div>
 
               <div className="flex flex-col gap-2 border-t border-ink-100 pt-3 sm:flex-row sm:items-center sm:justify-between">
-                <p className="text-[11.5px] text-ink-500">
+                <p className="text-caption text-ink-500">
                   Menampilkan {rangeStart}–{rangeEnd} dari {total} klien
                 </p>
                 <div className="flex items-center gap-2">
@@ -194,7 +209,7 @@ export function ClientsPage() {
                   >
                     Sebelumnya
                   </Button>
-                  <span className="text-[11.5px] tabular-nums text-ink-500">
+                  <span className="text-caption tabular-nums text-ink-500">
                     {page} / {totalPages}
                   </span>
                   <Button
@@ -251,16 +266,16 @@ function ClientDetailDialog({
         onClick={(event) => event.stopPropagation()}
       >
         <div className="flex items-start gap-3">
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-50 text-[12px] font-semibold text-brand-700">
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-50 text-meta font-semibold text-brand-700">
             {initials(client.name)}
           </span>
           <div className="min-w-0 flex-1">
-            <h3 className="truncate text-[15px] font-semibold text-ink-900">{client.name}</h3>
-            <p className="text-[12px] text-ink-500">Klien sejak {formatDate(client.createdAt ?? '')}</p>
+            <h3 className="truncate text-lead font-semibold text-ink-900">{client.name}</h3>
+            <p className="text-meta text-ink-500">Klien sejak {formatDate(client.createdAt ?? '')}</p>
           </div>
         </div>
 
-        <dl className="mt-4 space-y-2 border-t border-ink-100 pt-3 text-[12.5px]">
+        <dl className="mt-4 space-y-2 border-t border-ink-100 pt-3 text-meta">
           <div className="flex items-center gap-2 text-ink-700">
             <Phone className="size-3.5 shrink-0 text-ink-400" />
             <span className="tabular-nums">{client.phone}</span>
@@ -291,7 +306,7 @@ function ClientDetailDialog({
         </dl>
 
         {client.notes ? (
-          <p className="mt-3 rounded-lg bg-ink-50 px-3 py-2 text-[12px] leading-relaxed text-ink-600">
+          <p className="mt-3 rounded-lg bg-ink-50 px-3 py-2 text-meta leading-relaxed text-ink-600">
             {client.notes}
           </p>
         ) : null}

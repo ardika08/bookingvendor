@@ -40,19 +40,19 @@ export function PublicInvoicePage({ data }: { data: PublicInvoiceData }) {
               <Building2 className="size-5" aria-hidden="true" />
             </span>
             <div className="min-w-0">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-400">
+              <p className="text-2xs font-semibold uppercase tracking-[0.12em] text-ink-400">
                 Invoice dari
               </p>
-              <h1 className="truncate text-[15px] font-semibold text-ink-900 sm:text-base">
+              <h1 className="truncate text-lead font-semibold text-ink-900 sm:text-title">
                 {vendor.businessName}
               </h1>
             </div>
           </div>
           <div className="sm:text-right">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-400">
+            <p className="text-2xs font-semibold uppercase tracking-[0.12em] text-ink-400">
               Nomor invoice
             </p>
-            <p className="mt-0.5 text-[13px] font-semibold tabular-nums text-ink-800">
+            <p className="mt-0.5 text-body font-semibold tabular-nums text-ink-800">
               {invoice.number}
             </p>
           </div>
@@ -64,14 +64,14 @@ export function PublicInvoicePage({ data }: { data: PublicInvoiceData }) {
         >
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <p className="text-[11px] font-medium text-white/75">
+              <p className="text-caption font-medium text-white/75">
                 {invoice.status === 'paid'
                   ? 'Status pembayaran'
                   : invoice.status === 'void'
                     ? 'Status invoice'
                     : 'Sisa tagihan'}
               </p>
-              <p className="mt-1 text-[26px] font-semibold tracking-tight sm:text-[32px]">
+              <p className="mt-1 text-heading font-semibold tracking-tight sm:text-display">
                 {invoice.status === 'paid'
                   ? 'Lunas'
                   : invoice.status === 'void'
@@ -79,7 +79,7 @@ export function PublicInvoicePage({ data }: { data: PublicInvoiceData }) {
                     : formatCurrency(remaining)}
               </p>
               {invoice.status !== 'paid' && invoice.status !== 'void' ? (
-                <p className="mt-1 text-[12px] text-white/75">
+                <p className="mt-1 text-meta text-white/75">
                   dari {formatCurrency(invoice.amount)} tagihan {INVOICE_TYPE_META[invoice.type].label.toLowerCase()}
                 </p>
               ) : null}
@@ -89,14 +89,14 @@ export function PublicInvoicePage({ data }: { data: PublicInvoiceData }) {
                 <status.icon className="size-3" aria-hidden="true" />
                 {status.label}
               </Badge>
-              <p className="flex items-center gap-1.5 text-[12px] text-white/80">
+              <p className="flex items-center gap-1.5 text-meta text-white/80">
                 <CalendarDays className="size-3.5" aria-hidden="true" />
                 Jatuh tempo {formatShortDate(invoice.dueAt)}
               </p>
             </div>
           </div>
           {overdue ? (
-            <p className="mt-5 flex items-start gap-2 rounded-lg border border-white/20 bg-white/10 px-3 py-2.5 text-[12px] leading-relaxed text-white">
+            <p className="mt-5 flex items-start gap-2 rounded-lg border border-white/20 bg-white/10 px-3 py-2.5 text-meta leading-relaxed text-white">
               <AlertTriangle className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
               Invoice ini melewati tanggal jatuh tempo.
             </p>
@@ -134,15 +134,15 @@ export function PublicInvoicePage({ data }: { data: PublicInvoiceData }) {
               </dl>
 
               <div className="rounded-xl border border-ink-200 bg-ink-50/70 p-4 sm:p-5">
-                <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-wide text-ink-500">
+                <h2 className="mb-3 text-caption font-semibold uppercase tracking-wide text-ink-500">
                   Rincian pembayaran
                 </h2>
                 <div className="space-y-3">
                   <AmountRow label="Total tagihan" amount={invoice.amount} />
                   <AmountRow label="Sudah dibayar" amount={invoice.paidAmount} tone="emerald" />
                   <div className="flex items-baseline justify-between gap-3 border-t border-ink-200 pt-3">
-                    <span className="text-[13px] font-semibold text-ink-900">Sisa tagihan</span>
-                    <span className="text-[17px] font-semibold tabular-nums text-ink-900">
+                    <span className="text-body font-semibold text-ink-900">Sisa tagihan</span>
+                    <span className="text-lead font-semibold tabular-nums text-ink-900">
                       {formatCurrency(remaining)}
                     </span>
                   </div>
@@ -175,7 +175,7 @@ export function PublicInvoicePage({ data }: { data: PublicInvoiceData }) {
                     />
                   </dl>
                 ) : (
-                  <p className="rounded-lg bg-ink-50 px-3 py-2.5 text-[12px] leading-relaxed text-ink-500">
+                  <p className="rounded-lg bg-ink-50 px-3 py-2.5 text-meta leading-relaxed text-ink-500">
                     Informasi rekening belum tersedia. Hubungi vendor untuk mendapatkan instruksi pembayaran.
                   </p>
                 )
@@ -186,7 +186,7 @@ export function PublicInvoicePage({ data }: { data: PublicInvoiceData }) {
                   href={`https://wa.me/${waDigits}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-5 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-3 text-[12.5px] font-medium text-white transition-colors hover:bg-emerald-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+                  className="mt-5 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-3 text-meta font-medium text-white transition-colors hover:bg-emerald-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
                 >
                   <Phone className="size-3.5" aria-hidden="true" />
                   Hubungi vendor via WhatsApp
@@ -196,7 +196,7 @@ export function PublicInvoicePage({ data }: { data: PublicInvoiceData }) {
           </Card>
         </div>
 
-        <footer className="px-2 pb-2 text-center text-[11px] leading-relaxed text-ink-400">
+        <footer className="px-2 pb-2 text-center text-caption leading-relaxed text-ink-400">
           Halaman ini hanya menampilkan rincian invoice yang dibagikan kepada Anda.
         </footer>
       </div>
@@ -217,11 +217,11 @@ function PublicDetail({
 }) {
   return (
     <div className="min-w-0">
-      <dt className="flex items-center gap-1.5 text-[10.5px] font-medium uppercase tracking-wide text-ink-400">
+      <dt className="flex items-center gap-1.5 text-2xs font-medium uppercase tracking-wide text-ink-400">
         {icon}
         {label}
       </dt>
-      <dd className={`mt-1 wrap-break-word text-[12.5px] font-medium text-ink-800 ${mono ? 'font-mono tabular-nums' : ''}`}>
+      <dd className={`mt-1 wrap-break-word text-meta font-medium text-ink-800 ${mono ? 'font-mono tabular-nums' : ''}`}>
         {value}
       </dd>
     </div>
@@ -238,7 +238,7 @@ function AmountRow({
   tone?: 'emerald'
 }) {
   return (
-    <div className="flex items-baseline justify-between gap-3 text-[12.5px]">
+    <div className="flex items-baseline justify-between gap-3 text-meta">
       <span className="text-ink-500">{label}</span>
       <span className={tone === 'emerald' ? 'tabular-nums text-emerald-700' : 'tabular-nums text-ink-700'}>
         {formatCurrency(amount)}

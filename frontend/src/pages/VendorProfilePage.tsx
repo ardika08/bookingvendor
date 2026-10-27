@@ -129,14 +129,14 @@ export function VendorProfilePage({
       <Card>
         <CardBody className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-3">
-            <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-brand-100 text-[15px] font-semibold text-brand-700">
+            <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-brand-100 text-lead font-semibold text-brand-700">
               {initials(values.businessName || profile.businessName)}
             </span>
             <div className="min-w-0">
-              <h2 className="text-lg font-semibold tracking-tight text-ink-900">
+              <h2 className="text-title tracking-tight text-ink-900">
                 {values.businessName || 'Nama usaha'}
               </h2>
-              <p className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12.5px] text-ink-500">
+              <p className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-meta text-ink-500">
                 <span className="inline-flex items-center gap-1">
                   <Store className="size-3.5" />
                   {values.category || 'Kategori belum dipilih'}
@@ -148,7 +148,7 @@ export function VendorProfilePage({
                   </span>
                 ) : null}
               </p>
-              <p className="mt-1 text-[11.5px] text-ink-400">
+              <p className="mt-1 text-caption text-ink-400">
                 Tautan publik: <span className="font-medium text-ink-600">/{slug}</span>
               </p>
             </div>
@@ -156,11 +156,11 @@ export function VendorProfilePage({
 
           <div className="flex shrink-0 flex-wrap items-center gap-2">
             {dirty ? (
-              <span className="rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-700 ring-1 ring-inset ring-amber-200">
+              <span className="rounded-full bg-amber-50 px-2.5 py-1 text-caption font-medium text-amber-700 ring-1 ring-inset ring-amber-200">
                 Ada perubahan belum disimpan
               </span>
             ) : (
-              <span className="rounded-full bg-ink-100 px-2.5 py-1 text-[11px] font-medium text-ink-500">
+              <span className="rounded-full bg-ink-100 px-2.5 py-1 text-caption font-medium text-ink-500">
                 Tersimpan
               </span>
             )}
@@ -169,7 +169,7 @@ export function VendorProfilePage({
       </Card>
 
       {notice ? (
-        <div className="flex items-start gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-[12.5px] text-emerald-800">
+        <div className="flex items-start gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-meta text-emerald-800">
           <Sparkles className="mt-0.5 size-4 shrink-0" />
           {notice}
         </div>
@@ -178,7 +178,7 @@ export function VendorProfilePage({
       {submitted && errorCount > 0 ? (
         <div className="flex items-start gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3">
           <AlertTriangle className="mt-0.5 size-4 shrink-0 text-rose-600" />
-          <p className="text-[12.5px] text-rose-800">
+          <p className="text-meta text-rose-800">
             {errorCount} isian perlu diperbaiki sebelum profil bisa disimpan.
           </p>
         </div>
@@ -311,11 +311,11 @@ export function VendorProfilePage({
               description="Tujuan transfer yang tercetak di invoice klien."
               action={
                 bankMissing ? (
-                  <span className="rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-700 ring-1 ring-inset ring-amber-200">
+                  <span className="rounded-full bg-amber-50 px-2.5 py-1 text-caption font-medium text-amber-700 ring-1 ring-inset ring-amber-200">
                     Belum lengkap
                   </span>
                 ) : (
-                  <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-medium text-emerald-700 ring-1 ring-inset ring-emerald-200">
+                  <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-caption font-medium text-emerald-700 ring-1 ring-inset ring-emerald-200">
                     Lengkap
                   </span>
                 )
@@ -385,10 +385,10 @@ export function VendorProfilePage({
 
         <aside className="space-y-3 lg:sticky lg:top-20 lg:self-start">
           <div className="rounded-xl border border-ink-200/80 bg-white p-4">
-            <h3 className="text-[12px] font-semibold uppercase tracking-wide text-ink-400">
+            <h3 className="text-meta font-semibold uppercase tracking-wide text-ink-400">
               Ringkasan profil
             </h3>
-            <dl className="mt-3 space-y-2 text-[12.5px]">
+            <dl className="mt-3 space-y-2 text-meta">
               <SummaryRow label="Nama usaha" value={values.businessName || '—'} />
               <SummaryRow label="Kategori" value={values.category || 'Belum dipilih'} />
               <SummaryRow label="Kota" value={values.city || '—'} />
@@ -408,7 +408,7 @@ export function VendorProfilePage({
 
           <div className="flex items-start gap-2 rounded-xl border border-sky-200 bg-sky-50 px-3 py-2.5">
             <Info className="mt-0.5 size-3.5 shrink-0 text-sky-600" />
-            <p className="text-[11.5px] leading-relaxed text-sky-900">
+            <p className="text-caption leading-relaxed text-sky-900">
               Rekening dipakai saat vendor membuat instruksi transfer di invoice. Tanpa rekening,
               invoice tetap bisa diterbitkan tetapi tanpa instruksi pembayaran.
             </p>

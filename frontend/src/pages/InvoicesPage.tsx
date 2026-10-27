@@ -71,8 +71,8 @@ export function InvoicesPage({ subscription }: { subscription: SubscriptionSumma
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold tracking-tight text-ink-900">Daftar Invoice</h2>
-          <p className="mt-0.5 text-[13px] text-ink-500">
+          <h1 className="text-title tracking-tight text-ink-900">Daftar Invoice</h1>
+          <p className="mt-0.5 text-body text-ink-500">
             Semua tagihan booking kamu — DP, pelunasan, dan sisa yang belum masuk.
           </p>
         </div>
@@ -126,7 +126,7 @@ export function InvoicesPage({ subscription }: { subscription: SubscriptionSumma
                   <button
                     type="button"
                     onClick={() => setFilters({ status: 'all', type: 'all', search: '' })}
-                    className="text-[13px] font-medium text-brand-700 hover:underline"
+                    className="text-body font-medium text-brand-700 hover:underline"
                   >
                     Reset semua filter
                   </button>
@@ -160,7 +160,7 @@ export function InvoicesPage({ subscription }: { subscription: SubscriptionSumma
         </div>
 
         {result.items.length > 0 ? (
-          <div className="flex flex-col gap-2 border-t border-ink-100 px-4 py-2.5 text-[12px] text-ink-500 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+          <div className="flex flex-col gap-2 border-t border-ink-100 px-4 py-2.5 text-meta text-ink-500 sm:flex-row sm:items-center sm:justify-between sm:px-5">
             <span>
               Menampilkan {(page - 1) * (result.perPage || result.items.length) + 1}–
               {(page - 1) * (result.perPage || result.items.length) + result.items.length} dari{' '}
@@ -237,8 +237,8 @@ function StatusFilterPills({
           aria-pressed={active === option.value}
           className={
             active === option.value
-              ? 'rounded-full bg-ink-900 px-2.5 py-1 text-[12px] font-medium text-white'
-              : 'rounded-full px-2.5 py-1 text-[12px] font-medium text-ink-500 hover:bg-ink-100 hover:text-ink-800'
+              ? 'rounded-full bg-ink-900 px-2.5 py-1 text-meta font-medium text-white'
+              : 'rounded-full px-2.5 py-1 text-meta font-medium text-ink-500 hover:bg-ink-100 hover:text-ink-800'
           }
         >
           {option.label}
@@ -293,8 +293,8 @@ function StatTile({
 }) {
   return (
     <div className="rounded-xl border border-ink-200/80 bg-white px-3.5 py-3">
-      <p className="text-[11px] font-medium uppercase tracking-wide text-ink-400">{label}</p>
-      <p className={`mt-1 text-[15px] font-semibold tabular-nums ${TONE_CLASS[tone]}`}>{value}</p>
+      <p className="text-caption font-medium uppercase tracking-wide text-ink-400">{label}</p>
+      <p className={`mt-1 text-lead font-semibold tabular-nums ${TONE_CLASS[tone]}`}>{value}</p>
     </div>
   )
 }

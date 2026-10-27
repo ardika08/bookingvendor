@@ -125,8 +125,8 @@ export function PackagesPage() {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-lg font-semibold tracking-tight text-ink-900">Paket Layanan</h2>
-        <p className="mt-0.5 text-[13px] text-ink-500">
+        <h1 className="text-title tracking-tight text-ink-900">Paket Layanan</h1>
+        <p className="mt-0.5 text-body text-ink-500">
           Tetapkan paket &amp; harga sekali, lalu pilih saat membuat booking.
         </p>
       </div>

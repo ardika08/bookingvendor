@@ -13,7 +13,7 @@ export function SubscriptionBar({ subscription }: { subscription: SubscriptionSu
   if (subscription.status === 'active') {
     return (
       <div className="flex flex-col gap-2 rounded-xl border border-emerald-200 bg-emerald-50/70 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-[13px] text-emerald-800">
+        <p className="text-body text-emerald-800">
           <span className="font-semibold">Langganan aktif.</span> Booking &amp; invoice tanpa batas
           sampai {subscription.endsAt ?? 'masa paket berakhir'}.
         </p>
@@ -27,7 +27,7 @@ export function SubscriptionBar({ subscription }: { subscription: SubscriptionSu
   if (subscription.status === 'expired') {
     return (
       <div className="flex flex-col gap-2 rounded-xl border border-rose-200 bg-rose-50/70 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-[13px] text-rose-800">
+        <p className="text-body text-rose-800">
           <span className="font-semibold">Langganan berakhir.</span> Data lama tetap bisa dibaca,
           tetapi booking baru perlu perpanjangan paket.
         </p>
@@ -45,7 +45,7 @@ export function SubscriptionBar({ subscription }: { subscription: SubscriptionSu
     <div className="flex flex-col gap-2 rounded-xl border border-amber-200 bg-amber-50/70 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-start gap-2.5">
         <Sparkles className="mt-0.5 size-4 shrink-0 text-amber-600" />
-        <p className="text-[13px] leading-relaxed text-amber-900">
+        <p className="text-body leading-relaxed text-amber-900">
           <span className="font-semibold">Masa trial:</span> tersisa {bookingLeft} booking &amp;{' '}
           {invoiceLeft} invoice. Jatah tidak direset — berlangganan untuk akses tanpa batas.
         </p>

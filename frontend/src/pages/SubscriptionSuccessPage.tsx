@@ -85,16 +85,16 @@ export function SubscriptionSuccessPage() {
         {state === 'checking' ? (
           <>
             <LoaderCircle className="mx-auto size-10 animate-spin text-brand-600" />
-            <h1 className="mt-4 text-lg font-semibold text-ink-900">Memeriksa pembayaran…</h1>
-            <p className="mt-1 text-sm text-ink-500">Mohon tunggu sebentar, jangan tutup halaman ini.</p>
+            <h1 className="mt-4 text-title text-ink-900">Memeriksa pembayaran…</h1>
+            <p className="mt-1 text-body text-ink-500">Mohon tunggu sebentar, jangan tutup halaman ini.</p>
           </>
         ) : null}
 
         {state === 'paid' ? (
           <>
             <CheckCircle2 className="mx-auto size-10 text-emerald-600" />
-            <h1 className="mt-4 text-lg font-semibold text-ink-900">Pembayaran berhasil</h1>
-            <p className="mt-1 text-sm text-ink-500">
+            <h1 className="mt-4 text-title text-ink-900">Pembayaran berhasil</h1>
+            <p className="mt-1 text-body text-ink-500">
               Langganan Anda sudah aktif
               {endsAt ? ` sampai ${new Date(endsAt).toLocaleDateString('id-ID', {
                 day: 'numeric',
@@ -104,7 +104,7 @@ export function SubscriptionSuccessPage() {
             </p>
             <Link
               to="/dashboard"
-              className="mt-6 inline-flex h-10 items-center justify-center rounded-lg bg-brand-600 px-5 text-sm font-medium text-white hover:bg-brand-700"
+              className="mt-6 inline-flex h-10 items-center justify-center rounded-lg bg-brand-600 px-5 text-body font-medium text-white hover:bg-brand-700"
             >
               Ke dashboard
             </Link>
@@ -114,14 +114,14 @@ export function SubscriptionSuccessPage() {
         {state === 'pending' ? (
           <>
             <Clock3 className="mx-auto size-10 text-amber-500" />
-            <h1 className="mt-4 text-lg font-semibold text-ink-900">Pembayaran sedang diproses</h1>
-            <p className="mt-1 text-sm text-ink-500">
+            <h1 className="mt-4 text-title text-ink-900">Pembayaran sedang diproses</h1>
+            <p className="mt-1 text-body text-ink-500">
               Kami belum menerima konfirmasi dari penyedia pembayaran. Langganan akan aktif
               otomatis begitu pembayaran terkonfirmasi — tidak perlu membayar ulang.
             </p>
             <Link
               to="/upgrade"
-              className="mt-6 inline-flex h-10 items-center justify-center rounded-lg border border-ink-200 px-5 text-sm font-medium text-ink-700 hover:bg-ink-50"
+              className="mt-6 inline-flex h-10 items-center justify-center rounded-lg border border-ink-200 px-5 text-body font-medium text-ink-700 hover:bg-ink-50"
             >
               Lihat status langganan
             </Link>
@@ -131,14 +131,14 @@ export function SubscriptionSuccessPage() {
         {state === 'unknown' ? (
           <>
             <XCircle className="mx-auto size-10 text-rose-500" />
-            <h1 className="mt-4 text-lg font-semibold text-ink-900">Pembayaran belum terkonfirmasi</h1>
-            <p className="mt-1 text-sm text-ink-500">
+            <h1 className="mt-4 text-title text-ink-900">Pembayaran belum terkonfirmasi</h1>
+            <p className="mt-1 text-body text-ink-500">
               Transaksi tidak ditemukan atau sudah kedaluwarsa. Bila Anda sudah membayar, hubungi
               kami dengan menyertakan bukti pembayaran.
             </p>
             <Link
               to="/upgrade"
-              className="mt-6 inline-flex h-10 items-center justify-center rounded-lg bg-brand-600 px-5 text-sm font-medium text-white hover:bg-brand-700"
+              className="mt-6 inline-flex h-10 items-center justify-center rounded-lg bg-brand-600 px-5 text-body font-medium text-white hover:bg-brand-700"
             >
               Kembali ke paket
             </Link>

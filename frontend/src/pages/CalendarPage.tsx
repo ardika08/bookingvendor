@@ -128,8 +128,8 @@ export function CalendarPage() {
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold tracking-tight text-ink-900">Kalender</h2>
-          <p className="mt-0.5 text-[13px] text-ink-500">
+          <h1 className="text-title tracking-tight text-ink-900">Kalender</h1>
+          <p className="mt-0.5 text-body text-ink-500">
             Lihat tanggal terisi sekilas, blokir tanggal libur, dan buka detail acara.
           </p>
         </div>
@@ -182,7 +182,7 @@ export function CalendarPage() {
       )}
 
       {loading && !initialLoading ? (
-        <p className="text-center text-[11.5px] text-ink-400">Memuat ulang kalender…</p>
+        <p className="text-center text-caption text-ink-400">Memuat ulang kalender…</p>
       ) : null}
     </div>
   )
@@ -205,8 +205,8 @@ function StatTile({
 }) {
   return (
     <div className="rounded-xl border border-ink-200/80 bg-white px-3.5 py-3">
-      <p className="text-[11px] font-medium uppercase tracking-wide text-ink-400">{label}</p>
-      <p className={cn('mt-1 text-[17px] font-semibold tabular-nums', TONE_CLASS[tone])}>{value}</p>
+      <p className="text-caption font-medium uppercase tracking-wide text-ink-400">{label}</p>
+      <p className={cn('mt-1 text-lead font-semibold tabular-nums', TONE_CLASS[tone])}>{value}</p>
     </div>
   )
 }

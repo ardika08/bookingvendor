@@ -80,14 +80,14 @@ export function BookingCreateRoute() {
       {loadError ? (
         <div
           role="alert"
-          className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-2.5 text-[12.5px] text-rose-800"
+          className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-2.5 text-meta text-rose-800"
         >
           {loadError}
         </div>
       ) : null}
 
       {user.subscription.status === 'trial' ? (
-        <div className="rounded-xl border border-amber-200 bg-amber-50/70 px-4 py-2.5 text-[12.5px] text-amber-900">
+        <div className="rounded-xl border border-amber-200 bg-amber-50/70 px-4 py-2.5 text-meta text-amber-900">
           <span className="font-semibold">Masa trial.</span> Form tetap bisa diisi penuh — submit
           diblokir server bila jatah trial habis.
         </div>

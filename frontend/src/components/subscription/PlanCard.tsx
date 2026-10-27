@@ -22,33 +22,33 @@ export function PlanCard({ plan, current }: { plan: Plan; current?: boolean }) {
       )}
     >
       {plan.highlight ? (
-        <span className="absolute -top-2.5 left-5 inline-flex items-center gap-1 rounded-full bg-brand-600 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+        <span className="absolute -top-2.5 left-5 inline-flex items-center gap-1 rounded-full bg-brand-600 px-2 py-0.5 text-2xs font-semibold uppercase tracking-wide text-white">
           <Crown className="size-3" />
           Populer
         </span>
       ) : null}
 
       <header>
-        <h3 className="text-[15px] font-semibold text-ink-900">{plan.name}</h3>
-        <p className="text-[12px] text-ink-500">Aktif {durationDays} hari</p>
+        <h3 className="text-lead font-semibold text-ink-900">{plan.name}</h3>
+        <p className="text-meta text-ink-500">Aktif {durationDays} hari</p>
       </header>
 
       <p className="mt-3">
         {plan.price !== null ? (
           <>
-            <span className="text-[22px] font-semibold tabular-nums text-ink-900">
+            <span className="text-heading font-semibold tabular-nums text-ink-900">
               {formatCurrency(plan.price)}
             </span>
-            <span className="text-[12px] text-ink-500"> / {plan.durationMonths} bulan</span>
+            <span className="text-meta text-ink-500"> / {plan.durationMonths} bulan</span>
           </>
         ) : (
-          <span className="text-[15px] font-medium text-ink-400">Harga menyusul</span>
+          <span className="text-lead font-medium text-ink-400">Harga menyusul</span>
         )}
       </p>
 
       <ul className="mt-4 flex-1 space-y-2">
         {plan.benefits.map((benefit) => (
-          <li key={benefit} className="flex items-start gap-2 text-[12.5px] text-ink-700">
+          <li key={benefit} className="flex items-start gap-2 text-meta text-ink-700">
             <Check className="mt-0.5 size-3.5 shrink-0 text-emerald-600" />
             {benefit}
           </li>
@@ -57,7 +57,7 @@ export function PlanCard({ plan, current }: { plan: Plan; current?: boolean }) {
 
       <div className="mt-5">
         {current ? (
-          <span className="flex h-10 items-center justify-center rounded-lg bg-ink-100 text-[13px] font-medium text-ink-500">
+          <span className="flex h-10 items-center justify-center rounded-lg bg-ink-100 text-body font-medium text-ink-500">
             Paket kamu saat ini
           </span>
         ) : available ? (
@@ -69,7 +69,7 @@ export function PlanCard({ plan, current }: { plan: Plan; current?: boolean }) {
             type="button"
             disabled
             title="Harga paket ini belum ditetapkan"
-            className="flex h-10 w-full cursor-not-allowed items-center justify-center gap-1.5 rounded-lg bg-ink-50 text-[13px] font-medium text-ink-400"
+            className="flex h-10 w-full cursor-not-allowed items-center justify-center gap-1.5 rounded-lg bg-ink-50 text-body font-medium text-ink-400"
           >
             <Clock3 className="size-3.5" />
             Segera

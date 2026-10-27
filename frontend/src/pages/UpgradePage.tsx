@@ -81,7 +81,7 @@ export function UpgradePage() {
   if (error !== null || !subscription) {
     return (
       <div className="rounded-xl border border-rose-200 bg-rose-50/70 px-4 py-3">
-        <p className="text-[12.5px] text-rose-900">
+        <p className="text-meta text-rose-900">
           {error ?? 'Data langganan tidak tersedia.'}
         </p>
       </div>
@@ -91,8 +91,8 @@ export function UpgradePage() {
   return (
     <div className="space-y-5">
       <div>
-        <h2 className="text-lg font-semibold tracking-tight text-ink-900">Langganan</h2>
-        <p className="mt-0.5 text-[13px] text-ink-500">
+        <h1 className="text-title tracking-tight text-ink-900">Langganan</h1>
+        <p className="mt-0.5 text-body text-ink-500">
           Buka booking &amp; invoice tanpa batas dengan memilih paket. Jatah trial tidak hangus
           saat kamu upgrade.
         </p>
@@ -106,7 +106,7 @@ export function UpgradePage() {
           <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-rose-100 text-rose-700">
             <Lock className="size-3.5" />
           </span>
-          <p className="text-[12.5px] leading-relaxed text-rose-900">
+          <p className="text-meta leading-relaxed text-rose-900">
             <span className="font-semibold">Aksi itu terkunci karena langganan berakhir.</span>{' '}
             Data lama tetap bisa dibaca dan diekspor. Pilih paket di bawah untuk membuka kembali
             pembuatan booking &amp; invoice.
@@ -118,7 +118,7 @@ export function UpgradePage() {
 
       {pendingPayment ? (
         <div className="flex flex-col gap-2 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-[12.5px] text-amber-900">
+          <p className="text-meta text-amber-900">
             <span className="font-semibold">Ada transaksi menunggu pembayaran</span> —{' '}
             {pendingPayment.planName} ·{' '}
             {new Intl.NumberFormat('id-ID', {
@@ -155,7 +155,7 @@ export function UpgradePage() {
           description="Bayar lewat payment gateway — langganan aktif otomatis setelah terverifikasi."
         />
         <CardBody>
-          <ol className="list-inside list-decimal space-y-1.5 text-[12.5px] leading-relaxed text-ink-600">
+          <ol className="list-inside list-decimal space-y-1.5 text-meta leading-relaxed text-ink-600">
             <li>Pilih paket — kamu masuk ke halaman checkout dengan nomor referensi.</li>
             <li>Pilih metode: QRIS, Virtual Account, atau e-wallet, lalu selesaikan pembayaran.</li>
             <li>

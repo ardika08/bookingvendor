@@ -42,8 +42,8 @@ export function PlanConfigPage() {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-lg font-semibold tracking-tight text-ink-900">Paket Langganan</h2>
-        <p className="mt-0.5 text-[13px] text-ink-500">
+        <h1 className="text-title tracking-tight text-ink-900">Paket Langganan</h1>
+        <p className="mt-0.5 text-body text-ink-500">
           Harga paket untuk katalog upgrade vendor. Kosongkan harga → tampil "Segera".
         </p>
       </div>
@@ -85,8 +85,8 @@ function PlanCard({ plan, onEdit }: { plan: AdminPlan; onEdit: () => void }) {
     >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <h3 className="truncate text-[14px] font-semibold text-ink-900">{plan.name}</h3>
-          <p className="mt-0.5 text-[12px] text-ink-500">
+          <h3 className="truncate text-lead font-semibold text-ink-900">{plan.name}</h3>
+          <p className="mt-0.5 text-meta text-ink-500">
             Masa aktif {plan.durationMonths} bulan
           </p>
         </div>
@@ -95,14 +95,14 @@ function PlanCard({ plan, onEdit }: { plan: AdminPlan; onEdit: () => void }) {
 
       <p
         className={cn(
-          'mt-2 text-[17px] font-semibold tabular-nums',
+          'mt-2 text-lead font-semibold tabular-nums',
           unpriced ? 'text-ink-400' : 'text-ink-900',
         )}
       >
         {priceLabelSafe(plan.price)}
       </p>
 
-      <p className="mt-1.5 text-[11.5px] leading-relaxed text-ink-500">
+      <p className="mt-1.5 text-caption leading-relaxed text-ink-500">
         {unpriced
           ? 'Harga belum ditetapkan — vendor melihat "Segera" dan tidak bisa membeli.'
           : 'Langganan aktif tanpa batas booking & invoice selama masa paket.'}
@@ -193,10 +193,10 @@ function PriceDialog({
             <CreditCard className="size-4" />
           </span>
           <div className="min-w-0 flex-1">
-            <h2 id="plan-price-title" className="text-[15px] font-semibold text-ink-900">
+            <h2 id="plan-price-title" className="text-lead font-semibold text-ink-900">
               Atur harga — {plan.name}
             </h2>
-            <p className="text-[12px] text-ink-500">Masa aktif {plan.durationMonths} bulan.</p>
+            <p className="text-meta text-ink-500">Masa aktif {plan.durationMonths} bulan.</p>
           </div>
           <button
             type="button"
@@ -217,7 +217,7 @@ function PriceDialog({
               hint="Kosongkan bila harga belum ditetapkan — katalog menampilkan Segera."
             >
               <div className="relative">
-                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[13px] text-ink-400">
+                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-body text-ink-400">
                   Rp
                 </span>
                 <input
@@ -236,13 +236,13 @@ function PriceDialog({
               </div>
             </Field>
 
-            <div className="rounded-lg border border-ink-200 bg-ink-50/60 px-3 py-2 text-[12.5px]">
+            <div className="rounded-lg border border-ink-200 bg-ink-50/60 px-3 py-2 text-meta">
               <p className="text-ink-500">Katalog menampilkan</p>
               <p className="mt-0.5 font-semibold text-ink-900">{preview}</p>
             </div>
 
             {submitted && error ? (
-              <p className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-[12px] text-rose-800">
+              <p className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-meta text-rose-800">
                 {error}
               </p>
             ) : null}

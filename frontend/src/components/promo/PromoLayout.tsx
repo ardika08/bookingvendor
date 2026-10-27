@@ -30,10 +30,10 @@ export function PromoLayout() {
       <header className="sticky top-0 z-30 border-b border-ink-200/70 bg-white/85 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
           <Link to="/" className="flex shrink-0 items-center gap-2.5">
-            <span className="flex size-8 items-center justify-center rounded-lg bg-brand-600 text-sm font-bold text-white">
+            <span className="flex size-8 items-center justify-center rounded-lg bg-brand-600 text-body font-bold text-white">
               BV
             </span>
-            <span className="text-[14px] font-semibold text-ink-900">Booking Vendor</span>
+            <span className="text-lead font-semibold text-ink-900">Booking Vendor</span>
           </Link>
 
           <nav className="hidden items-center gap-7 md:flex" aria-label="Navigasi halaman">
@@ -41,7 +41,7 @@ export function PromoLayout() {
               <a
                 key={link.href}
                 href={link.href}
-                className="text-[13px] font-medium text-ink-600 transition-colors hover:text-ink-900"
+                className="text-body font-medium text-ink-600 transition-colors hover:text-ink-900"
               >
                 {link.label}
               </a>
@@ -51,7 +51,7 @@ export function PromoLayout() {
           <div className="hidden items-center gap-2 md:flex">
             <Link
               to="/login"
-              className="rounded-lg px-3 py-2 text-[13px] font-medium text-ink-600 transition-colors hover:bg-ink-50 hover:text-ink-900"
+              className="rounded-lg px-3 py-2 text-body font-medium text-ink-600 transition-colors hover:bg-ink-50 hover:text-ink-900"
             >
               Masuk
             </Link>
@@ -77,7 +77,7 @@ export function PromoLayout() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMenuOpen(false)}
-                  className="rounded-lg px-2.5 py-2 text-[13px] font-medium text-ink-600 hover:bg-ink-50 hover:text-ink-900"
+                  className="rounded-lg px-2.5 py-2 text-body font-medium text-ink-600 hover:bg-ink-50 hover:text-ink-900"
                 >
                   {link.label}
                 </a>
@@ -98,12 +98,12 @@ export function PromoLayout() {
         <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr]">
           <div>
             <div className="flex items-center gap-2.5">
-              <span className="flex size-8 items-center justify-center rounded-lg bg-brand-600 text-sm font-bold text-white">
+              <span className="flex size-8 items-center justify-center rounded-lg bg-brand-600 text-body font-bold text-white">
                 BV
               </span>
-              <span className="text-[14px] font-semibold text-ink-900">Booking Vendor</span>
+              <span className="text-lead font-semibold text-ink-900">Booking Vendor</span>
             </div>
-            <p className="mt-3 max-w-sm text-[12.5px] leading-relaxed text-ink-500">
+            <p className="mt-3 max-w-sm text-meta leading-relaxed text-ink-500">
               Alat operasional internal untuk vendor pernikahan — catat booking, atur jadwal,
               dan terbitkan invoice dari satu dashboard.
             </p>
@@ -119,10 +119,10 @@ export function PromoLayout() {
           />
 
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-ink-400">
+            <p className="text-caption font-semibold uppercase tracking-wider text-ink-400">
               Akun
             </p>
-            <ul className="mt-3 space-y-2 text-[12.5px]">
+            <ul className="mt-3 space-y-2 text-meta">
               <li>
                 <Link to="/login" className="text-ink-600 hover:text-ink-900">
                   Masuk dengan Google
@@ -138,7 +138,7 @@ export function PromoLayout() {
         </div>
 
         <div className="border-t border-ink-200/70">
-          <div className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-4 text-[11.5px] text-ink-400 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+          <div className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-4 text-caption text-ink-400 sm:flex-row sm:items-center sm:justify-between sm:px-6">
             <p>© {year} Booking Vendor. Semua hak dilindungi.</p>
             <p>Dibuat untuk vendor pernikahan di Indonesia.</p>
           </div>
@@ -157,8 +157,8 @@ function FooterColumn({
 }) {
   return (
     <div>
-      <p className="text-[11px] font-semibold uppercase tracking-wider text-ink-400">{title}</p>
-      <ul className="mt-3 space-y-2 text-[12.5px]">
+      <p className="text-caption font-semibold uppercase tracking-wider text-ink-400">{title}</p>
+      <ul className="mt-3 space-y-2 text-meta">
         {links.map((link) => (
           <li key={link.href}>
             <a href={link.href} className="text-ink-600 hover:text-ink-900">

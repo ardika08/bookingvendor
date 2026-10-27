@@ -92,7 +92,7 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }
           toast.tone === 'info' && 'text-ink-400',
         )}
       />
-      <p className="min-w-0 flex-1 text-[12.5px] leading-snug">{toast.message}</p>
+      <p className="min-w-0 flex-1 text-meta leading-snug">{toast.message}</p>
       {toast.action ? (
         <button
           type="button"
@@ -100,7 +100,7 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }
             toast.action?.onClick()
             onDismiss()
           }}
-          className="shrink-0 text-[12px] font-semibold underline underline-offset-2 hover:opacity-80"
+          className="shrink-0 text-meta font-semibold underline underline-offset-2 hover:opacity-80"
         >
           {toast.action.label}
         </button>

@@ -67,13 +67,13 @@ export function BenefitHighlights() {
     <section id="fitur" className="scroll-mt-20 border-t border-ink-200/70 bg-white">
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-brand-700">
+          <p className="text-caption font-semibold uppercase tracking-wider text-brand-700">
             Fitur
           </p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-ink-900 sm:text-3xl">
+          <h2 className="mt-2 text-heading tracking-tight text-ink-900 sm:text-display">
             Yang bikin operasional vendor lebih tenang
           </h2>
-          <p className="mt-3 text-[13.5px] leading-relaxed text-ink-500">
+          <p className="mt-3 text-body leading-relaxed text-ink-500">
             Semua yang dibutuhkan untuk mencatat acara, menjaga jadwal, dan menagih klien —
             tanpa spreadsheet dan tanpa aplikasi tambahan.
           </p>
@@ -97,8 +97,8 @@ function BenefitCard({ benefit }: { benefit: Benefit }) {
       <span className="flex size-9 items-center justify-center rounded-lg bg-brand-50 text-brand-700 ring-1 ring-inset ring-brand-100">
         <Icon className="size-4" />
       </span>
-      <h3 className="mt-3 text-[14px] font-semibold text-ink-900">{benefit.title}</h3>
-      <p className="mt-1.5 text-[12.5px] leading-relaxed text-ink-500">{benefit.description}</p>
+      <h3 className="mt-3 text-lead font-semibold text-ink-900">{benefit.title}</h3>
+      <p className="mt-1.5 text-meta leading-relaxed text-ink-500">{benefit.description}</p>
     </li>
   )
 }

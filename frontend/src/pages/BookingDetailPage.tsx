@@ -68,7 +68,7 @@ export function BookingDetailPage({
       <div className="flex items-center justify-between gap-2">
         <Link
           to="/bookings"
-          className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-ink-500 hover:text-ink-800"
+          className="inline-flex items-center gap-1.5 text-meta font-medium text-ink-500 hover:text-ink-800"
         >
           <ArrowLeft className="size-3.5" />
           Daftar booking
@@ -90,27 +90,27 @@ export function BookingDetailPage({
       <Card>
         <CardBody className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-3">
-            <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-100 text-[13px] font-semibold text-brand-700">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-100 text-body font-semibold text-brand-700">
               {initials(booking.client.name)}
             </span>
             <div>
-              <h2 className="text-lg font-semibold tracking-tight text-ink-900">
+              <h2 className="text-title tracking-tight text-ink-900">
                 {booking.client.name}
               </h2>
               <div className="mt-1 flex flex-wrap items-center gap-2">
                 <StatusBadge status={status} variant="pill" />
-                <span className="text-[12px] text-ink-500">{meta.description}</span>
+                <span className="text-meta text-ink-500">{meta.description}</span>
               </div>
             </div>
           </div>
           <div className="text-left sm:text-right">
-            <p className="text-[11px] font-medium uppercase tracking-wide text-ink-400">
+            <p className="text-caption font-medium uppercase tracking-wide text-ink-400">
               Nilai kontrak
             </p>
-            <p className="text-xl font-semibold tabular-nums text-ink-900">
+            <p className="text-heading font-semibold tabular-nums text-ink-900">
               {formatCurrency(booking.totalPrice)}
             </p>
-            <p className="text-[12px] text-ink-500">{booking.packageName ?? 'Tanpa paket'}</p>
+            <p className="text-meta text-ink-500">{booking.packageName ?? 'Tanpa paket'}</p>
           </div>
         </CardBody>
       </Card>
@@ -172,7 +172,7 @@ export function BookingDetailPage({
                 href={waLink}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-white px-3 text-[13px] font-medium text-ink-700 shadow-sm ring-1 ring-ink-200 hover:bg-ink-50"
+                className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-white px-3 text-body font-medium text-ink-700 shadow-sm ring-1 ring-ink-200 hover:bg-ink-50"
               >
                 <Phone className="size-3.5" />
                 Chat WhatsApp
@@ -184,7 +184,7 @@ export function BookingDetailPage({
             <Card>
               <CardHeader title="Catatan Internal" description="Hanya terlihat oleh kamu." />
               <CardBody>
-                <p className="whitespace-pre-line text-[13px] leading-relaxed text-ink-700">
+                <p className="whitespace-pre-line text-body leading-relaxed text-ink-700">
                   {booking.notes}
                 </p>
               </CardBody>
@@ -211,15 +211,15 @@ export function BookingDetailPage({
                   >
                     <div className="flex items-center gap-2">
                       <FileText className="size-3.5 text-ink-400" />
-                      <span className="text-[12.5px] font-medium text-ink-800">
+                      <span className="text-meta font-medium text-ink-800">
                         {index === 0 ? 'DP / tagihan awal' : `Pelunasan ${index}`}
                       </span>
                     </div>
-                    <span className="text-[11.5px] text-ink-400">Segera</span>
+                    <span className="text-caption text-ink-400">Segera</span>
                   </div>
                 ))
               ) : (
-                <p className="text-[12.5px] text-ink-500">
+                <p className="text-meta text-ink-500">
                   Buat invoice supaya klien menerima rincian tagihan dan link pembayaran.
                 </p>
               )}
@@ -239,12 +239,12 @@ export function BookingDetailPage({
           <Card>
             <CardHeader title="Riwayat" />
             <CardBody>
-              <ul className="space-y-2.5 text-[12.5px]">
+              <ul className="space-y-2.5 text-meta">
                 <li className="flex items-start gap-2">
                   <span className="mt-1 size-1.5 shrink-0 rounded-full bg-ink-300" />
                   <span>
                     <span className="block text-ink-700">Booking dibuat</span>
-                    <span className="block text-[11.5px] text-ink-400">
+                    <span className="block text-caption text-ink-400">
                       {formatShortDate(booking.createdAt.slice(0, 10))}
                     </span>
                   </span>
@@ -253,7 +253,7 @@ export function BookingDetailPage({
                   <span className={`mt-1 size-1.5 shrink-0 rounded-full ${meta.dotClass}`} />
                   <span>
                     <span className="block text-ink-700">Status sekarang: {meta.label}</span>
-                    <span className="block text-[11.5px] text-ink-400">{meta.description}</span>
+                    <span className="block text-caption text-ink-400">{meta.description}</span>
                   </span>
                 </li>
               </ul>
@@ -263,7 +263,7 @@ export function BookingDetailPage({
       </div>
 
       {isCancelled ? (
-        <div className="rounded-xl border border-rose-200 bg-rose-50/70 px-4 py-3 text-[12.5px] text-rose-800">
+        <div className="rounded-xl border border-rose-200 bg-rose-50/70 px-4 py-3 text-meta text-rose-800">
           Booking ini dibatalkan — tanggal sudah kosong lagi di kalender, dan jatah trial tetap
           terpakai sesuai aturan.
         </div>

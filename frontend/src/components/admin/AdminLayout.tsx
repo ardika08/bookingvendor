@@ -104,12 +104,12 @@ export function AdminSidebar({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <div className="flex h-full flex-col bg-white">
       <div className="flex h-16 items-center gap-2.5 px-5">
-        <span className="flex size-8 items-center justify-center rounded-lg bg-ink-900 text-sm font-bold text-white">
+        <span className="flex size-8 items-center justify-center rounded-lg bg-ink-900 text-body font-bold text-white">
           BV
         </span>
         <div className="leading-tight">
-          <p className="text-[13px] font-semibold text-ink-900">Booking Vendor</p>
-          <p className="inline-flex items-center gap-1 text-[11px] text-ink-400">
+          <p className="text-body font-semibold text-ink-900">Booking Vendor</p>
+          <p className="inline-flex items-center gap-1 text-caption text-ink-400">
             <ShieldCheck className="size-3" />
             Panel Admin
           </p>
@@ -117,7 +117,7 @@ export function AdminSidebar({ onNavigate }: { onNavigate?: () => void }) {
       </div>
 
       <nav className="flex-1 overflow-y-auto px-3 py-2">
-        <p className="px-2 pb-1.5 pt-2 text-[10px] font-semibold uppercase tracking-wider text-ink-400">
+        <p className="px-2 pb-1.5 pt-2 text-2xs font-semibold uppercase tracking-wider text-ink-400">
           Manajemen
         </p>
         <ul className="space-y-0.5">
@@ -129,11 +129,11 @@ export function AdminSidebar({ onNavigate }: { onNavigate?: () => void }) {
 
       <div className="border-t border-ink-100 p-3">
         <div className="rounded-lg bg-ink-50 p-3">
-          <p className="flex items-center gap-1.5 text-[12px] font-semibold text-ink-800">
+          <p className="flex items-center gap-1.5 text-meta font-semibold text-ink-800">
             <LifeBuoy className="size-3.5 text-ink-400" />
             Perlu cek data?
           </p>
-          <p className="mt-1 text-[11px] leading-relaxed text-ink-500">
+          <p className="mt-1 text-caption leading-relaxed text-ink-500">
             Aktif/nonaktifkan vendor dan kelola masa langganannya dari daftar vendor.
           </p>
         </div>
@@ -155,13 +155,13 @@ function AdminNavRow({
     return (
       <li>
         <span
-          className="flex cursor-not-allowed items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] font-medium text-ink-400"
+          className="flex cursor-not-allowed items-center gap-2.5 rounded-lg px-2.5 py-2 text-body font-medium text-ink-400"
           aria-disabled="true"
           title="Belum tersedia"
         >
           <Icon className="size-4" />
           <span className="flex-1">{item.label}</span>
-          <span className="rounded bg-ink-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-ink-400">
+          <span className="rounded bg-ink-100 px-1.5 py-0.5 text-2xs font-semibold uppercase tracking-wide text-ink-400">
             soon
           </span>
         </span>
@@ -177,7 +177,7 @@ function AdminNavRow({
         end={item.to === '/admin/vendors'}
         className={({ isActive }) =>
           cn(
-            'flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] font-medium transition-colors',
+            'flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-body font-medium transition-colors',
             isActive
               ? 'bg-ink-900 text-white'
               : 'text-ink-600 hover:bg-ink-50 hover:text-ink-900',

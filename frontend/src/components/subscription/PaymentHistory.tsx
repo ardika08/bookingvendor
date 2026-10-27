@@ -64,10 +64,10 @@ function PaymentRow({ payment }: { payment: Payment }) {
           <Icon className="size-4" />
         </span>
         <div className="min-w-0">
-          <p className="text-[13px] font-semibold text-ink-900">
+          <p className="text-body font-semibold text-ink-900">
             {payment.planName} · {formatCurrency(payment.amount)}
           </p>
-          <p className="mt-0.5 text-[11.5px] tabular-nums text-ink-500">
+          <p className="mt-0.5 text-caption tabular-nums text-ink-500">
             {payment.reference} · dibuat {formatShortDate(payment.createdAt.slice(0, 10))}
             {payment.expiresAt && payment.status === 'pending'
               ? ` · bayar sebelum ${formatShortDate(payment.expiresAt.slice(0, 10))}`
@@ -79,7 +79,7 @@ function PaymentRow({ payment }: { payment: Payment }) {
       <div className="flex items-center gap-2 sm:justify-end">
         <span
           className={cn(
-            'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11.5px] font-medium ring-1 ring-inset',
+            'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-caption font-medium ring-1 ring-inset',
             meta.className,
           )}
         >

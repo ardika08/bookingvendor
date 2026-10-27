@@ -28,13 +28,13 @@ export function ReadOnlyBanner({ access }: { access: AccessState }) {
             <Lock className="size-3.5" />
           </span>
           <div>
-            <p className="text-[13px] font-semibold text-rose-900">
+            <p className="text-body font-semibold text-rose-900">
               {readOnlyHeadline(access.reason)}
             </p>
-            <p className="mt-0.5 max-w-2xl text-[12.5px] leading-relaxed text-rose-800">
+            <p className="mt-0.5 max-w-2xl text-meta leading-relaxed text-rose-800">
               {readOnlyDescription(access.reason)}
             </p>
-            <p className="mt-1.5 flex items-center gap-1.5 text-[11.5px] font-medium text-rose-700">
+            <p className="mt-1.5 flex items-center gap-1.5 text-caption font-medium text-rose-700">
               <BookOpenCheck className="size-3.5" />
               Riwayat, filter, kalender, dan unduh PDF tetap berjalan normal.
             </p>
@@ -58,7 +58,7 @@ export function ReadOnlyActionHint({ label }: { label: string }) {
   return (
     <span
       title={`${label} terkunci sampai langganan diperpanjang.`}
-      className="inline-flex h-10 cursor-not-allowed items-center gap-2 rounded-lg bg-ink-100 px-4 text-sm font-medium text-ink-400"
+      className="inline-flex h-10 cursor-not-allowed items-center gap-2 rounded-lg bg-ink-100 px-4 text-body font-medium text-ink-400"
     >
       <Lock className="size-4" />
       {label}

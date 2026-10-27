@@ -46,7 +46,7 @@ export function TrialQuotaCard({ subscription }: { subscription: SubscriptionSum
         <div className="min-w-0">
           <p
             className={cn(
-              'flex items-center gap-1.5 text-[12.5px] font-semibold',
+              'flex items-center gap-1.5 text-meta font-semibold',
               exhausted ? 'text-rose-700' : urgent ? 'text-amber-800' : 'text-ink-800',
             )}
           >
@@ -81,7 +81,7 @@ function QuotaRow({ label, used, limit }: { label: string; used: number; limit: 
 
   return (
     <div>
-      <div className="flex items-baseline justify-between gap-3 text-[12px]">
+      <div className="flex items-baseline justify-between gap-3 text-meta">
         <span className="text-ink-600">{label}</span>
         <span className={cn('tabular-nums font-medium', exhausted ? 'text-rose-700' : 'text-ink-800')}>
           {left > 0 ? `sisa ${left}` : 'habis'}

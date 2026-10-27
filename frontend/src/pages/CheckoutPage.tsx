@@ -75,15 +75,15 @@ export function CheckoutPage({
       <div>
         <Link
           to="/upgrade"
-          className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-ink-500 hover:text-ink-800"
+          className="inline-flex items-center gap-1.5 text-meta font-medium text-ink-500 hover:text-ink-800"
         >
           <ArrowLeft className="size-3.5" />
           Kembali ke paket langganan
         </Link>
-        <h2 className="mt-2 text-lg font-semibold tracking-tight text-ink-900">
+        <h1 className="mt-2 text-title tracking-tight text-ink-900">
           Checkout langganan
-        </h2>
-        <p className="mt-0.5 text-[13px] text-ink-500">
+        </h1>
+        <p className="mt-0.5 text-body text-ink-500">
           Bayar lewat QRIS, Virtual Account, atau e-wallet. Langganan aktif otomatis begitu
           pembayaran terverifikasi.
         </p>
@@ -121,7 +121,7 @@ function CheckoutStepper({ step }: { step: CheckoutSession['step'] }) {
   const activeIndex = step === 'instructions' ? 1 : step === 'success' ? 2 : 0
 
   return (
-    <ol className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px]">
+    <ol className="flex flex-wrap items-center gap-x-2 gap-y-1 text-meta">
       {steps.map((item, index) => {
         const done = index < activeIndex
         const active = index === activeIndex
@@ -129,7 +129,7 @@ function CheckoutStepper({ step }: { step: CheckoutSession['step'] }) {
           <li key={item.key} className="flex items-center gap-2">
             <span
               className={cn(
-                'flex size-6 items-center justify-center rounded-full text-[11px] font-semibold',
+                'flex size-6 items-center justify-center rounded-full text-caption font-semibold',
                 active
                   ? 'bg-brand-600 text-white'
                   : done
@@ -161,17 +161,17 @@ function OrderSummary({ session }: { session: CheckoutSession }) {
       <CardBody className="space-y-3">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="text-[14px] font-semibold text-ink-900">Paket {plan.name}</p>
-            <p className="text-[12px] text-ink-500">Aktif {durationDays} hari</p>
+            <p className="text-lead font-semibold text-ink-900">Paket {plan.name}</p>
+            <p className="text-meta text-ink-500">Aktif {durationDays} hari</p>
           </div>
-          <p className="text-[15px] font-semibold tabular-nums text-ink-900">
+          <p className="text-lead font-semibold tabular-nums text-ink-900">
             {formatCurrency(plan.price ?? 0)}
           </p>
         </div>
 
         <ul className="space-y-2 border-t border-ink-100 pt-3">
           {plan.benefits.map((benefit) => (
-            <li key={benefit} className="flex items-start gap-2 text-[12.5px] text-ink-700">
+            <li key={benefit} className="flex items-start gap-2 text-meta text-ink-700">
               <Check className="mt-0.5 size-3.5 shrink-0 text-emerald-600" />
               {benefit}
             </li>
@@ -179,15 +179,15 @@ function OrderSummary({ session }: { session: CheckoutSession }) {
         </ul>
 
         {session.payment.reference ? (
-          <div className="rounded-lg bg-ink-50 px-3 py-2 text-[11.5px] text-ink-600">
+          <div className="rounded-lg bg-ink-50 px-3 py-2 text-caption text-ink-600">
             <span className="text-ink-400">No. referensi</span>
             <p className="font-semibold tabular-nums text-ink-800">{session.payment.reference}</p>
           </div>
         ) : null}
 
         <div className="flex items-center justify-between border-t border-ink-100 pt-3">
-          <span className="text-[13px] font-medium text-ink-600">Total bayar</span>
-          <span className="text-[16px] font-semibold tabular-nums text-ink-900">
+          <span className="text-body font-medium text-ink-600">Total bayar</span>
+          <span className="text-lead font-semibold tabular-nums text-ink-900">
             {formatCurrency(plan.price ?? 0)}
           </span>
         </div>
@@ -256,7 +256,7 @@ function MethodPicker({
         </ul>
 
         {error ? (
-          <p className="flex items-start gap-1.5 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-[12px] text-rose-700">
+          <p className="flex items-start gap-1.5 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-meta text-rose-700">
             <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
             {error}
           </p>
@@ -275,7 +275,7 @@ function MethodPicker({
           )}
         </Button>
 
-        <p className="flex items-start gap-1.5 text-[11.5px] leading-relaxed text-ink-500">
+        <p className="flex items-start gap-1.5 text-caption leading-relaxed text-ink-500">
           <ShieldCheck className="mt-0.5 size-3.5 shrink-0 text-emerald-600" />
           Pembayaran diproses gateway. Kami tidak menyimpan data kartu/rekening kamu.
         </p>
@@ -286,7 +286,7 @@ function MethodPicker({
 
 function ResumeBanner({ payment }: { payment: Payment }) {
   return (
-    <div className="rounded-lg border border-amber-300 bg-amber-50 px-3 py-2.5 text-[12px] text-amber-900">
+    <div className="rounded-lg border border-amber-300 bg-amber-50 px-3 py-2.5 text-meta text-amber-900">
       <span className="font-semibold">Melanjutkan transaksi {payment.reference}</span>
       {payment.expiresAt ? (
         <>
@@ -336,8 +336,8 @@ function MethodOption({
           <Icon className="size-4" />
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block text-[13px] font-medium text-ink-900">{method.name}</span>
-          <span className="block text-[11.5px] text-ink-500">{method.description}</span>
+          <span className="block text-body font-medium text-ink-900">{method.name}</span>
+          <span className="block text-caption text-ink-500">{method.description}</span>
         </span>
       </label>
     </li>
@@ -416,7 +416,7 @@ function InstructionsPanel({
           remaining !== null ? (
             <span
               className={cn(
-                'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11.5px] font-medium tabular-nums ring-1 ring-inset',
+                'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-caption font-medium tabular-nums ring-1 ring-inset',
                 remaining <= 5 * 60 * 1000
                   ? 'bg-rose-50 text-rose-700 ring-rose-200'
                   : 'bg-ink-100 text-ink-600 ring-ink-200',
@@ -432,7 +432,7 @@ function InstructionsPanel({
         <MethodInstructions method={method} amount={session.payment.amount} />
 
         {statusNote ? (
-          <p className="rounded-lg border border-ink-200 bg-ink-50 px-3 py-2 text-[12px] text-ink-700">
+          <p className="rounded-lg border border-ink-200 bg-ink-50 px-3 py-2 text-meta text-ink-700">
             {statusNote}
           </p>
         ) : null}
@@ -456,10 +456,10 @@ function InstructionsPanel({
 
         {USE_MOCK_SUBSCRIPTION ? (
           <div className="rounded-lg border border-dashed border-amber-300 bg-amber-50/70 px-3 py-2.5">
-            <p className="text-[11px] font-medium uppercase tracking-wide text-amber-700">
+            <p className="text-caption font-medium uppercase tracking-wide text-amber-700">
               Mode demo
             </p>
-            <p className="mt-0.5 text-[11.5px] leading-relaxed text-amber-900">
+            <p className="mt-0.5 text-caption leading-relaxed text-amber-900">
               Backend gateway belum aktif. Pakai tombol ini untuk meniru webhook pembayaran
               berhasil.
             </p>
@@ -493,7 +493,7 @@ function MethodInstructions({ method, amount }: { method: PaymentMethod; amount:
         <InfoRow label="Nomor Virtual Account" value={<CopyValue value={method.virtualAccount} mono />} />
         {method.provider ? <InfoRow label="Bank" value={method.provider} /> : null}
         <InfoRow label="Nominal" value={<span className="tabular-nums">{formatCurrency(amount)}</span>} />
-        <p className="text-[11.5px] leading-relaxed text-ink-500">
+        <p className="text-caption leading-relaxed text-ink-500">
           Transfer tepat sesuai nominal. Sistem mendeteksi pembayaran otomatis — tidak perlu unggah
           bukti.
         </p>
@@ -507,7 +507,7 @@ function MethodInstructions({ method, amount }: { method: PaymentMethod; amount:
         <div className="flex size-28 items-center justify-center rounded-xl border border-ink-200 bg-ink-50">
           <Wallet className="size-9 text-ink-400" />
         </div>
-        <p className="text-[12.5px] leading-relaxed text-ink-600">
+        <p className="text-meta leading-relaxed text-ink-600">
           Buka aplikasi e-wallet pilihanmu, lalu selesaikan pembayaran sebesar{' '}
           <span className="font-semibold tabular-nums text-ink-800">{formatCurrency(amount)}</span>.
         </p>
@@ -516,7 +516,7 @@ function MethodInstructions({ method, amount }: { method: PaymentMethod; amount:
             href={method.ewalletDeepLink}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex h-10 items-center gap-2 rounded-lg bg-brand-600 px-4 text-sm font-medium text-white shadow-sm hover:bg-brand-700"
+            className="inline-flex h-10 items-center gap-2 rounded-lg bg-brand-600 px-4 text-body font-medium text-white shadow-sm hover:bg-brand-700"
           >
             <Wallet className="size-4" /> Buka aplikasi e-wallet
           </a>
@@ -530,7 +530,7 @@ function MethodInstructions({ method, amount }: { method: PaymentMethod; amount:
     <div className="space-y-3">
       <QrisImage method={method} amount={amount} />
 
-      <p className="text-[12.5px] leading-relaxed text-ink-600">
+      <p className="text-meta leading-relaxed text-ink-600">
         Scan QR dengan aplikasi bank atau e-wallet apa pun, lalu bayar{' '}
         <span className="font-semibold tabular-nums text-ink-800">{formatCurrency(amount)}</span>.
       </p>
@@ -540,7 +540,7 @@ function MethodInstructions({ method, amount }: { method: PaymentMethod; amount:
           href={method.qrCodeUrl}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex h-10 items-center gap-2 rounded-lg border border-ink-200 px-4 text-sm font-medium text-ink-700 hover:bg-ink-50"
+          className="inline-flex h-10 items-center gap-2 rounded-lg border border-ink-200 px-4 text-body font-medium text-ink-700 hover:bg-ink-50"
         >
           <ExternalLink className="size-4" /> Buka halaman pembayaran
         </a>
@@ -612,7 +612,7 @@ function QrisImage({ method, amount }: { method: PaymentMethod; amount: number }
   return (
     <div className="flex size-48 flex-col items-center justify-center gap-1 rounded-xl border border-ink-200 bg-white text-ink-400">
       <QrCode className="size-14" />
-      <span className="text-[10.5px] font-medium">
+      <span className="text-2xs font-medium">
         {failed ? 'QR gagal dimuat' : 'Menyiapkan QR…'}
       </span>
     </div>
@@ -623,8 +623,8 @@ function QrisImage({ method, amount }: { method: PaymentMethod; amount: number }
 function InfoRow({ label, value }: { label: string; value: ReactNode }) {
   return (
     <div className="flex items-center justify-between gap-3 border-b border-ink-100 pb-2 last:border-b-0">
-      <span className="text-[12px] text-ink-500">{label}</span>
-      <span className="text-[13px] font-medium text-ink-900">{value}</span>
+      <span className="text-meta text-ink-500">{label}</span>
+      <span className="text-body font-medium text-ink-900">{value}</span>
     </div>
   )
 }
@@ -649,7 +649,7 @@ function CopyValue({ value, mono }: { value: string; mono?: boolean }) {
       <button
         type="button"
         onClick={handleCopy}
-        className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] font-medium text-brand-700 hover:bg-brand-50"
+        className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-caption font-medium text-brand-700 hover:bg-brand-50"
       >
         {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
         {copied ? 'Tersalin' : 'Salin'}
@@ -688,10 +688,10 @@ function CheckoutSuccess({
         <span className="mx-auto flex size-14 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
           <Check className="size-7" />
         </span>
-        <h2 className="mt-4 text-lg font-semibold tracking-tight text-ink-900">
+        <h1 className="mt-4 text-title tracking-tight text-ink-900">
           Langganan aktif
-        </h2>
-        <p className="mt-1 text-[13px] leading-relaxed text-ink-500">
+        </h1>
+        <p className="mt-1 text-body leading-relaxed text-ink-500">
           Pembayaran paket <span className="font-medium text-ink-700">{session.plan.name}</span> sudah
           terverifikasi. Booking &amp; invoice kini tanpa batas.
         </p>
@@ -728,10 +728,10 @@ function CheckoutExpired({ planName }: { planName: string }) {
         <span className="mx-auto flex size-14 items-center justify-center rounded-full bg-ink-100 text-ink-500">
           <AlertTriangle className="size-6" />
         </span>
-        <h2 className="mt-4 text-lg font-semibold tracking-tight text-ink-900">
+        <h1 className="mt-4 text-title tracking-tight text-ink-900">
           Transaksi kedaluwarsa
-        </h2>
-        <p className="mt-1 text-[13px] leading-relaxed text-ink-500">
+        </h1>
+        <p className="mt-1 text-body leading-relaxed text-ink-500">
           Waktu pembayaran paket <span className="font-medium text-ink-700">{planName}</span> sudah
           habis dan transaksi ditutup. Tidak ada dana yang tertarik; kamu bisa membuat transaksi
           baru kapan saja.

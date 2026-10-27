@@ -83,23 +83,23 @@ export function PublicSchedulePage({ slug }: { slug: string }) {
             <Building2 className="size-5" aria-hidden="true" />
           </span>
           <div className="min-w-0">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-400">
+            <p className="text-2xs font-semibold uppercase tracking-[0.12em] text-ink-400">
               Jadwal publik
             </p>
-            <h1 className="truncate text-[15px] font-semibold text-ink-900 sm:text-base">
+            <h1 className="truncate text-lead font-semibold text-ink-900 sm:text-title">
               {data?.vendor.businessName ?? 'Jadwal vendor'}
             </h1>
             {data?.vendor.category ? (
-              <p className="mt-0.5 text-[11.5px] text-ink-500">{data.vendor.category}</p>
+              <p className="mt-0.5 text-caption text-ink-500">{data.vendor.category}</p>
             ) : null}
           </div>
         </header>
 
         <section className="space-y-1 px-1">
-          <h2 className="text-xl font-semibold tracking-tight text-ink-900 sm:text-2xl">
+          <h2 className="text-lead tracking-tight text-ink-900 sm:text-heading">
             Cek ketersediaan tanggal
           </h2>
-          <p className="text-[13px] leading-relaxed text-ink-500">
+          <p className="text-body leading-relaxed text-ink-500">
             Pilih bulan untuk melihat tanggal yang masih tersedia untuk acara Anda.
           </p>
         </section>
@@ -111,10 +111,10 @@ export function PublicSchedulePage({ slug }: { slug: string }) {
                 <CalendarDays className="size-4" aria-hidden="true" />
               </span>
               <div>
-                <h3 className="text-[14px] font-semibold capitalize text-ink-900">
+                <h3 className="text-lead font-semibold capitalize text-ink-900">
                   {formatMonthLabel(monthKey)}
                 </h3>
-                <p className="text-[11px] text-ink-400">
+                <p className="text-caption text-ink-400">
                   {loading ? 'Memuat ketersediaan…' : `${busyCount} tanggal sudah terisi`}
                 </p>
               </div>
@@ -150,7 +150,7 @@ export function PublicSchedulePage({ slug }: { slug: string }) {
           </div>
 
           <div className="px-3 py-4 sm:px-5 sm:py-5">
-            <div className="mb-3 flex flex-wrap gap-x-4 gap-y-2 text-[11px] text-ink-500" aria-label="Legenda kalender">
+            <div className="mb-3 flex flex-wrap gap-x-4 gap-y-2 text-caption text-ink-500" aria-label="Legenda kalender">
               <span className="inline-flex items-center gap-1.5">
                 <CircleCheck className="size-3.5 text-emerald-600" aria-hidden="true" />
                 Tersedia
@@ -165,7 +165,7 @@ export function PublicSchedulePage({ slug }: { slug: string }) {
               <div className="space-y-2" aria-busy="true" aria-label="Memuat kalender">
                 <div className="grid grid-cols-7 gap-1.5">
                   {CALENDAR_WEEKDAYS.map((weekday) => (
-                    <div key={weekday} className="py-2 text-center text-[10px] font-semibold text-ink-400">
+                    <div key={weekday} className="py-2 text-center text-2xs font-semibold text-ink-400">
                       {weekday}
                     </div>
                   ))}
@@ -178,12 +178,12 @@ export function PublicSchedulePage({ slug }: { slug: string }) {
               </div>
             ) : error ? (
               <div className="rounded-xl border border-ink-200 bg-ink-50 px-4 py-8 text-center">
-                <p className="text-[14px] font-semibold text-ink-900">
+                <p className="text-lead font-semibold text-ink-900">
                   {error instanceof ApiError && error.status === 404
                     ? 'Jadwal tidak ditemukan'
                     : 'Jadwal belum dapat dimuat'}
                 </p>
-                <p className="mx-auto mt-1 max-w-sm text-[12px] leading-relaxed text-ink-500">
+                <p className="mx-auto mt-1 max-w-sm text-meta leading-relaxed text-ink-500">
                   {error instanceof ApiError && error.status === 404
                     ? 'Link mungkin sudah tidak aktif. Minta vendor membagikan link jadwal yang terbaru.'
                     : error.message || 'Periksa koneksi internet lalu coba lagi.'}
@@ -213,7 +213,7 @@ export function PublicSchedulePage({ slug }: { slug: string }) {
           </div>
         </Card>
 
-        <footer className="px-2 pb-2 text-center text-[11px] leading-relaxed text-ink-400">
+        <footer className="px-2 pb-2 text-center text-caption leading-relaxed text-ink-400">
           Kalender ini hanya menampilkan status ketersediaan tanggal. Informasi pribadi klien tidak ditampilkan.
         </footer>
 
@@ -235,10 +235,10 @@ function PublicPackageList({ packages }: { packages: PublicSchedulePackage[] }) 
   return (
     <section className="space-y-3" aria-labelledby="paket-vendor">
       <div className="px-1">
-        <h2 id="paket-vendor" className="text-[15px] font-semibold text-ink-900">
+        <h2 id="paket-vendor" className="text-lead font-semibold text-ink-900">
           Paket layanan
         </h2>
-        <p className="text-[12px] text-ink-500">
+        <p className="text-meta text-ink-500">
           Harga sudah termasuk layanan sesuai durasi yang tertera.
         </p>
       </div>
@@ -248,21 +248,21 @@ function PublicPackageList({ packages }: { packages: PublicSchedulePackage[] }) 
           <Card key={item.id}>
             <div className="space-y-2 px-4 py-4">
               <div className="flex items-start justify-between gap-3">
-                <h3 className="text-[13.5px] font-semibold text-ink-900">{item.name}</h3>
-                <p className="shrink-0 text-[13.5px] font-semibold tabular-nums text-brand-700">
+                <h3 className="text-lead font-semibold text-ink-900">{item.name}</h3>
+                <p className="shrink-0 text-body font-semibold tabular-nums text-brand-700">
                   {formatRupiah(item.price)}
                 </p>
               </div>
 
               {item.durationHours !== null ? (
-                <p className="inline-flex items-center gap-1.5 text-[11.5px] text-ink-500">
+                <p className="inline-flex items-center gap-1.5 text-caption text-ink-500">
                   <Clock3 className="size-3.5" aria-hidden="true" />
                   {item.durationHours} jam
                 </p>
               ) : null}
 
               {item.description ? (
-                <p className="text-[12px] leading-relaxed text-ink-600">{item.description}</p>
+                <p className="text-meta leading-relaxed text-ink-600">{item.description}</p>
               ) : null}
             </div>
           </Card>
@@ -302,7 +302,7 @@ export function PublicScheduleCalendar({
         {CALENDAR_WEEKDAYS.map((weekday) => (
           <div
             key={weekday}
-            className="py-2 text-center text-[10px] font-semibold uppercase tracking-wide text-ink-400 sm:text-[11px]"
+            className="py-2 text-center text-2xs font-semibold uppercase tracking-wide text-ink-400 sm:text-caption"
           >
             {weekday}
           </div>
@@ -335,11 +335,11 @@ export function PublicScheduleCalendar({
                 onClick={() => onSelectDate(cell.date!)}
                 className={`flex min-h-14 w-full flex-col items-center justify-center gap-1 rounded-lg border text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 sm:min-h-16 ${tone} ${past ? 'cursor-not-allowed' : 'cursor-pointer'} ${selected || (cell.isToday && !selectedDate) ? 'ring-2 ring-brand-400 ring-offset-1' : ''}`}
               >
-                <time dateTime={cell.date} className="text-[12px] font-semibold tabular-nums sm:text-[13px]">
+                <time dateTime={cell.date} className="text-meta font-semibold tabular-nums sm:text-body">
                   {cell.day}
                 </time>
                 {!past ? (
-                  <span className="text-[8px] font-medium leading-none sm:text-[9px]">{label}</span>
+                  <span className="text-2xs font-medium leading-none">{label}</span>
                 ) : null}
               </button>
             </div>
@@ -359,8 +359,8 @@ export function PublicScheduleCalendar({
             <CircleCheck className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
           )}
           <div>
-            <p className="text-[12px] font-semibold">{formatLongDate(selectedDate)}</p>
-            <p className="mt-0.5 text-[11.5px] leading-relaxed">
+            <p className="text-meta font-semibold">{formatLongDate(selectedDate)}</p>
+            <p className="mt-0.5 text-caption leading-relaxed">
               {selectedPast
                 ? 'Tanggal ini sudah berlalu.'
                 : selectedUnavailable
@@ -370,7 +370,7 @@ export function PublicScheduleCalendar({
           </div>
         </div>
       ) : (
-        <p className="mt-4 text-center text-[11.5px] text-ink-400">
+        <p className="mt-4 text-center text-caption text-ink-400">
           Pilih tanggal untuk melihat ketersediaannya.
         </p>
       )}

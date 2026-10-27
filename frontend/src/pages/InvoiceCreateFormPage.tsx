@@ -159,20 +159,20 @@ export function InvoiceCreateFormPage({
         <div>
           <Link
             to={`/bookings/${booking.id}`}
-            className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-ink-500 hover:text-ink-800"
+            className="inline-flex items-center gap-1.5 text-meta font-medium text-ink-500 hover:text-ink-800"
           >
             <ArrowLeft className="size-3.5" />
             Detail booking
           </Link>
-          <h2 className="mt-1 text-lg font-semibold tracking-tight text-ink-900">Buat Invoice</h2>
-          <p className="text-[13px] text-ink-500">
+          <h1 className="mt-1 text-title tracking-tight text-ink-900">Buat Invoice</h1>
+          <p className="text-body text-ink-500">
             {booking.client.name} · {formatLongDate(booking.eventDate)}
           </p>
         </div>
       </div>
 
       {notice ? (
-        <div className="flex items-start gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-[12.5px] text-emerald-800">
+        <div className="flex items-start gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-meta text-emerald-800">
           <Receipt className="mt-0.5 size-4 shrink-0" />
           {notice}
         </div>
@@ -181,7 +181,7 @@ export function InvoiceCreateFormPage({
       {trialLeft !== null ? (
         trialExhausted ? (
           <div className="flex flex-col gap-2 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-            <p className="flex items-start gap-2 text-[12.5px] leading-relaxed text-amber-900">
+            <p className="flex items-start gap-2 text-meta leading-relaxed text-amber-900">
               <Lock className="mt-0.5 size-3.5 shrink-0" />
               <span>
                 <span className="font-semibold">Jatah trial invoice habis.</span> Form tetap bisa
@@ -199,7 +199,7 @@ export function InvoiceCreateFormPage({
             </Button>
           </div>
         ) : trialLeft <= 1 ? (
-          <div className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50/70 px-4 py-2.5 text-[12.5px] text-amber-900">
+          <div className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50/70 px-4 py-2.5 text-meta text-amber-900">
             <Info className="mt-0.5 size-3.5 shrink-0" />
             <span>
               <span className="font-semibold">Sisa {trialLeft} invoice trial.</span> Setelah jatah
@@ -212,7 +212,7 @@ export function InvoiceCreateFormPage({
       {submitted && errorCount > 0 ? (
         <div className="flex items-start gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3">
           <AlertTriangle className="mt-0.5 size-4 shrink-0 text-rose-600" />
-          <p className="text-[12.5px] text-rose-800">
+          <p className="text-meta text-rose-800">
             {errorCount} isian perlu diperbaiki sebelum invoice bisa diterbitkan.
           </p>
         </div>
@@ -245,14 +245,14 @@ export function InvoiceCreateFormPage({
                           : 'border-ink-200 hover:border-ink-300 hover:bg-ink-50',
                       )}
                     >
-                      <span className="flex items-center gap-1.5 text-[13px] font-medium text-ink-900">
+                      <span className="flex items-center gap-1.5 text-body font-medium text-ink-900">
                         <FileText className="size-3.5" />
                         {meta.label}
                       </span>
-                      <span className="mt-0.5 block text-[11.5px] leading-snug text-ink-500">
+                      <span className="mt-0.5 block text-caption leading-snug text-ink-500">
                         {meta.description}
                       </span>
-                      <span className="mt-1 block text-[11.5px] tabular-nums text-ink-600">
+                      <span className="mt-1 block text-caption tabular-nums text-ink-600">
                         Default {formatCurrency(splitInvoiceAmount(booking.totalPrice, type))}
                       </span>
                     </button>
@@ -274,7 +274,7 @@ export function InvoiceCreateFormPage({
                 className="sm:col-span-2"
               >
                 <div className="relative">
-                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[13px] text-ink-400">
+                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-body text-ink-400">
                     Rp
                   </span>
                   <input
@@ -316,10 +316,10 @@ export function InvoiceCreateFormPage({
 
         <aside className="space-y-3 lg:sticky lg:top-20 lg:self-start">
           <div className="rounded-xl border border-ink-200/80 bg-white p-4">
-            <h3 className="text-[12px] font-semibold uppercase tracking-wide text-ink-400">
+            <h3 className="text-meta font-semibold uppercase tracking-wide text-ink-400">
               Ringkasan invoice
             </h3>
-            <dl className="mt-3 space-y-2 text-[12.5px]">
+            <dl className="mt-3 space-y-2 text-meta">
               <SummaryRow label="Klien" value={booking.client.name} />
               <SummaryRow
                 label="Acara"
@@ -342,7 +342,7 @@ export function InvoiceCreateFormPage({
               ) : null}
             </dl>
 
-            <div className="mt-3 space-y-1.5 border-t border-ink-100 pt-3 text-[11.5px]">
+            <div className="mt-3 space-y-1.5 border-t border-ink-100 pt-3 text-caption">
               <BreakdownRow label="Sudah ditagihkan" value={formatCurrency(breakdown.billed)} />
               <BreakdownRow label="Sisa kontrak" value={formatCurrency(breakdown.remaining)} />
               <BreakdownRow
@@ -355,14 +355,14 @@ export function InvoiceCreateFormPage({
 
           {existingInvoices.length > 0 ? (
             <div className="rounded-xl border border-ink-200/80 bg-white p-4">
-              <h3 className="text-[12px] font-semibold uppercase tracking-wide text-ink-400">
+              <h3 className="text-meta font-semibold uppercase tracking-wide text-ink-400">
                 Invoice sebelumnya
               </h3>
               <ul className="mt-2 space-y-1.5">
                 {existingInvoices.map((invoice) => (
                   <li
                     key={invoice.id}
-                    className="flex items-baseline justify-between gap-2 text-[12px]"
+                    className="flex items-baseline justify-between gap-2 text-meta"
                   >
                     <span className="truncate text-ink-600">
                       {INVOICE_TYPE_META[invoice.type].label}
@@ -378,7 +378,7 @@ export function InvoiceCreateFormPage({
 
           <div className="flex items-start gap-2 rounded-xl border border-sky-200 bg-sky-50 px-3 py-2.5">
             <Info className="mt-0.5 size-3.5 shrink-0 text-sky-600" />
-            <p className="text-[11.5px] leading-relaxed text-sky-900">
+            <p className="text-caption leading-relaxed text-sky-900">
               Invoice diterbitkan langsung dengan nomor urut otomatis. Tautan pembayaran untuk klien
               dibuat pada tahap berikutnya.
             </p>

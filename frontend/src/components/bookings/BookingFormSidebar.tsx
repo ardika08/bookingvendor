@@ -32,10 +32,10 @@ export function BookingFormSidebar({
   return (
     <aside className="space-y-3 lg:sticky lg:top-20">
       <div className="rounded-xl border border-ink-200/80 bg-white p-4">
-        <h3 className="text-[12px] font-semibold uppercase tracking-wide text-ink-400">
+        <h3 className="text-meta font-semibold uppercase tracking-wide text-ink-400">
           Ringkasan booking
         </h3>
-        <dl className="mt-3 space-y-2 text-[12.5px]">
+        <dl className="mt-3 space-y-2 text-meta">
           <Row label="Klien" value={clientName.trim() || '—'} />
           <Row label="Tanggal" value={eventDate || '—'} mono />
           <Row label="Jam" value={eventTime || '—'} mono />
@@ -48,10 +48,10 @@ export function BookingFormSidebar({
       </div>
 
       <div className="rounded-xl border border-ink-200/80 bg-white p-4">
-        <h3 className="text-[12px] font-semibold uppercase tracking-wide text-ink-400">
+        <h3 className="text-meta font-semibold uppercase tracking-wide text-ink-400">
           Paket cepat
         </h3>
-        <p className="mt-0.5 text-[11.5px] text-ink-400">Isi nama paket &amp; harga otomatis.</p>
+        <p className="mt-0.5 text-caption text-ink-400">Isi nama paket &amp; harga otomatis.</p>
         <ul className="mt-2.5 space-y-1.5">
           {packages.map((pkg) => {
             const active = pkg.id === selectedPackageId
@@ -66,10 +66,10 @@ export function BookingFormSidebar({
                       : 'w-full rounded-lg border border-ink-200 px-3 py-2 text-left hover:border-ink-300 hover:bg-ink-50'
                   }
                 >
-                  <span className="block truncate text-[12.5px] font-medium text-ink-800">
+                  <span className="block truncate text-meta font-medium text-ink-800">
                     {pkg.name}
                   </span>
-                  <span className="block text-[11.5px] text-ink-500">
+                  <span className="block text-caption text-ink-500">
                     {formatCurrency(pkg.price)}
                   </span>
                 </button>
@@ -77,7 +77,7 @@ export function BookingFormSidebar({
             )
           })}
           {packages.length === 0 ? (
-            <li className="rounded-lg border border-dashed border-ink-200 px-3 py-3 text-[12px] text-ink-400">
+            <li className="rounded-lg border border-dashed border-ink-200 px-3 py-3 text-meta text-ink-400">
               Belum ada paket. Isi manual di form.
             </li>
           ) : null}
@@ -85,14 +85,14 @@ export function BookingFormSidebar({
       </div>
 
       <div className="rounded-xl border border-ink-200/80 bg-white p-4">
-        <h3 className="text-[12px] font-semibold uppercase tracking-wide text-ink-400">
+        <h3 className="text-meta font-semibold uppercase tracking-wide text-ink-400">
           Tanggal sudah terisi
         </h3>
-        <p className="mt-0.5 text-[11.5px] text-ink-400">
+        <p className="mt-0.5 text-caption text-ink-400">
           Tanggal ini tidak bisa dipilih agar tidak bentrok.
         </p>
         {takenDates.length === 0 ? (
-          <p className="mt-2 text-[12px] text-ink-400">Semua tanggal masih kosong.</p>
+          <p className="mt-2 text-meta text-ink-400">Semua tanggal masih kosong.</p>
         ) : (
           <div className="mt-2 flex flex-wrap gap-1.5">
             {takenDates.slice(0, 8).map((date) => (
@@ -100,14 +100,14 @@ export function BookingFormSidebar({
                 key={date}
                 type="button"
                 onClick={() => onPickTakenDate?.(date)}
-                className="inline-flex items-center gap-1 rounded-md bg-ink-100 px-2 py-1 text-[11.5px] font-medium text-ink-600 hover:bg-rose-50 hover:text-rose-700"
+                className="inline-flex items-center gap-1 rounded-md bg-ink-100 px-2 py-1 text-caption font-medium text-ink-600 hover:bg-rose-50 hover:text-rose-700"
                 title="Tanggal sudah terisi — coba tanggal lain"
               >
                 {date.slice(8, 10)}/{date.slice(5, 7)}/{date.slice(0, 4)}
               </button>
             ))}
             {takenDates.length > 8 ? (
-              <span className="inline-flex items-center rounded-md px-1.5 py-1 text-[11.5px] text-ink-400">
+              <span className="inline-flex items-center rounded-md px-1.5 py-1 text-caption text-ink-400">
                 +{takenDates.length - 8} lagi
               </span>
             ) : null}

@@ -85,15 +85,15 @@ export function AccountProfilePage() {
   return (
     <form ref={formRef} onSubmit={handleSubmit} noValidate className="space-y-4">
       <div>
-        <h2 className="text-lg font-semibold tracking-tight text-ink-900">Akun Saya</h2>
-        <p className="mt-0.5 text-[13px] text-ink-500">
+        <h1 className="text-title tracking-tight text-ink-900">Akun Saya</h1>
+        <p className="mt-0.5 text-body text-ink-500">
           Nama &amp; kontak akun — berbeda dari profil usaha di menu Pengaturan.
         </p>
       </div>
 
       <Card>
         <CardBody className="flex flex-col gap-4 sm:flex-row sm:items-center">
-          <span className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-100 text-[17px] font-semibold text-brand-700">
+          <span className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-100 text-lead font-semibold text-brand-700">
             {initial.avatarUrl ? (
               <img src={initial.avatarUrl} alt="" className="size-full object-cover" />
             ) : (
@@ -101,9 +101,9 @@ export function AccountProfilePage() {
             )}
           </span>
           <div className="min-w-0">
-            <p className="text-[15px] font-semibold text-ink-900">{initial.name}</p>
-            <p className="mt-0.5 text-[12.5px] text-ink-500">{initial.email}</p>
-            <p className="mt-1 flex items-center gap-1 text-[11.5px] text-ink-400">
+            <p className="text-lead font-semibold text-ink-900">{initial.name}</p>
+            <p className="mt-0.5 text-meta text-ink-500">{initial.email}</p>
+            <p className="mt-1 flex items-center gap-1 text-caption text-ink-400">
               <IdCard className="size-3.5" />
               {user.role === 'admin' ? 'Peran: Admin' : 'Peran: Vendor'}
             </p>
@@ -166,7 +166,7 @@ export function AccountProfilePage() {
               </Field>
             </div>
 
-            <p className="mt-4 flex items-start gap-2 rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-[11.5px] leading-relaxed text-sky-900">
+            <p className="mt-4 flex items-start gap-2 rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-caption leading-relaxed text-sky-900">
               <User className="mt-0.5 size-3.5 shrink-0" />
               Foto profil tampil otomatis dari akun Google yang dipakai masuk.
             </p>

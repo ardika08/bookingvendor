@@ -175,7 +175,7 @@ export function BookingsPage({ subscription }: { subscription: SubscriptionSumma
   const createAction = access.readOnly ? (
     <ReadOnlyActionHint label="Booking Baru" />
   ) : (
-    <ButtonLink to="/bookings/new" className="h-9 shrink-0 rounded-full px-4 text-[13px]">
+    <ButtonLink to="/bookings/new" className="h-9 shrink-0 rounded-full px-4 text-body">
       <CalendarPlus className="size-4" />
       Booking Baru
     </ButtonLink>
@@ -188,10 +188,10 @@ export function BookingsPage({ subscription }: { subscription: SubscriptionSumma
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-[19px] font-bold tracking-tight text-ink-900">
+          <h1 className="text-title tracking-tight text-ink-900">
             {view === 'calendar' ? 'Jadwal Booking' : 'Daftar Booking'}
           </h1>
-          <p className="mt-0.5 text-[12.5px] text-ink-500">
+          <p className="mt-0.5 text-meta text-ink-500">
             {view === 'calendar'
               ? 'Lihat tanggal terisi sekilas — klik tanggal untuk detail acara.'
               : 'Kelola reservasi, pembatalan, dan aktivitas booking.'}
@@ -211,7 +211,7 @@ export function BookingsPage({ subscription }: { subscription: SubscriptionSumma
                 onClick={() => setView(option.value)}
                 aria-pressed={view === option.value}
                 className={cn(
-                  'rounded-full px-3 py-1.5 text-[12.5px] font-medium transition-colors',
+                  'rounded-full px-3 py-1.5 text-meta font-medium transition-colors',
                   view === option.value
                     ? 'bg-white text-ink-900 shadow-sm'
                     : 'text-ink-500 hover:text-ink-800',
@@ -240,13 +240,13 @@ export function BookingsPage({ subscription }: { subscription: SubscriptionSumma
             <section className="rounded-2xl border border-ink-200/70 bg-white p-4">
               <div className="mb-3 flex items-center justify-between gap-2">
                 <div>
-                  <h2 className="text-[14px] font-semibold text-ink-900">Status Tanggal</h2>
+                  <h2 className="text-lead font-semibold text-ink-900">Status Tanggal</h2>
                   {/*
                    * Subjudul dibuat dinamis. Tanpa ini grid (satu bulan) tampil
                    * berdampingan dengan Ringkasan (seluruh periode) seolah bisa
                    * dibandingkan, padahal cakupannya berbeda.
                    */}
-                  <p className="text-[11.5px] text-ink-400">
+                  <p className="text-caption text-ink-400">
                     {filters.month
                       ? `Sebaran acara ${formatMonthYear(filters.month)}.`
                       : 'Bulan berjalan — pilih bulan untuk memfilter tabel.'}
@@ -256,7 +256,7 @@ export function BookingsPage({ subscription }: { subscription: SubscriptionSumma
                   <button
                     type="button"
                     onClick={() => setFilters({ ...filters, month: '' })}
-                    className="shrink-0 rounded-full bg-brand-50 px-2.5 py-1 text-[11px] font-medium text-brand-700 hover:bg-brand-100"
+                    className="shrink-0 rounded-full bg-brand-50 px-2.5 py-1 text-caption font-medium text-brand-700 hover:bg-brand-100"
                   >
                     {formatMonthYear(filters.month)} ✕
                   </button>
@@ -273,8 +273,8 @@ export function BookingsPage({ subscription }: { subscription: SubscriptionSumma
 
             <section className="rounded-2xl border border-ink-200/70 bg-white p-4">
               <div className="mb-3">
-                <h2 className="text-[14px] font-semibold text-ink-900">Ringkasan</h2>
-                <p className="text-[11.5px] text-ink-400">
+                <h2 className="text-lead font-semibold text-ink-900">Ringkasan</h2>
+                <p className="text-caption text-ink-400">
                   {filters.month ? formatMonthYear(filters.month) : 'Seluruh periode'}
                   {filters.search ? ' · hasil pencarian' : ''}
                 </p>
@@ -285,7 +285,7 @@ export function BookingsPage({ subscription }: { subscription: SubscriptionSumma
                 activeStatus={filters.status}
                 onSelectStatus={selectStatus}
               />
-              <p className="mt-3 border-t border-ink-100 pt-2.5 text-[11px] leading-relaxed text-ink-400">
+              <p className="mt-3 border-t border-ink-100 pt-2.5 text-caption leading-relaxed text-ink-400">
                 Nilai kontrak hanya menghitung booking terkonfirmasi dan selesai. Klik
                 kartu untuk memfilter tabel.
               </p>
@@ -296,8 +296,8 @@ export function BookingsPage({ subscription }: { subscription: SubscriptionSumma
           <section className="overflow-hidden rounded-2xl border border-ink-200/70 bg-white">
             <div className="flex flex-col gap-2 border-b border-ink-100 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5">
               <div className="min-w-0">
-                <h2 className="text-[14px] font-semibold text-ink-900">Daftar Booking</h2>
-                <p className="text-[11.5px] text-ink-400">
+                <h2 className="text-lead font-semibold text-ink-900">Semua booking</h2>
+                <p className="text-caption text-ink-400">
                   {result.total} booking
                   {filters.month ? ` · ${formatMonthYear(filters.month)}` : ''}
                   {loading ? ' · memuat…' : ''}
@@ -330,7 +330,7 @@ export function BookingsPage({ subscription }: { subscription: SubscriptionSumma
                         onClick={() =>
                           setFilters({ month: '', status: 'all', search: '', sort: 'event_date' })
                         }
-                        className="text-[13px] font-medium text-brand-700 hover:underline"
+                        className="text-body font-medium text-brand-700 hover:underline"
                       >
                         Reset semua filter
                       </button>
@@ -369,7 +369,7 @@ export function BookingsPage({ subscription }: { subscription: SubscriptionSumma
             </div>
 
             {result.items.length > 0 ? (
-              <div className="flex flex-wrap items-center justify-between gap-2 border-t border-ink-100 px-4 py-2.5 text-[12px] text-ink-500 sm:px-5">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-t border-ink-100 px-4 py-2.5 text-meta text-ink-500 sm:px-5">
                 <span>
                   Menampilkan {result.items.length} dari {result.total} booking
                   {hasFilter ? ' · filter aktif' : ''}
@@ -384,7 +384,7 @@ export function BookingsPage({ subscription }: { subscription: SubscriptionSumma
                   >
                     <ChevronLeft className="size-3.5" />
                   </button>
-                  <span className="tabular-nums text-[11.5px]">
+                  <span className="tabular-nums text-caption">
                     {urlFilters.page} / {totalPages}
                   </span>
                   <button

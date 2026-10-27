@@ -26,12 +26,12 @@ export function SubmitErrorBanner({
     <div className="flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3">
       <AlertTriangle className="mt-0.5 size-4 shrink-0 text-rose-600" />
       <div className="min-w-0 flex-1">
-        <p className="text-[12.5px] font-medium text-rose-800">{error.message}</p>
+        <p className="text-meta font-medium text-rose-800">{error.message}</p>
 
         {fieldErrors.length > 0 ? (
           <ul className="mt-1.5 space-y-0.5">
             {fieldErrors.slice(0, 4).map(([field, message]) => (
-              <li key={field} className="text-[11.5px] text-rose-700">
+              <li key={field} className="text-caption text-rose-700">
                 <span className="font-medium">{fieldLabel(field)}:</span> {message}
               </li>
             ))}
@@ -42,7 +42,7 @@ export function SubmitErrorBanner({
           <button
             type="button"
             onClick={onRetry}
-            className="mt-2 inline-flex items-center gap-1.5 rounded-md bg-white px-2.5 py-1 text-[11.5px] font-medium text-rose-700 ring-1 ring-rose-200 hover:bg-rose-100"
+            className="mt-2 inline-flex items-center gap-1.5 rounded-md bg-white px-2.5 py-1 text-caption font-medium text-rose-700 ring-1 ring-rose-200 hover:bg-rose-100"
           >
             <RefreshCw className="size-3" />
             Coba lagi

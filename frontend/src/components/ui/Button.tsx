@@ -21,9 +21,9 @@ const VARIANT_CLASS: Record<Variant, string> = {
 }
 
 const SIZE_CLASS: Record<Size, string> = {
-  sm: 'h-9 gap-1.5 px-3 text-[13px]',
-  md: 'h-10 gap-2 px-4 text-sm',
-  lg: 'h-11 gap-2 px-5 text-sm',
+  sm: 'h-9 gap-1.5 px-3 text-body',
+  md: 'h-10 gap-2 px-4 text-body',
+  lg: 'h-11 gap-2 px-5 text-body',
 }
 
 const BASE_CLASS =

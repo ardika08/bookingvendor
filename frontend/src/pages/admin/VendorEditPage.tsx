@@ -53,13 +53,13 @@ export function VendorEditPage() {
     return (
       <div className="rounded-xl border border-dashed border-ink-300 bg-white px-6 py-16 text-center">
         <ShieldCheck className="mx-auto size-6 text-ink-400" />
-        <h2 className="mt-3 text-base font-semibold text-ink-900">Vendor tidak ditemukan</h2>
-        <p className="mx-auto mt-1 max-w-sm text-[13px] text-ink-500">
+        <h2 className="mt-3 text-lead text-ink-900">Vendor tidak ditemukan</h2>
+        <p className="mx-auto mt-1 max-w-sm text-body text-ink-500">
           Vendor mungkin sudah dihapus atau tautannya tidak berlaku.
         </p>
         <Link
           to="/admin/vendors"
-          className="mt-5 inline-flex h-9 items-center gap-1.5 rounded-lg bg-white px-3 text-[13px] font-medium text-ink-700 shadow-sm ring-1 ring-ink-200 hover:bg-ink-50"
+          className="mt-5 inline-flex h-9 items-center gap-1.5 rounded-lg bg-white px-3 text-body font-medium text-ink-700 shadow-sm ring-1 ring-ink-200 hover:bg-ink-50"
         >
           <ArrowLeft className="size-3.5" /> Kembali ke daftar vendor
         </Link>
@@ -142,7 +142,7 @@ export function VendorEditPage() {
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <Link
           to={`/admin/vendors/${vendorId}`}
-          className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-ink-500 hover:text-ink-800"
+          className="inline-flex items-center gap-1.5 text-meta font-medium text-ink-500 hover:text-ink-800"
         >
           <ArrowLeft className="size-3.5" />
           Detail vendor
@@ -150,8 +150,8 @@ export function VendorEditPage() {
         <span
           className={
             current.isActive
-              ? 'rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-medium text-emerald-700 ring-1 ring-inset ring-emerald-200'
-              : 'rounded-full bg-ink-100 px-2.5 py-1 text-[11px] font-medium text-ink-500'
+              ? 'rounded-full bg-emerald-50 px-2.5 py-1 text-caption font-medium text-emerald-700 ring-1 ring-inset ring-emerald-200'
+              : 'rounded-full bg-ink-100 px-2.5 py-1 text-caption font-medium text-ink-500'
           }
         >
           {current.isActive ? 'Akun aktif' : 'Akun nonaktif'}
@@ -287,10 +287,10 @@ export function VendorEditPage() {
               aria-hidden
             />
             <div>
-              <p className="text-[13px] font-semibold text-ink-900">
+              <p className="text-body font-semibold text-ink-900">
                 {current.isActive ? 'Nonaktifkan akun vendor' : 'Aktifkan kembali akun vendor'}
               </p>
-              <p className="mt-0.5 max-w-md text-[12px] leading-relaxed text-ink-500">
+              <p className="mt-0.5 max-w-md text-meta leading-relaxed text-ink-500">
                 {current.isActive
                   ? 'Vendor tidak bisa masuk dan link publiknya ditutup. Data booking, invoice, dan langganannya tetap utuh — nonaktif bukan hapus.'
                   : 'Vendor bisa masuk kembali dan link publiknya dibuka. Langganan tidak berubah.'}

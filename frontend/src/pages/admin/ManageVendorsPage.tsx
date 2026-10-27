@@ -67,8 +67,8 @@ export function ManageVendorsPage() {
     <div className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold tracking-tight text-ink-900">Kelola Vendor</h2>
-          <p className="mt-0.5 text-[13px] text-ink-500">
+          <h1 className="text-title tracking-tight text-ink-900">Kelola Vendor</h1>
+          <p className="mt-0.5 text-body text-ink-500">
             Tambah, aktif/nonaktifkan, dan pantau langganan vendor.
           </p>
         </div>
@@ -96,7 +96,7 @@ export function ManageVendorsPage() {
               onChange={(event) => setFilters({ ...filters, search: event.target.value })}
               placeholder="Cari nama usaha, pemilik, email, atau kota…"
               aria-label="Cari vendor"
-              className="h-10 w-full rounded-lg border border-ink-200 bg-white pl-9 pr-9 text-sm text-ink-800 placeholder:text-ink-400 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+              className="h-10 w-full rounded-lg border border-ink-200 bg-white pl-9 pr-9 text-body text-ink-800 placeholder:text-ink-400 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
             />
             {filters.search ? (
               <button
@@ -120,7 +120,7 @@ export function ManageVendorsPage() {
                 })
               }
               aria-label="Filter langganan"
-              className="h-10 rounded-lg border border-ink-200 bg-white px-3 text-[13px] text-ink-700 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+              className="h-10 rounded-lg border border-ink-200 bg-white px-3 text-body text-ink-700 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
             >
               <option value="all">Semua langganan</option>
               <option value="trial">Trial</option>
@@ -138,7 +138,7 @@ export function ManageVendorsPage() {
                 })
               }
               aria-label="Filter status akun"
-              className="h-10 rounded-lg border border-ink-200 bg-white px-3 text-[13px] text-ink-700 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+              className="h-10 rounded-lg border border-ink-200 bg-white px-3 text-body text-ink-700 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
             >
               <option value="all">Semua akun</option>
               <option value="active">Aktif</option>
@@ -149,14 +149,14 @@ export function ManageVendorsPage() {
               <button
                 type="button"
                 onClick={() => setFilters(EMPTY_ADMIN_VENDOR_FILTERS)}
-                className="inline-flex h-10 items-center gap-1.5 rounded-lg px-2.5 text-[13px] font-medium text-ink-500 hover:bg-ink-100 hover:text-ink-800"
+                className="inline-flex h-10 items-center gap-1.5 rounded-lg px-2.5 text-body font-medium text-ink-500 hover:bg-ink-100 hover:text-ink-800"
               >
                 <X className="size-3.5" /> Reset
               </button>
             ) : null}
           </div>
 
-          <p className="text-[12px] text-ink-500 lg:ml-1 lg:shrink-0">{filtered.length} vendor</p>
+          <p className="text-meta text-ink-500 lg:ml-1 lg:shrink-0">{filtered.length} vendor</p>
         </div>
 
         <div className="border-t border-ink-100">
@@ -226,17 +226,17 @@ function VendorCard({
         <div className="min-w-0">
           <Link
             to={`/admin/vendors/${vendor.id}`}
-            className="block truncate text-[14px] font-semibold text-ink-900 hover:text-brand-700"
+            className="block truncate text-lead font-semibold text-ink-900 hover:text-brand-700"
           >
             {vendor.name}
           </Link>
-          <p className="mt-0.5 truncate text-[12px] text-ink-500">
+          <p className="mt-0.5 truncate text-meta text-ink-500">
             {[vendor.category, vendor.city].filter(Boolean).join(' • ') || 'Kategori belum diisi'}
           </p>
         </div>
         <span
           className={cn(
-            'inline-flex shrink-0 items-center rounded-full px-2 py-0.5 text-[11px] font-medium ring-1 ring-inset',
+            'inline-flex shrink-0 items-center rounded-full px-2 py-0.5 text-caption font-medium ring-1 ring-inset',
             subscription.badgeClass,
           )}
         >
@@ -244,12 +244,12 @@ function VendorCard({
         </span>
       </div>
 
-      <div className="mt-2 min-w-0 text-[12px] text-ink-600">
+      <div className="mt-2 min-w-0 text-meta text-ink-600">
         <p className="truncate">{vendor.ownerName}</p>
         <p className="truncate text-ink-500">{vendor.email}</p>
       </div>
 
-      <p className="mt-2 text-[11px] text-ink-400">
+      <p className="mt-2 text-caption text-ink-400">
         {vendor.bookingsCount} booking · {vendor.invoicesCount} invoice · bergabung{' '}
         {formatShortDate(vendor.createdAt)}
       </p>
@@ -283,8 +283,8 @@ function StatTile({
 }) {
   return (
     <div className="rounded-xl border border-ink-200/80 bg-white px-3.5 py-3">
-      <p className="text-[11px] font-medium uppercase tracking-wide text-ink-400">{label}</p>
-      <p className={cn('mt-1 text-[17px] font-semibold tabular-nums', TONE_CLASS[tone])}>{value}</p>
+      <p className="text-caption font-medium uppercase tracking-wide text-ink-400">{label}</p>
+      <p className={cn('mt-1 text-lead font-semibold tabular-nums', TONE_CLASS[tone])}>{value}</p>
     </div>
   )
 }

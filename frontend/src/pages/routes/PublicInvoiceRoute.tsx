@@ -54,10 +54,10 @@ export function PublicInvoiceRoute() {
     return (
       <main className="flex min-h-screen items-center justify-center bg-ink-50 px-4 py-8">
         <div className="w-full max-w-md rounded-xl border border-ink-200 bg-white px-6 py-10 text-center">
-          <h1 className="text-base font-semibold text-ink-900">
+          <h1 className="text-lead text-ink-900">
             {notFound ? 'Invoice tidak ditemukan' : 'Invoice belum dapat dimuat'}
           </h1>
-          <p className="mt-1 text-[13px] leading-relaxed text-ink-500">
+          <p className="mt-1 text-body leading-relaxed text-ink-500">
             {notFound
               ? 'Link mungkin sudah tidak aktif. Silakan minta vendor mengirimkan link invoice yang baru.'
               : error?.message ?? 'Periksa koneksi internet lalu coba lagi.'}

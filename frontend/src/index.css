@@ -1,7 +1,101 @@
 @import 'tailwindcss';
 
+/*
+ * Poppins di-host sendiri, bukan lewat Google Fonts CDN.
+ *
+ * Alasannya bukan preferensi: aplikasi ini berjalan di VPS lokal, dan CDN font
+ * menambah satu titik gagal di luar kendali kita (blokir DNS, jaringan lambat,
+ * atau offline). Berkasnya hanya ~31 KB untuk empat bobot, jadi menumpang di
+ * `public/fonts/` jauh lebih murah daripada risiko teks tak termuat.
+ *
+ * Hanya subset latin yang diunduh — aplikasi ini berbahasa Indonesia dan tidak
+ * memuat aksara Devanagari/latin-ext, jadi dua subset lain itu hanya menambah
+ * berat tanpa pernah terpakai.
+ *
+ * `font-display: swap` membuat teks langsung terbaca dengan font sistem, lalu
+ * ditukar saat Poppins siap. Tanpa ini, halaman diam tak berteks selama font
+ * diunduh — jauh lebih buruk daripada satu kedipan pergantian font.
+ */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/poppins-400.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/poppins-500.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/poppins-600.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/poppins-700.woff2') format('woff2');
+}
+
 @theme {
-  --font-sans: 'Plus Jakarta Sans', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+
+  /*
+   * Skala tipografi berbasis PERAN, bukan t-shirt size.
+   *
+   * Sebelumnya ukuran ditulis ad-hoc di 83 berkas: 10 / 10,5 / 11 / 11,5 / 12 /
+   * 12,5 / 13 / 13,5 px. Tujuh anak tangga yang bedanya 0,5 px tidak terbaca
+   * mata sebagai hirarki — hasilnya judul dan label tampak setara. Skala ini
+   * memangkasnya jadi delapan peran dengan jarak yang benar-benar terlihat.
+   *
+   * Angkanya sengaja tidak sama dengan skala Tailwind bawaan. Poppins ~6% lebih
+   * lebar dan x-height-nya lebih tinggi daripada Plus Jakarta Sans, jadi ukuran
+   * lama akan terasa membesar dan mendorong teks meluber di layar 375px.
+   */
+  /*
+   * Dua peran terkecil memakai `clamp()` alih-alih nilai tetap.
+   *
+   * Di 375px teks mikro harus tetap 10–11px supaya tabel dan sel kalender tidak
+   * pecah; di 1280px ukuran itu terbaca terlalu kecil karena kepadatan layar
+   * turun. `clamp()` membuatnya naik ~1px di desktop tanpa satu pun varian
+   * `sm:` tambahan di 600 tempat pemakaian. Batas atas sengaja 11/12px: cukup
+   * untuk keterbacaan, belum cukup besar untuk menggeser tata letak.
+   */
+  --text-2xs: clamp(0.625rem, 0.55rem + 0.19vw, 0.6875rem); /* 10 → 11px */
+  --text-2xs--line-height: 1.45;
+  --text-2xs--font-weight: 500;
+  --text-caption: clamp(0.6875rem, 0.63rem + 0.16vw, 0.75rem); /* 11 → 12px */
+  --text-caption--line-height: 1.45;
+  --text-caption--font-weight: 500;
+  --text-meta: 0.75rem; /* 12px — teks sekunder, deskripsi kartu */
+  --text-meta--line-height: 1.5;
+  --text-meta--font-weight: 400;
+  --text-body: 0.8125rem; /* 13px — teks utama antarmuka */
+  --text-body--line-height: 1.55;
+  --text-body--font-weight: 400;
+  --text-lead: 0.9375rem; /* 15px — paragraf pembuka, judul kartu, angka penting */
+  --text-lead--line-height: 1.45;
+  --text-lead--font-weight: 500;
+  --text-title: 1.1875rem; /* 19px — judul halaman (mobile) */
+  --text-title--line-height: 1.3;
+  --text-title--font-weight: 600;
+  --text-heading: 1.5rem; /* 24px — judul seksi halaman publik */
+  --text-heading--line-height: 1.25;
+  --text-heading--font-weight: 600;
+  --text-display: 1.875rem; /* 30px — hero halaman pemasaran */
+  --text-display--line-height: 1.15;
+  --text-display--font-weight: 600;
 
   /*
    * Accent oranye. Sebelumnya palet ini merah bata (brand-600 #c23f2a); acuan
@@ -38,7 +132,55 @@
   }
 
   body {
-    @apply bg-ink-50 font-sans text-ink-800 antialiased;
+    @apply bg-ink-50 font-sans text-body text-ink-800 antialiased;
+  }
+
+  /*
+   * Bobot judul ditetapkan sekali di sini, bukan diulang di 75 tempat.
+   *
+   * Sebelumnya hampir setiap heading menulis `font-semibold` sendiri, dan satu
+   * halaman (`BookingsPage`) memakai `font-bold` sehingga judulnya lebih berat
+   * daripada halaman lain tanpa alasan. Poppins 600 sudah cukup tegas untuk
+   * judul; 700 hanya untuk penekanan angka.
+   */
+  h1,
+  h2,
+  h3 {
+    @apply font-semibold text-ink-900;
+    /* Poppins lebar, jadi baris judul mudah menyisakan satu kata menggantung. */
+    text-wrap: balance;
+  }
+
+  /*
+   * Angka rupiah dan tanggal memakai lebar digit seragam supaya kolom tabel
+   * tidak bergoyang saat nilainya berubah. Poppins tidak mengaktifkan `tnum`
+   * secara bawaan, jadi ini harus diminta eksplisit.
+   */
+  th,
+  td,
+  dd,
+  time {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /*
+   * Poppins punya x-height tinggi dan huruf lebar, jadi teks kecil dengan
+   * tracking bawaan (0) terlihat rapat dan berdesakan. Memberi sedikit
+   * letter-spacing pada ukuran kecil membuatnya jauh lebih terbaca — ini
+   * penyesuaian yang khas dibutuhkan Poppins, bukan preferensi selera.
+   */
+  .text-2xs,
+  .text-caption {
+    letter-spacing: 0.01em;
+  }
+
+  /*
+   * Kebalikannya untuk teks besar: pada 24px ke atas, tracking normal terlihat
+   * renggang. Sedikit dirapatkan agar baris judul terasa padu.
+   */
+  .text-heading,
+  .text-display {
+    letter-spacing: -0.015em;
   }
 
   :focus-visible {

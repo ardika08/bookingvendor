@@ -163,7 +163,7 @@ export function DashboardPage() {
                 <button
                   type="button"
                   onClick={reload}
-                  className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-brand-600 px-3 text-[13px] font-medium text-white hover:bg-brand-700"
+                  className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-brand-600 px-3 text-body font-medium text-white hover:bg-brand-700"
                 >
                   <RefreshCw className="size-3.5" />
                   Coba lagi
@@ -182,10 +182,10 @@ export function DashboardPage() {
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold tracking-tight text-ink-900">
+          <h1 className="text-title tracking-tight text-ink-900">
             {greeting}, {firstName(user)}
-          </h2>
-          <p className="mt-0.5 text-[13px] text-ink-500">
+          </h1>
+          <p className="mt-0.5 text-body text-ink-500">
             {summary.counts.pending > 0
               ? `${summary.counts.pending} pesanan menunggu konfirmasi, ${summary.upcoming.length} jadwal terdekat.`
               : 'Semua pesanan sudah ditindaklanjuti. Jadwal terdekat ada di bawah.'}
@@ -239,7 +239,7 @@ export function DashboardPage() {
               action={
                 <Link
                   to="/bookings?status=tentative"
-                  className="inline-flex items-center gap-1 text-[12.5px] font-medium text-brand-700 hover:underline"
+                  className="inline-flex items-center gap-1 text-meta font-medium text-brand-700 hover:underline"
                 >
                   Semua booking
                   <ChevronRight className="size-3.5" />
@@ -261,22 +261,22 @@ export function DashboardPage() {
               <ul className="divide-y divide-ink-100">
                 {incoming.slice(0, 5).map((booking) => (
                   <li key={booking.id} className="flex items-start gap-3 px-4 py-3 sm:px-5">
-                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-100 text-[12px] font-semibold text-brand-700">
+                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-100 text-meta font-semibold text-brand-700">
                       {initials(booking.client.name)}
                     </span>
                     <div className="min-w-0 flex-1">
                       <Link
                         to={`/bookings/${booking.id}`}
-                        className="block truncate text-[13.5px] font-semibold text-ink-900 hover:underline"
+                        className="block truncate text-body font-semibold text-ink-900 hover:underline"
                       >
                         {booking.client.name}
                       </Link>
-                      <p className="mt-0.5 text-[12px] text-ink-500">
+                      <p className="mt-0.5 text-meta text-ink-500">
                         {formatShortDate(booking.eventDate)}
                         {booking.eventTime ? ` · ${formatTime(booking.eventTime)}` : ''} ·{' '}
                         {booking.packageName ?? 'Tanpa paket'}
                       </p>
-                      <p className="text-[12px] font-medium tabular-nums text-ink-700">
+                      <p className="text-meta font-medium tabular-nums text-ink-700">
                         {formatCurrency(booking.totalPrice)}
                       </p>
                     </div>
@@ -299,7 +299,7 @@ export function DashboardPage() {
               action={
                 <Link
                   to="/bookings?view=calendar"
-                  className="inline-flex items-center gap-1 text-[12.5px] font-medium text-brand-700 hover:underline"
+                  className="inline-flex items-center gap-1 text-meta font-medium text-brand-700 hover:underline"
                 >
                   Lihat kalender
                   <ChevronRight className="size-3.5" />
@@ -326,14 +326,14 @@ export function DashboardPage() {
                       className="flex items-start justify-between gap-3 hover:opacity-80"
                     >
                       <div className="min-w-0">
-                        <p className="truncate text-[13px] font-medium text-ink-900">
+                        <p className="truncate text-body font-medium text-ink-900">
                           {booking.client.name}
                         </p>
-                        <p className="mt-0.5 text-[12px] text-ink-500">
+                        <p className="mt-0.5 text-meta text-ink-500">
                           {formatShortDate(booking.eventDate)}
                           {booking.eventTime ? ` · ${formatTime(booking.eventTime)}` : ''}
                         </p>
-                        <p className="truncate text-[11.5px] text-ink-400">
+                        <p className="truncate text-caption text-ink-400">
                           {booking.eventLocation ?? 'Lokasi belum diisi'}
                         </p>
                       </div>
@@ -351,7 +351,7 @@ export function DashboardPage() {
             <CardHeader title="Perlu ditagih" description="Invoice lewat jatuh tempo." />
             {summary.overdueInvoices.length === 0 ? (
               <CardBody>
-                <p className="text-[12.5px] text-ink-500">
+                <p className="text-meta text-ink-500">
                   Tidak ada tagihan terlambat. Semua invoice masih dalam tenggat.
                 </p>
               </CardBody>
@@ -364,14 +364,14 @@ export function DashboardPage() {
                       className="block px-4 py-2.5 hover:bg-ink-50/60 sm:px-5"
                     >
                       <div className="flex items-start justify-between gap-2">
-                        <p className="truncate text-[12.5px] font-medium text-ink-800">
+                        <p className="truncate text-meta font-medium text-ink-800">
                           {invoice.clientName}
                         </p>
-                        <span className="shrink-0 text-[11px] text-rose-600">
+                        <span className="shrink-0 text-caption text-rose-600">
                           {INVOICE_STATUS_META[invoice.status].label}
                         </span>
                       </div>
-                      <p className="text-[11.5px] tabular-nums text-ink-500">
+                      <p className="text-caption tabular-nums text-ink-500">
                         sisa {formatCurrency(remainingAmount(invoice))} · jatuh tempo{' '}
                         {formatShortDate(invoice.dueAt)}
                       </p>
@@ -384,7 +384,7 @@ export function DashboardPage() {
 
           <Card>
             <CardHeader title="Ringkasan" />
-            <CardBody className="space-y-1.5 text-[12.5px]">
+            <CardBody className="space-y-1.5 text-meta">
               <SummaryRow label="Nilai kontrak" value={formatCurrency(summary.money.contractValue)} />
               <SummaryRow
                 label="Potensi (tentatif)"
@@ -398,7 +398,7 @@ export function DashboardPage() {
           {clients.length > 0 ? (
             <Card>
               <CardHeader title="Klien teratas" />
-              <CardBody className="space-y-1.5 text-[12.5px]">
+              <CardBody className="space-y-1.5 text-meta">
                 {clients.map((client) => (
                   <div key={client.name} className="flex items-baseline justify-between gap-2">
                     <span className="truncate text-ink-600">{client.name}</span>
@@ -413,7 +413,7 @@ export function DashboardPage() {
 
           <div className="flex items-start gap-2 rounded-xl border border-sky-200 bg-sky-50 px-3 py-2.5">
             <Wallet className="mt-0.5 size-3.5 shrink-0 text-sky-600" />
-            <p className="text-[11.5px] leading-relaxed text-sky-900">
+            <p className="text-caption leading-relaxed text-sky-900">
               Angka uang dihitung dari invoice yang sudah terbit. Tagihan baru bisa dibuat dari
               halaman detail booking.
             </p>
@@ -443,9 +443,15 @@ function StatTile({
 }) {
   return (
     <div className="rounded-xl border border-ink-200/80 bg-white px-3.5 py-3">
-      <p className="text-[11px] font-medium uppercase tracking-wide text-ink-400">{label}</p>
-      <p className={cn('mt-1 text-[16px] font-semibold tabular-nums', TONE_CLASS[tone])}>{value}</p>
-      {hint ? <p className="mt-0.5 truncate text-[10.5px] text-ink-400">{hint}</p> : null}
+      <p className="text-caption font-medium uppercase tracking-wide text-ink-400">{label}</p>
+      <p className={cn('mt-1 text-lead font-semibold tabular-nums', TONE_CLASS[tone])}>{value}</p>
+      {/*
+        `truncate` dihapus: di 375px "dari Rp 213.000.000 ditagihkan" terpotong
+        jadi "dari Rp 213.000.000 dit…" — angka yang justru ingin dibaca hilang
+        di belakang elipsis. Dibiarkan membungkus dua baris; tinggi kartu
+        disamakan lewat `items-stretch` di grid induk, bukan dengan memotong teks.
+      */}
+      {hint ? <p className="mt-0.5 text-2xs leading-snug text-ink-400">{hint}</p> : null}
     </div>
   )
 }

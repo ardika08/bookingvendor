@@ -25,7 +25,7 @@ export function DetailItem({
   const body = (
     <span
       className={cn(
-        'block text-[13px] leading-snug',
+        'block text-body leading-snug',
         muted ? 'text-ink-400' : 'text-ink-800',
         href && 'text-brand-700 hover:underline',
       )}
@@ -36,7 +36,7 @@ export function DetailItem({
 
   return (
     <div className={cn('min-w-0', className)}>
-      <dt className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wide text-ink-400">
+      <dt className="flex items-center gap-1.5 text-caption font-medium uppercase tracking-wide text-ink-400">
         {icon}
         {label}
       </dt>

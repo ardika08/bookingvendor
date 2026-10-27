@@ -115,10 +115,10 @@ export function PaymentRecordModal({
             <Banknote className="size-4" />
           </span>
           <div className="min-w-0 flex-1">
-            <h2 id="payment-title" className="text-[15px] font-semibold text-ink-900">
+            <h2 id="payment-title" className="text-lead font-semibold text-ink-900">
               Catat pembayaran
             </h2>
-            <p className="truncate text-[12px] text-ink-500">
+            <p className="truncate text-meta text-ink-500">
               {invoice.number} · {invoice.clientName}
             </p>
           </div>
@@ -134,7 +134,7 @@ export function PaymentRecordModal({
 
         {blocked ? (
           <div className="px-5 py-5">
-            <p className="text-[13px] leading-relaxed text-ink-600">
+            <p className="text-body leading-relaxed text-ink-600">
               {isPaid
                 ? 'Invoice ini sudah lunas — tidak ada sisa yang perlu dicatat.'
                 : 'Invoice ini dibatalkan, jadi pembayaran tidak bisa dicatat.'}
@@ -148,7 +148,7 @@ export function PaymentRecordModal({
         ) : (
           <form ref={formRef} onSubmit={handleSubmit} noValidate>
             <div className="space-y-3 px-5 py-4">
-              <div className="rounded-lg border border-ink-200 bg-ink-50/60 px-3 py-2 text-[12.5px]">
+              <div className="rounded-lg border border-ink-200 bg-ink-50/60 px-3 py-2 text-meta">
                 <div className="flex items-baseline justify-between gap-3">
                   <span className="text-ink-500">Sisa tagihan</span>
                   <span className="font-semibold tabular-nums text-ink-900">
@@ -173,7 +173,7 @@ export function PaymentRecordModal({
                 hint="Kurangi bila klien membayar sebagian."
               >
                 <div className="relative">
-                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[13px] text-ink-400">
+                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-body text-ink-400">
                     Rp
                   </span>
                   <input

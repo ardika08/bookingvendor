@@ -44,13 +44,13 @@ export function WorkflowSteps() {
     <section className="border-t border-ink-200/70 bg-ink-50/60">
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-brand-700">
+          <p className="text-caption font-semibold uppercase tracking-wider text-brand-700">
             Cara kerja
           </p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-ink-900 sm:text-3xl">
+          <h2 className="mt-2 text-heading tracking-tight text-ink-900 sm:text-display">
             Tiga langkah, dari pesanan sampai tagihan
           </h2>
-          <p className="mt-3 text-[13.5px] leading-relaxed text-ink-500">
+          <p className="mt-3 text-body leading-relaxed text-ink-500">
             Tidak perlu berpindah aplikasi — semuanya selesai di dashboard yang sama.
           </p>
         </div>
@@ -79,11 +79,11 @@ function WorkflowStepCard({ step }: { step: WorkflowStep }) {
       <span className="relative z-10 flex size-12 items-center justify-center rounded-full border border-ink-200 bg-white text-brand-700 shadow-sm">
         <Icon className="size-5" />
       </span>
-      <span className="mt-3 text-[10.5px] font-semibold uppercase tracking-wider text-ink-400">
+      <span className="mt-3 text-2xs font-semibold uppercase tracking-wider text-ink-400">
         Langkah {step.step}
       </span>
-      <h3 className="mt-1 text-[14px] font-semibold text-ink-900">{step.title}</h3>
-      <p className="mt-1.5 max-w-xs text-[12.5px] leading-relaxed text-ink-500">
+      <h3 className="mt-1 text-lead font-semibold text-ink-900">{step.title}</h3>
+      <p className="mt-1.5 max-w-xs text-meta leading-relaxed text-ink-500">
         {step.description}
       </p>
     </li>

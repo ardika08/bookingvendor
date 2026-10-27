@@ -106,7 +106,7 @@ export function InvoiceShareLinkCard({ invoiceId }: { invoiceId: string }) {
       />
       <CardBody className="space-y-3">
         {loading ? (
-          <p className="inline-flex items-center gap-1.5 text-[11.5px] text-ink-400">
+          <p className="inline-flex items-center gap-1.5 text-caption text-ink-400">
             <LoaderCircle className="size-3.5 animate-spin" aria-hidden="true" />
             Memeriksa link…
           </p>
@@ -121,7 +121,7 @@ export function InvoiceShareLinkCard({ invoiceId }: { invoiceId: string }) {
               readOnly
               value={publicUrl}
               onFocus={(event) => event.currentTarget.select()}
-              className="h-9 w-full rounded-lg border border-ink-200 bg-ink-50 px-3 text-[11px] text-ink-700 outline-none focus:border-brand-400"
+              className="h-9 w-full rounded-lg border border-ink-200 bg-ink-50 px-3 text-caption text-ink-700 outline-none focus:border-brand-400"
             />
             <div className="flex flex-wrap gap-2">
               <Button type="button" variant="secondary" size="sm" onClick={copyLink} disabled={savingAction}>
@@ -132,7 +132,7 @@ export function InvoiceShareLinkCard({ invoiceId }: { invoiceId: string }) {
                 href={publicUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex h-9 items-center gap-1.5 rounded-lg px-3 text-[12px] font-medium text-brand-700 hover:bg-brand-50"
+                className="inline-flex h-9 items-center gap-1.5 rounded-lg px-3 text-meta font-medium text-brand-700 hover:bg-brand-50"
               >
                 <ExternalLink className="size-3.5" />
                 Buka
@@ -143,7 +143,7 @@ export function InvoiceShareLinkCard({ invoiceId }: { invoiceId: string }) {
                 type="button"
                 onClick={() => setPendingAction('reset')}
                 disabled={savingAction}
-                className="inline-flex items-center gap-1 text-[11px] font-medium text-ink-500 hover:text-ink-800 disabled:opacity-50"
+                className="inline-flex items-center gap-1 text-caption font-medium text-ink-500 hover:text-ink-800 disabled:opacity-50"
               >
                 <RotateCw className="size-3" />
                 Reset link
@@ -152,7 +152,7 @@ export function InvoiceShareLinkCard({ invoiceId }: { invoiceId: string }) {
                 type="button"
                 onClick={() => setPendingAction('disable')}
                 disabled={savingAction}
-                className="inline-flex items-center gap-1 text-[11px] font-medium text-rose-700 hover:text-rose-800 disabled:opacity-50"
+                className="inline-flex items-center gap-1 text-caption font-medium text-rose-700 hover:text-rose-800 disabled:opacity-50"
               >
                 <Ban className="size-3" />
                 Nonaktifkan link
@@ -168,10 +168,10 @@ export function InvoiceShareLinkCard({ invoiceId }: { invoiceId: string }) {
 
         {pendingAction ? (
           <div className="space-y-2 rounded-lg border border-amber-200 bg-amber-50 p-3">
-            <p className="text-[12px] font-semibold text-amber-900">
+            <p className="text-meta font-semibold text-amber-900">
               {pendingAction === 'reset' ? 'Reset link invoice?' : 'Nonaktifkan link invoice?'}
             </p>
-            <p className="text-[11px] leading-relaxed text-amber-800">
+            <p className="text-caption leading-relaxed text-amber-800">
               {pendingAction === 'reset'
                 ? 'Link saat ini akan langsung tidak berlaku dan diganti dengan link baru.'
                 : 'Klien tidak dapat lagi membuka invoice melalui link ini.'}
@@ -201,12 +201,12 @@ export function InvoiceShareLinkCard({ invoiceId }: { invoiceId: string }) {
           </div>
         ) : null}
 
-        <p className="text-[11px] leading-relaxed text-ink-400">
+        <p className="text-caption leading-relaxed text-ink-400">
           Klien hanya dapat melihat rincian invoice dan informasi pembayaran yang dibagikan.
         </p>
-        {notice ? <p role="status" className="text-[11px] text-emerald-700">{notice}</p> : null}
-        {error ? <p role="alert" className="text-[11px] leading-relaxed text-rose-700">{error}</p> : null}
-        {copied ? <p role="status" className="text-[11px] text-emerald-700">Link invoice berhasil disalin.</p> : null}
+        {notice ? <p role="status" className="text-caption text-emerald-700">{notice}</p> : null}
+        {error ? <p role="alert" className="text-caption leading-relaxed text-rose-700">{error}</p> : null}
+        {copied ? <p role="status" className="text-caption text-emerald-700">Link invoice berhasil disalin.</p> : null}
       </CardBody>
     </Card>
   )

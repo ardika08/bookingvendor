@@ -83,7 +83,7 @@ export function InvoiceDetailPage({
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <Link
           to="/invoices"
-          className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-ink-500 hover:text-ink-800"
+          className="inline-flex items-center gap-1.5 text-meta font-medium text-ink-500 hover:text-ink-800"
         >
           <ArrowLeft className="size-3.5" />
           Daftar invoice
@@ -109,20 +109,20 @@ export function InvoiceDetailPage({
       <Card>
         <CardBody className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex items-start gap-3">
-            <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-100 text-[13px] font-semibold text-brand-700">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-100 text-body font-semibold text-brand-700">
               {initials(invoice.clientName)}
             </span>
             <div className="min-w-0">
-              <p className="text-[11px] font-medium uppercase tracking-wide text-ink-400">
+              <p className="text-caption font-medium uppercase tracking-wide text-ink-400">
                 Invoice
               </p>
-              <h2 className="text-lg font-semibold tabular-nums tracking-tight text-ink-900">
+              <h2 className="text-title font-semibold tabular-nums tracking-tight text-ink-900">
                 {invoice.number}
               </h2>
               <div className="mt-1.5 flex flex-wrap items-center gap-2">
                 <span
                   className={cn(
-                    'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium ring-1 ring-inset',
+                    'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-caption font-medium ring-1 ring-inset',
                     statusMeta.badgeClass,
                   )}
                   title={statusMeta.description}
@@ -149,18 +149,18 @@ export function InvoiceDetailPage({
           </div>
 
           <div className="text-left sm:text-right">
-            <p className="text-[11px] font-medium uppercase tracking-wide text-ink-400">
+            <p className="text-caption font-medium uppercase tracking-wide text-ink-400">
               Sisa tagihan
             </p>
             <p
               className={cn(
-                'text-xl font-semibold tabular-nums',
+                'text-heading font-semibold tabular-nums',
                 isVoid ? 'text-ink-400 line-through' : remaining > 0 ? 'text-ink-900' : 'text-emerald-700',
               )}
             >
               {formatCurrency(isVoid ? 0 : remaining)}
             </p>
-            <p className="text-[12px] text-ink-500">
+            <p className="text-meta text-ink-500">
               dari {formatCurrency(invoice.amount)} ditagihkan
             </p>
           </div>
@@ -174,13 +174,13 @@ export function InvoiceDetailPage({
               title="Rincian Tagihan"
               description={typeMeta.description}
               action={
-                <span className="text-[12px] tabular-nums text-ink-500">
+                <span className="text-meta tabular-nums text-ink-500">
                   Terbit {formatShortDate(invoice.issuedAt)}
                 </span>
               }
             />
             <CardBody>
-              <ul className="space-y-2.5 text-[13px]">
+              <ul className="space-y-2.5 text-body">
                 <AmountRow
                   label="Nilai kontrak booking"
                   value={formatCurrency(invoice.bookingTotal)}
@@ -206,18 +206,18 @@ export function InvoiceDetailPage({
                       style={{ width: `${percent}%` }}
                     />
                   </span>
-                  <span className="text-[10.5px] tabular-nums text-ink-400">{percent}%</span>
+                  <span className="text-2xs tabular-nums text-ink-400">{percent}%</span>
                 </div>
                 <li className="flex items-baseline justify-between gap-3 border-t border-ink-100 pt-2.5">
                   <span className="font-medium text-ink-900">Sisa yang harus dibayar</span>
-                  <span className="text-[15px] font-semibold tabular-nums text-ink-900">
+                  <span className="text-lead font-semibold tabular-nums text-ink-900">
                     {formatCurrency(remaining)}
                   </span>
                 </li>
               </ul>
             </CardBody>
             <CardFooter className="sm:justify-between">
-              <p className="text-[12px] text-ink-500">
+              <p className="text-meta text-ink-500">
                 {isVoid
                   ? 'Invoice ini dibatalkan dan tidak lagi ditagihkan.'
                   : overdue
@@ -290,14 +290,14 @@ export function InvoiceDetailPage({
                 <div className="flex items-center justify-between rounded-lg border border-ink-200 px-3 py-2">
                   <div className="flex items-center gap-2">
                     <Banknote className="size-3.5 text-emerald-600" />
-                    <span className="text-[12.5px] font-medium text-ink-800">Pembayaran diterima</span>
+                    <span className="text-meta font-medium text-ink-800">Pembayaran diterima</span>
                   </div>
-                  <span className="text-[12px] tabular-nums text-ink-700">
+                  <span className="text-meta tabular-nums text-ink-700">
                     {formatCurrency(invoice.paidAmount)}
                   </span>
                 </div>
               ) : (
-                <p className="text-[12.5px] text-ink-500">
+                <p className="text-meta text-ink-500">
                   {isVoid
                     ? 'Tidak ada pembayaran pada invoice ini.'
                     : 'Belum ada pembayaran yang tercatat.'}
@@ -307,9 +307,9 @@ export function InvoiceDetailPage({
                 <div className="flex items-center justify-between rounded-lg border border-dashed border-ink-200 px-3 py-2">
                   <div className="flex items-center gap-2">
                     <Clock className="size-3.5 text-ink-400" />
-                    <span className="text-[12.5px] text-ink-600">Menunggu sisa</span>
+                    <span className="text-meta text-ink-600">Menunggu sisa</span>
                   </div>
-                  <span className="text-[12px] tabular-nums text-ink-700">
+                  <span className="text-meta tabular-nums text-ink-700">
                     {formatCurrency(remaining)}
                   </span>
                 </div>
@@ -328,14 +328,14 @@ export function InvoiceDetailPage({
               {vendorProfile?.bank.name &&
               vendorProfile.bank.accountNumber &&
               vendorProfile.bank.accountHolder ? (
-                <dl className="space-y-2 text-[12.5px]">
+                <dl className="space-y-2 text-meta">
                   <BankDetail label="Bank" value={vendorProfile.bank.name} />
                   <BankDetail label="Nomor rekening" value={vendorProfile.bank.accountNumber} mono />
                   <BankDetail label="Atas nama" value={vendorProfile.bank.accountHolder} />
                 </dl>
               ) : (
                 <div className="space-y-2">
-                  <p className="text-[12.5px] leading-relaxed text-ink-500">
+                  <p className="text-meta leading-relaxed text-ink-500">
                     Rekening vendor belum lengkap, jadi belum bisa dicantumkan sebagai tujuan transfer.
                   </p>
                   <ButtonLink to="/settings" variant="secondary" size="sm">
@@ -367,21 +367,21 @@ export function InvoiceDetailPage({
                     className="flex items-start justify-between gap-2 rounded-lg border border-ink-200 px-3 py-2 hover:border-ink-300 hover:bg-ink-50/60"
                   >
                     <div className="min-w-0">
-                      <p className="truncate text-[12.5px] font-medium tabular-nums text-ink-800">
+                      <p className="truncate text-meta font-medium tabular-nums text-ink-800">
                         {INVOICE_TYPE_META[item.type].label}
                       </p>
-                      <p className="truncate text-[11px] text-ink-500">{item.number}</p>
+                      <p className="truncate text-caption text-ink-500">{item.number}</p>
                     </div>
                     <div className="shrink-0 text-right">
-                      <p className="text-[12px] tabular-nums text-ink-700">
+                      <p className="text-meta tabular-nums text-ink-700">
                         {formatCurrency(item.amount)}
                       </p>
-                      <p className="text-[11px] text-ink-400">{INVOICE_STATUS_META[item.status].label}</p>
+                      <p className="text-caption text-ink-400">{INVOICE_STATUS_META[item.status].label}</p>
                     </div>
                   </Link>
                 ))
               ) : (
-                <p className="text-[12.5px] text-ink-500">
+                <p className="text-meta text-ink-500">
                   Invoice DP dan pelunasan akan tampil di sini saat diterbitkan.
                 </p>
               )}
@@ -389,7 +389,7 @@ export function InvoiceDetailPage({
             <CardFooter>
               <Link
                 to={`/bookings/${invoice.bookingId}`}
-                className="inline-flex items-center gap-1 text-[12.5px] font-medium text-brand-700 hover:underline"
+                className="inline-flex items-center gap-1 text-meta font-medium text-brand-700 hover:underline"
               >
                 Buka booking
                 <ArrowUpRight className="size-3.5" />
@@ -424,15 +424,15 @@ export function InvoiceDetailPage({
             <span className="flex size-9 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
               <CheckCircle2 className="size-4" />
             </span>
-            <h2 id="mark-paid-title" className="mt-3 text-[15px] font-semibold text-ink-900">
+            <h2 id="mark-paid-title" className="mt-3 text-lead font-semibold text-ink-900">
               Tandai invoice lunas?
             </h2>
-            <p className="mt-1 text-[12.5px] leading-relaxed text-ink-600">
+            <p className="mt-1 text-meta leading-relaxed text-ink-600">
               Sisa tagihan {formatCurrency(remaining)} akan dicatat sebagai transfer yang diterima
               hari ini. Pastikan pembayaran dari klien benar-benar sudah masuk.
             </p>
             {markPaidError ? (
-              <p role="alert" className="mt-3 rounded-lg bg-rose-50 px-3 py-2 text-[12px] text-rose-700">
+              <p role="alert" className="mt-3 rounded-lg bg-rose-50 px-3 py-2 text-meta text-rose-700">
                 {markPaidError}
               </p>
             ) : null}
@@ -589,7 +589,7 @@ function AmountRow({
     <li className="flex items-baseline justify-between gap-3">
       <span className="min-w-0">
         <span className={cn('block', muted ? 'text-ink-600' : 'text-ink-800')}>{label}</span>
-        {hint ? <span className="block text-[11.5px] text-ink-400">{hint}</span> : null}
+        {hint ? <span className="block text-caption text-ink-400">{hint}</span> : null}
       </span>
       <span
         className={cn(
@@ -636,10 +636,10 @@ export function InvoiceDetailError({
       <div className="mx-auto mb-3 flex size-11 items-center justify-center rounded-full bg-ink-100 text-ink-500">
         {notFound ? <FileText className="size-5" /> : <AlertTriangle className="size-5" />}
       </div>
-      <p className="text-sm font-semibold text-ink-800">
+      <p className="text-lead font-semibold text-ink-800">
         {notFound ? 'Invoice tidak ditemukan' : 'Gagal memuat invoice'}
       </p>
-      <p className="mx-auto mt-1 max-w-sm text-[13px] leading-relaxed text-ink-500">
+      <p className="mx-auto mt-1 max-w-sm text-body leading-relaxed text-ink-500">
         {notFound
           ? 'Invoice mungkin sudah dihapus atau tautannya tidak lagi berlaku.'
           : 'Periksa koneksi internet lalu coba lagi.'}
@@ -653,7 +653,7 @@ export function InvoiceDetailError({
           <button
             type="button"
             onClick={onRetry}
-            className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-brand-600 px-3 text-[13px] font-medium text-white hover:bg-brand-700"
+            className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-brand-600 px-3 text-body font-medium text-white hover:bg-brand-700"
           >
             <RefreshCw className="size-3.5" />
             Coba lagi

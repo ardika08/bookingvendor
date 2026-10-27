@@ -31,7 +31,7 @@ export function VendorStatusCard({ subscription }: { subscription: SubscriptionS
           label="Langganan aktif"
           tone="emerald"
         />
-        <p className="mt-2 max-w-2xl text-[12.5px] leading-relaxed text-emerald-900">
+        <p className="mt-2 max-w-2xl text-meta leading-relaxed text-emerald-900">
           Booking &amp; invoice tanpa batas
           {daysLeft !== null ? (
             <>
@@ -69,7 +69,7 @@ export function VendorStatusCard({ subscription }: { subscription: SubscriptionS
           label="Langganan berakhir"
           tone="rose"
         />
-        <p className="mt-2 max-w-2xl text-[12.5px] leading-relaxed text-rose-900">
+        <p className="mt-2 max-w-2xl text-meta leading-relaxed text-rose-900">
           {subscription.endsAt ? (
             <>
               Masa aktif habis sejak{' '}
@@ -108,7 +108,7 @@ export function VendorStatusCard({ subscription }: { subscription: SubscriptionS
         label={nearlyUsed ? 'Jatah trial hampir habis' : 'Masa trial'}
         tone={nearlyUsed ? 'rose' : 'amber'}
       />
-      <p className="mt-2 max-w-2xl text-[12.5px] leading-relaxed text-ink-700">
+      <p className="mt-2 max-w-2xl text-meta leading-relaxed text-ink-700">
         Kuota sekali pakai — {bookingLeft} booking &amp; {invoiceLeft} invoice tersisa. Jatah tidak
         direset per bulan; berlangganan untuk akses tanpa batas.
       </p>
@@ -140,7 +140,7 @@ function CardHeader({ icon, label, tone }: { icon: ReactNode; label: string; ton
       {icon}
       <p
         className={cn(
-          'text-[13px] font-semibold',
+          'text-body font-semibold',
           tone === 'emerald' && 'text-emerald-800',
           tone === 'rose' && 'text-rose-800',
           tone === 'amber' && 'text-amber-800',
@@ -160,7 +160,7 @@ function QuotaBar({ label, used, limit }: { label: string; used: number; limit: 
 
   return (
     <div className="rounded-lg bg-white/80 px-2.5 py-2 ring-1 ring-inset ring-black/5">
-      <p className="flex items-baseline justify-between gap-2 text-[11.5px] font-medium text-ink-600">
+      <p className="flex items-baseline justify-between gap-2 text-caption font-medium text-ink-600">
         {label}
         <span className={cn('tabular-nums', exhausted ? 'text-rose-700' : 'text-ink-800')}>
           {left > 0 ? `sisa ${left}` : 'habis'}

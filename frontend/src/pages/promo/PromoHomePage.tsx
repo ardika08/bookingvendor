@@ -23,17 +23,17 @@ export function PromoHomePage() {
         />
         <div className="relative mx-auto max-w-6xl px-4 pb-16 pt-16 sm:px-6 sm:pb-20 sm:pt-24">
           <div className="mx-auto max-w-2xl text-center">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-3 py-1 text-[11.5px] font-medium text-brand-700 ring-1 ring-inset ring-brand-200">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-3 py-1 text-caption font-medium text-brand-700 ring-1 ring-inset ring-brand-200">
               <Sparkles className="size-3.5" />
               Trial 2 booking + 2 invoice — tanpa kartu kredit
             </span>
 
-            <h1 className="mt-5 text-3xl font-semibold leading-tight tracking-tight text-ink-900 sm:text-4xl">
+            <h1 className="mt-5 text-display leading-tight tracking-tight text-ink-900 sm:text-[2.625rem] sm:leading-[1.1]">
               Kelola booking vendor pernikahan
               <span className="text-brand-600"> tanpa bentrok jadwal.</span>
             </h1>
 
-            <p className="mx-auto mt-4 max-w-xl text-[14px] leading-relaxed text-ink-600">
+            <p className="mx-auto mt-4 max-w-xl text-lead leading-relaxed text-ink-600">
               Catat pesanan, pantau kalender acara, dan terbitkan invoice dari satu dashboard.
               Dibuat khusus vendor pernikahan — bukan marketplace.
             </p>
@@ -42,13 +42,13 @@ export function PromoHomePage() {
               <GoogleSignInCta size="lg" className="w-full sm:w-auto" />
               <a
                 href="#harga"
-                className="inline-flex h-11 w-full items-center justify-center rounded-lg bg-white px-5 text-sm font-medium text-ink-700 shadow-sm ring-1 ring-ink-200 transition-colors hover:bg-ink-50 sm:w-auto"
+                className="inline-flex h-11 w-full items-center justify-center rounded-lg bg-white px-5 text-body font-medium text-ink-700 shadow-sm ring-1 ring-ink-200 transition-colors hover:bg-ink-50 sm:w-auto"
               >
                 Lihat paket
               </a>
             </div>
 
-            <p className="mt-3 text-[11.5px] text-ink-400">
+            <p className="mt-3 text-caption text-ink-400">
               Tidak ada registrasi publik — akun vendor disiapkan admin.
             </p>
           </div>
@@ -83,10 +83,10 @@ export function PromoHomePage() {
       {/* CTA penutup */}
       <section className="border-t border-ink-200/70 bg-ink-900">
         <div className="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 sm:py-20">
-          <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+          <h2 className="text-heading tracking-tight text-white sm:text-display">
             Siap menata jadwal vendor lebih rapi?
           </h2>
-          <p className="mx-auto mt-3 max-w-xl text-[13.5px] leading-relaxed text-ink-300">
+          <p className="mx-auto mt-3 max-w-xl text-body leading-relaxed text-ink-300">
             Masuk dengan akun Google yang sudah terdaftar, atau minta admin menambahkan vendor
             kamu. Masa trial langsung aktif tanpa kartu kredit.
           </p>
@@ -94,7 +94,7 @@ export function PromoHomePage() {
             <GoogleSignInCta size="lg" className="w-full sm:w-auto" />
             <a
               href="#harga"
-              className="inline-flex h-11 w-full items-center justify-center rounded-lg bg-white/10 px-5 text-sm font-medium text-white ring-1 ring-white/20 transition-colors hover:bg-white/15 sm:w-auto"
+              className="inline-flex h-11 w-full items-center justify-center rounded-lg bg-white/10 px-5 text-body font-medium text-white ring-1 ring-white/20 transition-colors hover:bg-white/15 sm:w-auto"
             >
               Bandingkan paket
             </a>
@@ -119,8 +119,8 @@ function Highlight({
       <span className="flex size-8 items-center justify-center rounded-lg bg-brand-50 text-brand-700">
         {icon}
       </span>
-      <p className="mt-2.5 text-[13px] font-semibold text-ink-900">{title}</p>
-      <p className="mt-0.5 text-[12px] leading-relaxed text-ink-500">{note}</p>
+      <p className="mt-2.5 text-body font-semibold text-ink-900">{title}</p>
+      <p className="mt-0.5 text-meta leading-relaxed text-ink-500">{note}</p>
     </li>
   )
 }

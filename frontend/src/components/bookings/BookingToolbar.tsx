@@ -48,7 +48,7 @@ export function BookingToolbar({
           value={filters.search}
           onChange={(event) => onChange({ ...filters, search: event.target.value })}
           placeholder="Cari nama klien atau nomor WA…"
-          className="h-9 w-full rounded-full border border-ink-200 bg-white pl-9 pr-9 text-[13px] text-ink-800 placeholder:text-ink-400 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+          className="h-9 w-full rounded-full border border-ink-200 bg-white pl-9 pr-9 text-body text-ink-800 placeholder:text-ink-400 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
           aria-label="Cari booking"
         />
         {filters.search ? (
@@ -83,14 +83,14 @@ export function BookingToolbar({
             onClick={() =>
               onChange({ month: '', status: 'all', search: '', sort: 'event_date' })
             }
-            className="inline-flex h-9 items-center gap-1.5 rounded-full px-2.5 text-[12.5px] font-medium text-ink-500 transition-colors hover:bg-ink-100 hover:text-ink-800"
+            className="inline-flex h-9 items-center gap-1.5 rounded-full px-2.5 text-meta font-medium text-ink-500 transition-colors hover:bg-ink-100 hover:text-ink-800"
           >
             <X className="size-3.5" />
             Reset
           </button>
         ) : null}
 
-        <span className="hidden text-[12px] text-ink-400 xl:inline">{resultCount} booking</span>
+        <span className="hidden text-meta text-ink-400 xl:inline">{resultCount} booking</span>
 
         {onCreate}
       </div>
@@ -127,7 +127,7 @@ function StatusFilterPill({
         aria-haspopup="menu"
         aria-expanded={open}
         className={cn(
-          'inline-flex h-9 items-center gap-1.5 rounded-full border px-3 text-[12.5px] font-medium transition-colors',
+          'inline-flex h-9 items-center gap-1.5 rounded-full border px-3 text-meta font-medium transition-colors',
           isDefault
             ? 'border-ink-200 bg-white text-ink-600 hover:bg-ink-50'
             : 'border-brand-200 bg-brand-50 text-brand-700',
@@ -212,7 +212,7 @@ function MonthFilterPill({
         aria-haspopup="menu"
         aria-expanded={open}
         className={cn(
-          'inline-flex h-9 items-center gap-1.5 rounded-full border px-3 text-[12.5px] font-medium transition-colors',
+          'inline-flex h-9 items-center gap-1.5 rounded-full border px-3 text-meta font-medium transition-colors',
           value
             ? 'border-brand-200 bg-brand-50 text-brand-700'
             : 'border-ink-200 bg-white text-ink-600 hover:bg-ink-50',
@@ -273,7 +273,7 @@ function SortPill({ value, onChange }: { value: BookingSort; onChange: (next: Bo
         onClick={() => setOpen((prev) => !prev)}
         aria-haspopup="menu"
         aria-expanded={open}
-        className="inline-flex h-9 items-center gap-1.5 rounded-full border border-ink-200 bg-white px-3 text-[12.5px] font-medium text-ink-600 transition-colors hover:bg-ink-50"
+        className="inline-flex h-9 items-center gap-1.5 rounded-full border border-ink-200 bg-white px-3 text-meta font-medium text-ink-600 transition-colors hover:bg-ink-50"
       >
         <ArrowUpDown className="size-3.5" />
         <span className="hidden sm:inline">{SORT_LABEL[value]}</span>
@@ -319,7 +319,7 @@ function MenuOption({
       role="menuitemradio"
       aria-checked={active}
       onClick={onClick}
-      className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-[12.5px] text-ink-700 hover:bg-ink-50"
+      className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-meta text-ink-700 hover:bg-ink-50"
     >
       {dotClass ? <span className={cn('size-2 rounded-full', dotClass)} aria-hidden /> : null}
       <span className="flex-1">{label}</span>

@@ -123,7 +123,7 @@ export function ClientLookup({
             role="combobox"
             aria-autocomplete="list"
             className={cn(
-              'h-10 w-full rounded-lg border bg-white pl-9 pr-3 text-sm text-ink-800 placeholder:text-ink-400',
+              'h-10 w-full rounded-lg border bg-white pl-9 pr-3 text-body text-ink-800 placeholder:text-ink-400',
               'focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100',
               error ? 'border-rose-300' : 'border-ink-200',
             )}
@@ -150,14 +150,14 @@ export function ClientLookup({
                       index === highlight ? 'bg-brand-50' : 'hover:bg-ink-50',
                     )}
                   >
-                    <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-brand-100 text-[10.5px] font-semibold text-brand-700">
+                    <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-brand-100 text-2xs font-semibold text-brand-700">
                       {initials(client.name)}
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-[13px] font-medium text-ink-800">
+                      <span className="block truncate text-body font-medium text-ink-800">
                         {client.name}
                       </span>
-                      <span className="block text-[11.5px] text-ink-500">
+                      <span className="block text-caption text-ink-500">
                         {client.phone} · {client.bookingCount} booking
                         {client.lastEventDate ? ` · terakhir ${formatShortDate(client.lastEventDate)}` : ''}
                       </span>
@@ -170,7 +170,7 @@ export function ClientLookup({
           ) : (
             <div className="flex items-start gap-2 px-3 py-3">
               <UserPlus className="mt-0.5 size-3.5 shrink-0 text-ink-400" />
-              <p className="text-[12.5px] leading-relaxed text-ink-600">
+              <p className="text-meta leading-relaxed text-ink-600">
                 Tidak ada klien dengan nama/nomor itu. Pakai tombol{' '}
                 <span className="font-medium text-ink-800">Isi klien baru</span> untuk mengetik manual.
               </p>
@@ -205,12 +205,12 @@ export function SelectedClientCard({
         hasError ? 'border-rose-300' : 'border-ink-200',
       )}
     >
-      <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-[11px] font-semibold text-brand-700">
+      <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-caption font-semibold text-brand-700">
         {initials(name)}
       </span>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-[13px] font-semibold text-ink-900">{name}</p>
-        <p className="truncate text-[11.5px] text-ink-500">
+        <p className="truncate text-body font-semibold text-ink-900">{name}</p>
+        <p className="truncate text-caption text-ink-500">
           {[phone, email, meta].filter(Boolean).join(' · ')}
         </p>
       </div>
@@ -253,7 +253,7 @@ export function ClientModeTabs({
           onClick={() => onChange(tab.key)}
           aria-pressed={mode === tab.key}
           className={cn(
-            'rounded-[7px] px-3 py-1.5 text-[12.5px] font-medium transition-colors',
+            'rounded-[7px] px-3 py-1.5 text-meta font-medium transition-colors',
             mode === tab.key
               ? 'bg-white text-ink-900 shadow-sm'
               : 'text-ink-500 hover:text-ink-800',

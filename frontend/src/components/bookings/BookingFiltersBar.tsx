@@ -30,7 +30,7 @@ export function BookingFiltersBar({
           value={filters.search}
           onChange={(event) => onChange({ ...filters, search: event.target.value })}
           placeholder="Cari nama klien atau nomor WA…"
-          className="h-10 w-full rounded-lg border border-ink-200 bg-white pl-9 pr-9 text-sm text-ink-800 placeholder:text-ink-400 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+          className="h-10 w-full rounded-lg border border-ink-200 bg-white pl-9 pr-9 text-body text-ink-800 placeholder:text-ink-400 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
           aria-label="Cari booking"
         />
         {filters.search ? (
@@ -51,7 +51,7 @@ export function BookingFiltersBar({
             type="month"
             value={filters.month}
             onChange={(event) => onChange({ ...filters, month: event.target.value })}
-            className="h-10 w-[9.5rem] rounded-lg border border-ink-200 bg-white px-3 text-[13px] text-ink-700 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+            className="h-10 w-[9.5rem] rounded-lg border border-ink-200 bg-white px-3 text-body text-ink-700 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
             aria-label="Filter bulan acara"
             placeholder="Semua bulan"
           />
@@ -63,7 +63,7 @@ export function BookingFiltersBar({
             onChange={(event) =>
               onChange({ ...filters, status: event.target.value as BookingFilters['status'] })
             }
-            className="h-10 appearance-none rounded-lg border border-ink-200 bg-white pl-3 pr-8 text-[13px] text-ink-700 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+            className="h-10 appearance-none rounded-lg border border-ink-200 bg-white pl-3 pr-8 text-body text-ink-700 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
             aria-label="Filter status booking"
           >
             <option value="all">Semua status</option>
@@ -81,7 +81,7 @@ export function BookingFiltersBar({
             type="button"
             onClick={() => onChange({ search: '', status: 'all', month: '' })}
             className={cn(
-              'inline-flex h-10 items-center gap-1.5 rounded-lg px-2.5 text-[13px] font-medium',
+              'inline-flex h-10 items-center gap-1.5 rounded-lg px-2.5 text-body font-medium',
               'text-ink-500 hover:bg-ink-100 hover:text-ink-800',
             )}
           >
@@ -91,14 +91,14 @@ export function BookingFiltersBar({
           <button
             type="button"
             onClick={() => onChange({ ...filters, month: currentMonthKey() })}
-            className="inline-flex h-10 items-center gap-1.5 rounded-lg px-2.5 text-[13px] font-medium text-ink-500 hover:bg-ink-100 hover:text-ink-800"
+            className="inline-flex h-10 items-center gap-1.5 rounded-lg px-2.5 text-body font-medium text-ink-500 hover:bg-ink-100 hover:text-ink-800"
           >
             Bulan ini
           </button>
         )}
       </div>
 
-      <p className="text-[12px] text-ink-500 lg:ml-1 lg:shrink-0">
+      <p className="text-meta text-ink-500 lg:ml-1 lg:shrink-0">
         {resultCount} booking
       </p>
     </div>

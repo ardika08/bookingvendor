@@ -58,7 +58,7 @@ export function PublicScheduleLinkCard({ slug }: { slug: string }) {
               readOnly
               value={url}
               onFocus={(event) => event.currentTarget.select()}
-              className="h-9 w-full rounded-lg border border-ink-200 bg-ink-50 px-3 text-[11px] text-ink-700 outline-none focus:border-brand-400"
+              className="h-9 w-full rounded-lg border border-ink-200 bg-ink-50 px-3 text-caption text-ink-700 outline-none focus:border-brand-400"
             />
             <div className="flex flex-wrap gap-2">
               <Button type="button" variant="secondary" size="sm" onClick={copyLink}>
@@ -69,26 +69,26 @@ export function PublicScheduleLinkCard({ slug }: { slug: string }) {
                 href={url}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex h-9 items-center gap-1.5 rounded-lg px-3 text-[12px] font-medium text-brand-700 hover:bg-brand-50"
+                className="inline-flex h-9 items-center gap-1.5 rounded-lg px-3 text-meta font-medium text-brand-700 hover:bg-brand-50"
               >
                 <ExternalLink className="size-3.5" />
                 Buka
               </a>
             </div>
-            <p className="border-t border-ink-100 pt-2 text-[11px] leading-relaxed text-ink-400">
+            <p className="border-t border-ink-100 pt-2 text-caption leading-relaxed text-ink-400">
               Kalender menandai tanggal yang sudah terisi, sehingga calon klien tahu sisa
               tanggal yang tersedia. Nama, kontak, dan nilai transaksi klien tidak pernah
               ditampilkan.
             </p>
           </>
         ) : (
-          <p className="inline-flex items-center gap-1.5 text-[11.5px] text-ink-500">
+          <p className="inline-flex items-center gap-1.5 text-caption text-ink-500">
             <Link2 className="size-3.5" aria-hidden="true" />
             Tautan publik belum tersedia. Lengkapi profil vendor terlebih dahulu.
           </p>
         )}
 
-        {error ? <p className="text-[11.5px] text-rose-700">{error}</p> : null}
+        {error ? <p className="text-caption text-rose-700">{error}</p> : null}
       </CardBody>
     </Card>
   )

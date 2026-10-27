@@ -99,7 +99,7 @@ export function BookingDateGrid({
   return (
     <div>
       <div className="mb-3 flex items-center justify-between gap-2">
-        <p className="text-[13px] font-semibold text-ink-900">{formatMonthYear(monthKey)}</p>
+        <p className="text-body font-semibold text-ink-900">{formatMonthYear(monthKey)}</p>
         <div className="flex items-center gap-1">
           <button
             type="button"
@@ -137,7 +137,7 @@ export function BookingDateGrid({
               }
               aria-label={`Tanggal ${day.day}`}
               className={cn(
-                'flex h-8 items-center justify-center rounded-lg text-[12px] font-semibold tabular-nums transition-colors',
+                'flex h-8 items-center justify-center rounded-lg text-meta font-semibold tabular-nums transition-colors',
                 day.status
                   ? CELL_CLASS[day.status]
                   : day.isBlocked
@@ -167,11 +167,11 @@ export function BookingDateGrid({
        * mengisi tanggal berwarna.
        */}
       <div className="mt-3 border-t border-ink-100 pt-2.5">
-        <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-ink-400">
+        <p className="mb-1.5 text-caption font-semibold uppercase tracking-wide text-ink-400">
           Acara bulan ini
         </p>
         {monthBookings.length === 0 ? (
-          <p className="text-[12px] text-ink-400">
+          <p className="text-meta text-ink-400">
             {/*
              * Jangan bilang "belum ada acara" saat tabel di bawah jelas berisi
              * baris — bisa terjadi jika filter status/pencarian menyaring habis
@@ -189,10 +189,10 @@ export function BookingDateGrid({
                   to={`/bookings/${booking.id}`}
                   className="flex items-center gap-2 rounded-lg px-1.5 py-1 transition-colors hover:bg-ink-50"
                 >
-                  <span className="w-9 shrink-0 text-[11px] font-semibold tabular-nums text-ink-500">
+                  <span className="w-9 shrink-0 text-caption font-semibold tabular-nums text-ink-500">
                     {booking.eventDate.slice(8, 10)}/{booking.eventDate.slice(5, 7)}
                   </span>
-                  <span className="min-w-0 flex-1 truncate text-[12px] text-ink-800">
+                  <span className="min-w-0 flex-1 truncate text-meta text-ink-800">
                     {booking.client.name}
                   </span>
                   <span className={cn('size-1.5 shrink-0 rounded-full', BOOKING_STATUS_META[booking.status].dotClass)} />
@@ -202,7 +202,7 @@ export function BookingDateGrid({
           </ul>
         )}
         {monthBookings.length > 6 ? (
-          <p className="mt-1 text-[11px] text-ink-400">+{monthBookings.length - 6} acara lain</p>
+          <p className="mt-1 text-caption text-ink-400">+{monthBookings.length - 6} acara lain</p>
         ) : null}
       </div>
     </div>
@@ -211,7 +211,7 @@ export function BookingDateGrid({
 
 function LegendItem({ className, label }: { className: string; label: string }) {
   return (
-    <span className="inline-flex items-center gap-1.5 text-[11px] text-ink-500">
+    <span className="inline-flex items-center gap-1.5 text-caption text-ink-500">
       <span className={cn('size-2 rounded-full', className)} aria-hidden />
       {label}
     </span>

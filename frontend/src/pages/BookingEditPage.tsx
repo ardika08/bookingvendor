@@ -139,8 +139,8 @@ export function BookingEditForm({
     <form onSubmit={handleSubmit} noValidate className="space-y-4">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold tracking-tight text-ink-900">Edit Booking</h2>
-          <p className="text-[13px] text-ink-500">
+          <h1 className="text-title tracking-tight text-ink-900">Edit Booking</h1>
+          <p className="text-body text-ink-500">
             {booking.client.name} · {BOOKING_STATUS_META[booking.status].label}
           </p>
         </div>
@@ -153,7 +153,7 @@ export function BookingEditForm({
       {submitted && errorCount > 0 ? (
         <div className="flex items-start gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3">
           <AlertTriangle className="mt-0.5 size-4 shrink-0 text-rose-600" />
-          <p className="text-[12.5px] text-rose-800">
+          <p className="text-meta text-rose-800">
             {errorCount} isian perlu diperbaiki sebelum perubahan disimpan.
           </p>
         </div>
@@ -162,7 +162,7 @@ export function BookingEditForm({
       {savedAt ? (
         <div className="flex items-start gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5">
           <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600" />
-          <p className="text-[12.5px] text-emerald-800">
+          <p className="text-meta text-emerald-800">
             Perubahan tersimpan — mengalihkan ke detail booking…
           </p>
         </div>
@@ -259,7 +259,7 @@ export function BookingEditForm({
                   </Field>
                   <Field id="editTotalPrice" label="Nilai kontrak (Rp)" required error={errors.totalPrice}>
                     <div className="relative">
-                      <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[13px] text-ink-400">
+                      <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-body text-ink-400">
                         Rp
                       </span>
                       <input
@@ -304,17 +304,17 @@ export function BookingEditForm({
 
           {dirty ? (
             <div className="rounded-xl border border-brand-200 bg-brand-50/70 p-4 lg:sticky lg:top-20">
-              <h3 className="text-[12px] font-semibold uppercase tracking-wide text-brand-700">
+              <h3 className="text-meta font-semibold uppercase tracking-wide text-brand-700">
                 {changes.length} perubahan belum disimpan
               </h3>
               <ul className="mt-2 space-y-1">
                 {changes.slice(0, 5).map((change) => (
-                  <li key={change.key} className="text-[11.5px] text-brand-900">
+                  <li key={change.key} className="text-caption text-brand-900">
                     <span className="font-medium">{change.label}:</span> {change.from} → {change.to}
                   </li>
                 ))}
                 {changes.length > 5 ? (
-                  <li className="text-[11.5px] text-brand-700">+{changes.length - 5} lainnya</li>
+                  <li className="text-caption text-brand-700">+{changes.length - 5} lainnya</li>
                 ) : null}
               </ul>
             </div>
@@ -324,7 +324,7 @@ export function BookingEditForm({
 
       <Card>
         <CardFooter className="sm:justify-between">
-          <p className="text-[12px] text-ink-500">
+          <p className="text-meta text-ink-500">
             {dirty ? `${changes.length} perubahan siap disimpan.` : 'Belum ada perubahan.'}
           </p>
           <div className="flex gap-2">

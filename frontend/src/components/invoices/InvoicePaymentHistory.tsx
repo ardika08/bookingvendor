@@ -24,7 +24,7 @@ export function InvoicePaymentHistory({ payments }: { payments: InvoicePayment[]
       />
       <CardBody>
         {payments.length === 0 ? (
-          <p className="text-[12.5px] text-ink-500">Belum ada pembayaran yang tercatat.</p>
+          <p className="text-meta text-ink-500">Belum ada pembayaran yang tercatat.</p>
         ) : (
           <ul className="space-y-2">
             {payments.map((payment) => (
@@ -37,20 +37,20 @@ export function InvoicePaymentHistory({ payments }: { payments: InvoicePayment[]
                     <Banknote className="size-3.5" />
                   </span>
                   <div className="min-w-0">
-                    <p className="text-[12.5px] font-medium text-ink-800">
+                    <p className="text-meta font-medium text-ink-800">
                       {METHOD_LABEL[payment.method]}
                     </p>
-                    <p className="text-[11.5px] text-ink-500">
+                    <p className="text-caption text-ink-500">
                       {formatShortDate(payment.paidAt)}
                     </p>
                     {payment.note ? (
-                      <p className="mt-0.5 wrap-break-word text-[11.5px] text-ink-500">
+                      <p className="mt-0.5 wrap-break-word text-caption text-ink-500">
                         {payment.note}
                       </p>
                     ) : null}
                   </div>
                 </div>
-                <span className="shrink-0 text-[12.5px] font-semibold tabular-nums text-emerald-700">
+                <span className="shrink-0 text-meta font-semibold tabular-nums text-emerald-700">
                   +{formatCurrency(payment.amount)}
                 </span>
               </li>

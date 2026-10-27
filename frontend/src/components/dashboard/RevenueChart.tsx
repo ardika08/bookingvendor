@@ -70,13 +70,13 @@ export function RevenueChart() {
       <section className="rounded-xl border border-ink-200/80 bg-white px-5 py-6">
         <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-[13.5px] font-semibold text-ink-900">Grafik pendapatan</h2>
-            <p className="mt-0.5 text-[12px] text-ink-500">{error.message}</p>
+            <h2 className="text-lead font-semibold text-ink-900">Grafik pendapatan</h2>
+            <p className="mt-0.5 text-meta text-ink-500">{error.message}</p>
           </div>
           <button
             type="button"
             onClick={reload}
-            className="inline-flex h-8 shrink-0 items-center rounded-lg bg-white px-3 text-[12.5px] font-medium text-ink-700 shadow-sm ring-1 ring-ink-200 hover:bg-ink-50"
+            className="inline-flex h-8 shrink-0 items-center rounded-lg bg-white px-3 text-meta font-medium text-ink-700 shadow-sm ring-1 ring-ink-200 hover:bg-ink-50"
           >
             Coba lagi
           </button>
@@ -95,8 +95,8 @@ export function RevenueChart() {
             <TrendingUp className="size-4" />
           </span>
           <div>
-            <h2 className="text-[13.5px] font-semibold text-ink-900">Grafik pendapatan</h2>
-            <p className="mt-0.5 text-[12px] text-ink-500">
+            <h2 className="text-lead font-semibold text-ink-900">Grafik pendapatan</h2>
+            <p className="mt-0.5 text-meta text-ink-500">
               Nilai kontrak acara vs uang yang benar-benar masuk, per bulan.
             </p>
           </div>
@@ -107,18 +107,18 @@ export function RevenueChart() {
               angka besar jadi jangkar, label kecil di atasnya. */}
           <dl className="flex items-baseline gap-5">
             <div>
-              <dt className="flex items-center gap-1.5 text-[10.5px] font-medium uppercase tracking-wide text-ink-400">
+              <dt className="flex items-center gap-1.5 text-2xs font-medium uppercase tracking-wide text-ink-400">
                 <LegendDot color={CONTRACT_COLOR} /> Kontrak
               </dt>
-              <dd className="text-[15px] font-semibold tabular-nums text-ink-900">
+              <dd className="text-lead font-semibold tabular-nums text-ink-900">
                 {formatCurrency(totals.contractValue)}
               </dd>
             </div>
             <div>
-              <dt className="flex items-center gap-1.5 text-[10.5px] font-medium uppercase tracking-wide text-ink-400">
+              <dt className="flex items-center gap-1.5 text-2xs font-medium uppercase tracking-wide text-ink-400">
                 <LegendDot color={PAID_COLOR} /> Masuk
               </dt>
-              <dd className="text-[15px] font-semibold tabular-nums text-ink-900">
+              <dd className="text-lead font-semibold tabular-nums text-ink-900">
                 {formatCurrency(totals.paid)}
               </dd>
             </div>
@@ -187,7 +187,7 @@ export function RevenueChart() {
         )}
       </div>
 
-      <p className="mt-3 text-[11.5px] leading-relaxed text-ink-400">
+      <p className="mt-3 text-caption leading-relaxed text-ink-400">
         Nilai kontrak dihitung dari acara terkonfirmasi & selesai; booking batal tidak
         diikutkan. Uang masuk memakai tanggal pembayaran yang kamu catat.
       </p>
@@ -216,8 +216,8 @@ function RangeSelector({
           onClick={() => onChange(option)}
           className={
             value === option
-              ? 'rounded-[6px] bg-white px-2.5 py-1 text-[12px] font-medium text-ink-900 shadow-sm'
-              : 'rounded-[6px] px-2.5 py-1 text-[12px] text-ink-500 hover:text-ink-700'
+              ? 'rounded-[6px] bg-white px-2.5 py-1 text-meta font-medium text-ink-900 shadow-sm'
+              : 'rounded-[6px] px-2.5 py-1 text-meta text-ink-500 hover:text-ink-700'
           }
         >
           {option}B
@@ -243,14 +243,14 @@ function RevenueTooltip({
 
   return (
     <div className="rounded-lg border border-ink-200 bg-white px-3 py-2 shadow-md">
-      <p className="text-[12px] font-semibold text-ink-900">{label}</p>
-      <p className="mt-1 text-[11.5px] tabular-nums" style={{ color: CONTRACT_COLOR }}>
+      <p className="text-meta font-semibold text-ink-900">{label}</p>
+      <p className="mt-1 text-caption tabular-nums" style={{ color: CONTRACT_COLOR }}>
         Kontrak {formatCurrency(point.contractValue)}
       </p>
-      <p className="text-[11.5px] tabular-nums" style={{ color: PAID_COLOR }}>
+      <p className="text-caption tabular-nums" style={{ color: PAID_COLOR }}>
         Masuk {formatCurrency(point.paid)}
       </p>
-      <p className="mt-1 text-[11px] text-ink-400">
+      <p className="mt-1 text-caption text-ink-400">
         {point.bookingCount} booking tercatat
       </p>
     </div>
@@ -272,8 +272,8 @@ function compactCurrency(value: number): string {
 function EmptyChart() {
   return (
     <div className="flex h-full flex-col items-center justify-center rounded-lg border border-dashed border-ink-200 px-4 text-center">
-      <p className="text-[12.5px] font-medium text-ink-700">Belum ada pendapatan tercatat</p>
-      <p className="mt-1 max-w-xs text-[11.5px] text-ink-500">
+      <p className="text-meta font-medium text-ink-700">Belum ada pendapatan tercatat</p>
+      <p className="mt-1 max-w-xs text-caption text-ink-500">
         Grafik terisi setelah ada booking terkonfirmasi atau pembayaran yang kamu catat.
       </p>
     </div>

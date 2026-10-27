@@ -106,15 +106,24 @@ export function BookingSummaryTiles({
             </span>
             <p
               className={cn(
-                'text-[19px] font-bold leading-none tabular-nums text-ink-900',
-                /* Nilai rupiah panjang ("Rp 60.000.000") harus mengecil, bukan meluber. */
-                tile.key === 'revenue' && 'text-[15px] leading-tight',
+                /*
+                 * "Rp 213.000.000" adalah string terpanjang yang pernah masuk sini:
+                 * 15 digit + titik. Pada 19px bold ia butuh ~148px, sedangkan kartu
+                 * hanya ~122px di 375px dan ~142px di sidebar desktop — jadi 19px
+                 * selalu meluber, di layar kecil maupun besar.
+                 *
+                 * Karena itu nilainya turun satu tingkat (12px -> 15px) dan hanya
+                 * naik setelah kartu benar-benar cukup lebar. Label lain tetap 19px
+                 * karena isinya pendek ("12", "3").
+                 */
+                'font-bold leading-none tabular-nums text-ink-900',
+                tile.key === 'revenue' ? 'text-meta sm:text-lead' : 'text-title',
                 loading && 'opacity-50',
               )}
             >
               {tile.value}
             </p>
-            <p className="mt-1 text-[11px] font-medium text-ink-500">{tile.label}</p>
+            <p className="mt-1 text-caption font-medium text-ink-500">{tile.label}</p>
           </button>
         )
       })}

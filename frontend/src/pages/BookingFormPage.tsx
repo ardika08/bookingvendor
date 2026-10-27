@@ -167,13 +167,13 @@ export function BookingFormPage({
       <div className="flex flex-col gap-1">
         <Link
           to="/bookings"
-          className="inline-flex w-fit items-center gap-1.5 text-[12.5px] font-medium text-ink-500 hover:text-ink-800"
+          className="inline-flex w-fit items-center gap-1.5 text-meta font-medium text-ink-500 hover:text-ink-800"
         >
           <ArrowLeft className="size-3.5" />
           Daftar booking
         </Link>
-        <h2 className="text-lg font-semibold tracking-tight text-ink-900">Booking Baru</h2>
-        <p className="text-[13px] text-ink-500">
+        <h1 className="text-title tracking-tight text-ink-900">Booking Baru</h1>
+        <p className="text-body text-ink-500">
           Catat kesepakatan dengan klien. Nama &amp; nomor WA otomatis tersimpan sebagai data klien.
         </p>
       </div>
@@ -181,7 +181,7 @@ export function BookingFormPage({
       {submitted && errorCount > 0 ? (
         <div className="flex items-start gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3">
           <AlertTriangle className="mt-0.5 size-4 shrink-0 text-rose-600" />
-          <p className="text-[12.5px] leading-relaxed text-rose-800">
+          <p className="text-meta leading-relaxed text-rose-800">
             Ada {errorCount} isian yang perlu diperbaiki sebelum booking bisa disimpan.
           </p>
         </div>
@@ -190,12 +190,12 @@ export function BookingFormPage({
       {notice ? (
         <div className="flex items-start gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3">
           <Info className="mt-0.5 size-4 shrink-0 text-emerald-600" />
-          <p className="text-[12.5px] text-emerald-800">{notice}</p>
+          <p className="text-meta text-emerald-800">{notice}</p>
         </div>
       ) : null}
       {trialGate.blocked ? (
         <div className="flex flex-col gap-2 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="flex items-start gap-2 text-[12.5px] leading-relaxed text-amber-900">
+          <p className="flex items-start gap-2 text-meta leading-relaxed text-amber-900">
             <Lock className="mt-0.5 size-3.5 shrink-0" />
             <span>
               <span className="font-semibold">Jatah trial habis.</span> Isian form tetap
@@ -342,7 +342,7 @@ export function BookingFormPage({
                     {dateConflict && !errors.eventDate ? (
                       <p
                         role="alert"
-                        className="mt-1.5 flex items-start gap-1.5 text-[12px] leading-relaxed text-amber-800"
+                        className="mt-1.5 flex items-start gap-1.5 text-meta leading-relaxed text-amber-800"
                       >
                         <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
                         Tanggal ini sudah memiliki booking aktif. Pilih tanggal lain agar tidak
@@ -402,7 +402,7 @@ export function BookingFormPage({
                     error={errors.totalPrice}
                   >
                     <div className="relative">
-                      <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[13px] text-ink-400">
+                      <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-body text-ink-400">
                         Rp
                       </span>
                       <input
@@ -432,7 +432,7 @@ export function BookingFormPage({
                             onClick={() => update('status', status)}
                             aria-pressed={active}
                             className={cn(
-                              'inline-flex h-9 items-center gap-1.5 rounded-lg px-3 text-[12.5px] font-medium ring-1 transition',
+                              'inline-flex h-9 items-center gap-1.5 rounded-lg px-3 text-meta font-medium ring-1 transition',
                               active
                                 ? `${meta.badgeClass} ring-2`
                                 : 'bg-white text-ink-600 ring-ink-200 hover:bg-ink-50',

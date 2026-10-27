@@ -114,8 +114,8 @@ export function VendorCreatePage() {
     <form ref={formRef} onSubmit={handleSubmit} noValidate className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold tracking-tight text-ink-900">Tambah Vendor</h2>
-          <p className="mt-0.5 text-[13px] text-ink-500">
+          <h1 className="text-title tracking-tight text-ink-900">Tambah Vendor</h1>
+          <p className="mt-0.5 text-body text-ink-500">
             Vendor langsung aktif dengan masa trial — tanpa proses verifikasi.
           </p>
         </div>

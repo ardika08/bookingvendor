@@ -32,7 +32,7 @@ export function StatusBadge({
     <span
       className={cn(
         'inline-flex items-center rounded-full font-medium ring-1 ring-inset',
-        variant === 'badge' ? 'gap-1.5 px-2 py-0.5 text-[11px]' : 'gap-1.5 px-2.5 py-1 text-[12px]',
+        variant === 'badge' ? 'gap-1.5 px-2 py-0.5 text-caption' : 'gap-1.5 px-2.5 py-1 text-meta',
         meta.badgeClass,
         className,
       )}
@@ -76,7 +76,7 @@ export function StatusMenu({
 
   if (options.length === 0) {
     return (
-      <span className="text-[11.5px] text-ink-400" title="Acara selesai — data tersimpan sebagai riwayat">
+      <span className="text-caption text-ink-400" title="Acara selesai — data tersimpan sebagai riwayat">
         Final
       </span>
     )
@@ -91,7 +91,7 @@ export function StatusMenu({
         aria-haspopup="menu"
         aria-expanded={open}
         className={cn(
-          'inline-flex h-7 items-center gap-1 rounded-md border border-ink-200 bg-white px-2 text-[11.5px] font-medium text-ink-600',
+          'inline-flex h-7 items-center gap-1 rounded-md border border-ink-200 bg-white px-2 text-caption font-medium text-ink-600',
           'hover:border-ink-300 hover:text-ink-900 disabled:cursor-not-allowed disabled:opacity-60',
         )}
       >
@@ -121,16 +121,16 @@ export function StatusMenu({
               >
                 <Icon className={cn('mt-0.5 size-3.5 shrink-0', option === 'cancelled' ? 'text-rose-500' : 'text-ink-400')} />
                 <span className="min-w-0">
-                  <span className="block text-[12.5px] font-medium text-ink-800">
+                  <span className="block text-meta font-medium text-ink-800">
                     {transitionLabel(status, option)}
                   </span>
-                  <span className="block text-[11px] leading-snug text-ink-500">
+                  <span className="block text-caption leading-snug text-ink-500">
                     {freesDate
                       ? 'Tanggal akan kosong lagi di kalender.'
                       : meta.description}
                   </span>
                   {option === 'cancelled' && hasInvoice ? (
-                    <span className="mt-0.5 block text-[11px] font-medium text-rose-600">
+                    <span className="mt-0.5 block text-caption font-medium text-rose-600">
                       Invoice terkait perlu ditinjau ulang.
                     </span>
                   ) : null}
@@ -169,7 +169,7 @@ export function StatusStepper({
             disabled={!onChange}
             onClick={() => onChange?.(item)}
             className={cn(
-              'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11.5px] font-medium ring-1 ring-inset transition',
+              'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-caption font-medium ring-1 ring-inset transition',
               active
                 ? meta.badgeClass
                 : 'bg-white text-ink-500 ring-ink-200 hover:bg-ink-50 disabled:hover:bg-white',
@@ -187,7 +187,7 @@ export function StatusStepper({
         )
       })}
       {status === 'cancelled' ? (
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-50 px-2.5 py-1 text-[11.5px] font-medium text-rose-700 ring-1 ring-inset ring-rose-200">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-50 px-2.5 py-1 text-caption font-medium text-rose-700 ring-1 ring-inset ring-rose-200">
           Dibatalkan
         </span>
       ) : null}
@@ -198,7 +198,7 @@ export function StatusStepper({
 /** Legenda kalender: hanya status yang menempati tanggal. */
 export function StatusLegend() {
   return (
-    <ul className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-ink-500">
+    <ul className="flex flex-wrap items-center gap-x-3 gap-y-1 text-caption text-ink-500">
       {(['tentative', 'confirmed', 'completed'] as BookingStatus[]).map((status) => {
         const meta = BOOKING_STATUS_META[status]
         return (
@@ -246,7 +246,7 @@ export function StatusCountPills({
             onClick={() => onSelect(entry.key)}
             aria-pressed={isActive}
             className={cn(
-              'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11.5px] font-medium ring-1 transition',
+              'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-caption font-medium ring-1 transition',
               isActive
                 ? 'bg-ink-900 text-white ring-ink-900'
                 : 'bg-white text-ink-600 ring-ink-200 hover:bg-ink-50',
@@ -255,7 +255,7 @@ export function StatusCountPills({
             {entry.label}
             <span
               className={cn(
-                'rounded-full px-1 text-[10.5px] tabular-nums',
+                'rounded-full px-1 text-2xs tabular-nums',
                 isActive ? 'bg-white/20' : 'bg-ink-100 text-ink-500',
               )}
             >

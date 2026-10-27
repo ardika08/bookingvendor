@@ -5,7 +5,7 @@ export function Badge({ className, children }: { className?: string; children: R
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 rounded-full bg-ink-100 px-2 py-0.5 text-[11px] font-medium text-ink-600',
+        'inline-flex items-center gap-1 rounded-full bg-ink-100 px-2 py-0.5 text-caption font-medium text-ink-600',
         className,
       )}
     >

@@ -26,7 +26,7 @@ export function InvoiceTable({ invoices }: { invoices: Invoice[] }) {
       <div className="hidden overflow-x-auto scrollbar-slim md:block">
         <table className="w-full border-collapse text-left">
           <thead>
-            <tr className="border-b border-ink-100 bg-ink-50/60 text-[11px] font-semibold uppercase tracking-wide text-ink-500">
+            <tr className="border-b border-ink-100 bg-ink-50/60 text-caption font-semibold uppercase tracking-wide text-ink-500">
               <th scope="col" className="py-2.5 pl-5 pr-3">Invoice</th>
               <th scope="col" className="px-3 py-2.5">Klien</th>
               <th scope="col" className="px-3 py-2.5">Tagihan</th>
@@ -42,10 +42,10 @@ export function InvoiceTable({ invoices }: { invoices: Invoice[] }) {
                   <InvoiceNumberCell invoice={invoice} />
                 </td>
                 <td className="px-3 py-3">
-                  <p className="max-w-[11rem] truncate text-[13px] font-medium text-ink-800">
+                  <p className="max-w-[11rem] truncate text-body font-medium text-ink-800">
                     {invoice.clientName}
                   </p>
-                  <p className="text-[11.5px] text-ink-500">{invoice.clientPhone}</p>
+                  <p className="text-caption text-ink-500">{invoice.clientPhone}</p>
                 </td>
                 <td className="px-3 py-3">
                   <AmountBreakdown invoice={invoice} />
@@ -54,11 +54,11 @@ export function InvoiceTable({ invoices }: { invoices: Invoice[] }) {
                   <StatusCell invoice={invoice} />
                 </td>
                 <td className="px-3 py-3 text-right">
-                  <p className="text-[13px] font-semibold tabular-nums text-ink-900">
+                  <p className="text-body font-semibold tabular-nums text-ink-900">
                     {formatCurrency(invoice.amount)}
                   </p>
                   {remainingAmount(invoice) > 0 && invoice.status !== 'void' ? (
-                    <p className="text-[11px] tabular-nums text-ink-500">
+                    <p className="text-caption tabular-nums text-ink-500">
                       sisa {formatCurrency(remainingAmount(invoice))}
                     </p>
                   ) : null}
@@ -66,7 +66,7 @@ export function InvoiceTable({ invoices }: { invoices: Invoice[] }) {
                 <td className="py-3 pl-3 pr-5 text-right">
                   <Link
                     to={`/invoices/${invoice.id}`}
-                    className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[12.5px] font-medium text-brand-700 hover:bg-brand-50"
+                    className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-meta font-medium text-brand-700 hover:bg-brand-50"
                   >
                     Lihat rincian
                     <ArrowUpRight className="size-3.5" />
@@ -83,22 +83,22 @@ export function InvoiceTable({ invoices }: { invoices: Invoice[] }) {
           <li key={invoice.id} className="px-4 py-3.5">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <p className="truncate text-[13px] font-semibold text-ink-900">{invoice.number}</p>
-                <p className="truncate text-[12px] text-ink-500">{invoice.clientName}</p>
+                <p className="truncate text-body font-semibold text-ink-900">{invoice.number}</p>
+                <p className="truncate text-meta text-ink-500">{invoice.clientName}</p>
               </div>
               <StatusCell invoice={invoice} align="right" />
             </div>
 
             <div className="mt-2 flex items-end justify-between gap-3">
               <AmountBreakdown invoice={invoice} />
-              <p className="text-[13px] font-semibold tabular-nums text-ink-900">
+              <p className="text-body font-semibold tabular-nums text-ink-900">
                 {formatCurrency(invoice.amount)}
               </p>
             </div>
 
             <Link
               to={`/invoices/${invoice.id}`}
-              className="mt-2 inline-flex items-center gap-1 text-[12.5px] font-medium text-brand-700"
+              className="mt-2 inline-flex items-center gap-1 text-meta font-medium text-brand-700"
             >
               Lihat rincian
               <ArrowUpRight className="size-3.5" />
@@ -114,7 +114,7 @@ function InvoiceNumberCell({ invoice }: { invoice: Invoice }) {
   const overdue = isOverdue(invoice)
   return (
     <div>
-      <p className="flex items-center gap-1.5 text-[13px] font-semibold tabular-nums text-ink-900">
+      <p className="flex items-center gap-1.5 text-body font-semibold tabular-nums text-ink-900">
         {invoice.number}
         {overdue ? (
           <span title="Lewat jatuh tempo">
@@ -122,7 +122,7 @@ function InvoiceNumberCell({ invoice }: { invoice: Invoice }) {
           </span>
         ) : null}
       </p>
-      <p className="text-[11.5px] text-ink-500">Terbit {formatShortDate(invoice.issuedAt)}</p>
+      <p className="text-caption text-ink-500">Terbit {formatShortDate(invoice.issuedAt)}</p>
     </div>
   )
 }
@@ -131,7 +131,7 @@ function AmountBreakdown({ invoice }: { invoice: Invoice }) {
   const percent = paidPercent(invoice)
   return (
     <div>
-      <p className="flex items-center gap-1.5 text-[12.5px] text-ink-700">
+      <p className="flex items-center gap-1.5 text-meta text-ink-700">
         <Badge
           className={cn(
             invoice.type === 'dp'
@@ -145,7 +145,7 @@ function AmountBreakdown({ invoice }: { invoice: Invoice }) {
         <span className="tabular-nums text-ink-500">dari {formatCurrency(invoice.bookingTotal)}</span>
       </p>
       {invoice.status === 'void' ? (
-        <p className="mt-1 text-[11px] text-ink-400">Tidak ditagihkan</p>
+        <p className="mt-1 text-caption text-ink-400">Tidak ditagihkan</p>
       ) : (
         <div className="mt-1.5 flex items-center gap-1.5">
           <span className="h-1 w-16 overflow-hidden rounded-full bg-ink-100">
@@ -157,10 +157,10 @@ function AmountBreakdown({ invoice }: { invoice: Invoice }) {
               style={{ width: `${percent}%` }}
             />
           </span>
-          <span className="text-[10.5px] tabular-nums text-ink-400">{percent}% dibayar</span>
+          <span className="text-2xs tabular-nums text-ink-400">{percent}% dibayar</span>
         </div>
       )}
-      <p className="mt-1 text-[11px] text-ink-400">
+      <p className="mt-1 text-caption text-ink-400">
         {isOverdue(invoice) ? 'Lewat jatuh tempo ' : 'Jatuh tempo '}
         {formatShortDate(invoice.dueAt)}
       </p>
@@ -175,7 +175,7 @@ function StatusCell({ invoice, align }: { invoice: Invoice; align?: 'right' }) {
     <div className={cn(align === 'right' && 'shrink-0 text-right')}>
       <span
         className={cn(
-          'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium ring-1 ring-inset',
+          'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-caption font-medium ring-1 ring-inset',
           meta.badgeClass,
         )}
         title={meta.description}
@@ -184,7 +184,7 @@ function StatusCell({ invoice, align }: { invoice: Invoice; align?: 'right' }) {
         {meta.label}
       </span>
       {isOverdue(invoice) ? (
-        <p className="mt-1 text-[10.5px] font-medium text-rose-600">Terlambat</p>
+        <p className="mt-1 text-2xs font-medium text-rose-600">Terlambat</p>
       ) : null}
     </div>
   )

@@ -51,8 +51,8 @@ export function FaqSection() {
     <section id="faq" className="scroll-mt-20 border-t border-ink-200/70 bg-white">
       <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 sm:py-20">
         <div className="text-center">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-brand-700">FAQ</p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-ink-900 sm:text-3xl">
+          <p className="text-caption font-semibold uppercase tracking-wider text-brand-700">FAQ</p>
+          <h2 className="mt-2 text-heading tracking-tight text-ink-900 sm:text-display">
             Pertanyaan yang sering muncul
           </h2>
         </div>
@@ -63,14 +63,14 @@ export function FaqSection() {
               key={faq.question}
               className="group rounded-xl border border-ink-200/80 bg-white px-4 py-3 open:border-brand-200 open:bg-brand-50/20"
             >
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-[13px] font-medium text-ink-900 [&::-webkit-details-marker]:hidden">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-body font-medium text-ink-900 [&::-webkit-details-marker]:hidden">
                 {faq.question}
                 <ChevronDown
                   className="size-4 shrink-0 text-ink-400 transition-transform group-open:rotate-180"
                   aria-hidden
                 />
               </summary>
-              <p className="mt-2 text-[12.5px] leading-relaxed text-ink-500">{faq.answer}</p>
+              <p className="mt-2 text-meta leading-relaxed text-ink-500">{faq.answer}</p>
             </details>
           ))}
         </div>

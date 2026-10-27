@@ -117,10 +117,10 @@ export function UpgradeModal({
               <Lock className="size-4" />
             </span>
             <div>
-              <h2 id="upgrade-title" className="text-[15px] font-semibold text-ink-900">
+              <h2 id="upgrade-title" className="text-lead font-semibold text-ink-900">
                 Jatah trial habis
               </h2>
-              <p className="text-[12px] text-ink-500">
+              <p className="text-meta text-ink-500">
                 Booking &amp; invoice berikutnya butuh langganan aktif.
               </p>
             </div>
@@ -128,7 +128,7 @@ export function UpgradeModal({
         </div>
 
         <div className="px-5 py-4">
-          <p id="upgrade-description" className="text-[13px] leading-relaxed text-ink-600">
+          <p id="upgrade-description" className="text-body leading-relaxed text-ink-600">
             Kamu sudah memakai seluruh jatah trial. Isian {resource} yang sedang kamu buat
             <span className="font-medium text-ink-800"> tetap tersimpan di layar</span>. Pilih
             paket untuk melanjutkan — setelah pembayaran terverifikasi, akses tanpa batas
@@ -136,7 +136,7 @@ export function UpgradeModal({
           </p>
 
           {trialUsage ? (
-            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 rounded-lg border border-amber-200 bg-amber-50/70 px-3 py-2 text-[11.5px] text-amber-900">
+            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 rounded-lg border border-amber-200 bg-amber-50/70 px-3 py-2 text-caption text-amber-900">
               {trialUsage.bookingsUsed !== undefined && trialUsage.bookingsLimit !== undefined ? (
                 <p>
                   Booking: <span className="font-semibold">{trialUsage.bookingsUsed}</span>/
@@ -166,7 +166,7 @@ export function UpgradeModal({
             </ul>
           </fieldset>
 
-          <p className="mt-3 flex items-start gap-1.5 text-[11.5px] leading-relaxed text-ink-500">
+          <p className="mt-3 flex items-start gap-1.5 text-caption leading-relaxed text-ink-500">
             <Sparkles className="mt-0.5 size-3.5 shrink-0 text-amber-500" />
             Pembayaran lewat payment gateway. Jatah trial tidak direset — langganan berlaku
             sampai masa paket berakhir.
@@ -221,20 +221,20 @@ function PlanOption({
         />
         <span className="min-w-0 flex-1">
           <span className="flex flex-wrap items-center gap-1.5">
-            <span className="text-[13px] font-medium text-ink-900">{plan.name}</span>
+            <span className="text-body font-medium text-ink-900">{plan.name}</span>
             {plan.highlight ? (
-              <span className="rounded bg-brand-600 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-white">
+              <span className="rounded bg-brand-600 px-1.5 py-0.5 text-2xs font-semibold uppercase text-white">
                 Populer
               </span>
             ) : null}
           </span>
-          <span className="mt-0.5 block text-[11.5px] text-ink-500">
+          <span className="mt-0.5 block text-caption text-ink-500">
             {plan.durationMonths} bulan · booking &amp; invoice tanpa batas
           </span>
           {plan.benefits && plan.benefits.length > 0 ? (
             <span className="mt-1.5 flex flex-col gap-0.5">
               {plan.benefits.slice(0, 3).map((benefit) => (
-                <span key={benefit} className="flex items-start gap-1 text-[11px] text-ink-500">
+                <span key={benefit} className="flex items-start gap-1 text-caption text-ink-500">
                   <Check className="mt-0.5 size-3 shrink-0 text-brand-600" aria-hidden />
                   {benefit}
                 </span>
@@ -244,11 +244,11 @@ function PlanOption({
         </span>
         <span className="shrink-0 text-right">
           {available ? (
-            <span className="text-[13px] font-semibold tabular-nums text-ink-900">
+            <span className="text-body font-semibold tabular-nums text-ink-900">
               {formatCurrency(plan.price as number)}
             </span>
           ) : (
-            <span className="text-[12px] font-medium text-ink-400">Segera</span>
+            <span className="text-meta font-medium text-ink-400">Segera</span>
           )}
         </span>
       </label>

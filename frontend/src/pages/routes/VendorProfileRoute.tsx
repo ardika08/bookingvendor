@@ -87,10 +87,10 @@ function ProfileError({
 }) {
   return (
     <div className="rounded-xl border border-ink-200/80 bg-white px-6 py-12 text-center">
-      <p className="text-sm font-semibold text-ink-800">
+      <p className="text-lead font-semibold text-ink-800">
         {unauthorized ? 'Sesi kamu berakhir' : 'Gagal memuat profil'}
       </p>
-      <p className="mx-auto mt-1 max-w-sm text-[13px] leading-relaxed text-ink-500">
+      <p className="mx-auto mt-1 max-w-sm text-body leading-relaxed text-ink-500">
         {unauthorized
           ? 'Masuk kembali dengan akun Google untuk melanjutkan.'
           : message || 'Periksa koneksi internet lalu coba lagi.'}
@@ -99,7 +99,7 @@ function ProfileError({
         <button
           type="button"
           onClick={onRetry}
-          className="mt-4 inline-flex h-9 items-center gap-1.5 rounded-lg bg-brand-600 px-3 text-[13px] font-medium text-white hover:bg-brand-700"
+          className="mt-4 inline-flex h-9 items-center gap-1.5 rounded-lg bg-brand-600 px-3 text-body font-medium text-white hover:bg-brand-700"
         >
           Coba lagi
         </button>

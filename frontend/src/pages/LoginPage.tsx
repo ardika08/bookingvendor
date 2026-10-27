@@ -63,20 +63,20 @@ export function LoginPage() {
     <div className="flex min-h-dvh flex-col items-center justify-center bg-ink-50 px-4">
       <div className="w-full max-w-sm">
         <div className="text-center">
-          <span className="inline-flex size-12 items-center justify-center rounded-xl bg-brand-600 text-lg font-bold text-white">
+          <span className="inline-flex size-12 items-center justify-center rounded-xl bg-brand-600 text-lead text-white">
             BV
           </span>
-          <h1 className="mt-4 text-xl font-semibold tracking-tight text-ink-900">
+          <h1 className="mt-4 text-heading tracking-tight text-ink-900">
             Booking Vendor
           </h1>
-          <p className="mt-1.5 text-[13px] leading-relaxed text-ink-500">
+          <p className="mt-1.5 text-body leading-relaxed text-ink-500">
             Satu tempat mencatat booking, mengelola jadwal, dan menagih klien —
             khusus vendor pernikahan.
           </p>
         </div>
 
         {sessionRole !== null ? (
-          <div className="mb-4 mt-6 flex items-center justify-between gap-2 rounded-lg border border-ink-200 bg-white px-3 py-2 text-[12px]">
+          <div className="mb-4 mt-6 flex items-center justify-between gap-2 rounded-lg border border-ink-200 bg-white px-3 py-2 text-meta">
             <span className="min-w-0 truncate text-ink-600">
               Sesi aktif:{' '}
               <span className="font-medium text-ink-800">
@@ -99,7 +99,7 @@ export function LoginPage() {
               role="alert"
               className="mb-4 flex items-start gap-2 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2.5"
             >
-              <p className="min-w-0 flex-1 text-[12px] leading-relaxed text-rose-800">{error}</p>
+              <p className="min-w-0 flex-1 text-meta leading-relaxed text-rose-800">{error}</p>
               <button
                 type="button"
                 onClick={() => setError(null)}
@@ -113,13 +113,13 @@ export function LoginPage() {
 
           <a
             href="/auth/google/redirect"
-            className="flex h-11 w-full items-center justify-center gap-3 rounded-lg border border-ink-200 bg-white text-sm font-medium text-ink-800 shadow-sm transition-colors hover:bg-ink-50"
+            className="flex h-11 w-full items-center justify-center gap-3 rounded-lg border border-ink-200 bg-white text-body font-medium text-ink-800 shadow-sm transition-colors hover:bg-ink-50"
           >
             <GoogleMark />
             Masuk dengan Google
           </a>
 
-          <p className="mt-4 text-center text-[11.5px] leading-relaxed text-ink-400">
+          <p className="mt-4 text-center text-caption leading-relaxed text-ink-400">
             Tidak ada registrasi publik. Akun vendor &amp; admin disiapkan admin —
             cukup masuk lewat akun Google yang terdaftar.
           </p>
@@ -128,13 +128,13 @@ export function LoginPage() {
               404 untuk endpoint ini di environment lain, jadi tombol ini
               aman untuk dibiarkan di kode. */}
           <div className="mt-4 border-t border-dashed border-ink-200 pt-3">
-            <p className="text-center text-[10px] font-semibold uppercase tracking-wider text-ink-300">
+            <p className="text-center text-2xs font-semibold uppercase tracking-wider text-ink-300">
               Dev login (tanpa Google)
             </p>
             <button
               type="button"
               onClick={handleDevLogin}
-              className="mt-2 flex h-9 w-full items-center justify-center gap-2 rounded-lg bg-ink-100 text-[12px] font-medium text-ink-700 transition-colors hover:bg-ink-200"
+              className="mt-2 flex h-9 w-full items-center justify-center gap-2 rounded-lg bg-ink-100 text-meta font-medium text-ink-700 transition-colors hover:bg-ink-200"
             >
               <LoaderCircle className="size-3.5" />
               Masuk sebagai vendor uji
@@ -142,7 +142,7 @@ export function LoginPage() {
           </div>
         </div>
 
-        <p className="mt-6 text-center text-[12px] text-ink-400">
+        <p className="mt-6 text-center text-meta text-ink-400">
           Mengelola platform?{' '}
           <Link
             to="/admin"
