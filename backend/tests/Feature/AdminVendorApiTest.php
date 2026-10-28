@@ -213,4 +213,43 @@ class AdminVendorApiTest extends TestCase
             ->assertStatus(422)
             ->assertJsonValidationErrors(['name', 'owner_name', 'email', 'category']);
     }
+
+    /**
+     * Regresi: form tambah vendor dulu hanya menulis ke state contoh, sehingga
+     * UI melaporkan "berhasil" tanpa satu pun baris baru di database. Tes ini
+     * memastikan endpoint yang dipakai UI benar-benar membuat data.
+     */
+    public function test_tambah_vendor_lalu_muncul_di_daftar_dan_bisa_dibuka_detailnya(): void
+    {
+        $created = $this->postJson('/api/admin/vendors', [
+            'name' => 'Vendor Baru Uji',
+            'owner_name' => 'Pemilik Baru',
+            'email' => 'baru@example.test',
+            'category' => 'Wedding Organizer',
+            'city' => 'Semarang',
+        ])->assertCreated()->json();
+
+        $this->assertNotEmpty($created['id']);
+
+        // Muncul di daftar.
+        $this->getJson('/api/admin/vendors')
+            ->assertOk()
+            ->assertJsonFragment(['name' => 'Vendor Baru Uji']);
+
+        // Detailnya bisa dibuka lewat ID numerik dari server — inilah yang
+        // dulu gagal karena halaman detail memakai ID contoh `vd-1`.
+        $this->getJson('/api/admin/vendors/'.$created['id'])
+            ->assertOk()
+            ->assertJsonPath('name', 'Vendor Baru Uji')
+            ->assertJsonPath('email', 'baru@example.test');
+    }
+
+    /**
+     * Regresi: ID yang tidak ada harus 404, bukan 500 — halaman detail
+     * membedakan keduanya (pesan "tidak ditemukan" vs galat jaringan).
+     */
+    public function test_detail_vendor_tidak_dikenal_menghasilkan_404(): void
+    {
+        $this->getJson('/api/admin/vendors/999999')->assertNotFound();
+    }
 }

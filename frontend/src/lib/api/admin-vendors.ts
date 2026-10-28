@@ -71,6 +71,103 @@ export async function fetchAdminVendor(
   return apiRequest<AdminVendorSummary>(`/admin/vendors/${id}`, { signal })
 }
 
+/* ------------------------------------------------------------------ *
+ * Riwayat transaksi langganan vendor
+ * ------------------------------------------------------------------ */
+
+/** Status pembayaran gateway, sesuai kolom `subscription_payments.status`. */
+export type AdminPaymentStatus = 'pending' | 'paid' | 'failed' | 'expired' | 'refunded'
+
+export interface AdminSubscriptionPayment {
+  id: string
+  /** `order_id` yang dikirim ke gateway. */
+  reference: string
+  vendorId: string
+  planName: string
+  amount: number
+  status: AdminPaymentStatus
+  /** Channel pembayaran, fallback ke nama gateway. */
+  method: string
+  /** ISO date `YYYY-MM-DD`. */
+  createdAt: string
+  /** ISO date `YYYY-MM-DD`; null bila belum dibayar. */
+  paidAt: string | null
+}
+
+/**
+ * Riwayat transaksi satu vendor.
+ *
+ * Backend sudah mengurutkan dari yang terbaru (`created_at` desc), jadi urutan
+ * dari server dipakai apa adanya — mengurutkan ulang di klien hanya menambah
+ * tempat untuk berbeda pendapat dengan server.
+ */
+export async function fetchAdminVendorPayments(
+  id: string,
+  signal?: AbortSignal,
+): Promise<AdminSubscriptionPayment[]> {
+  return apiRequest<AdminSubscriptionPayment[]>(`/admin/vendors/${id}/payments`, { signal })
+}
+
+/* ------------------------------------------------------------------ *
+ * Tambah vendor
+ * ------------------------------------------------------------------ */
+
+/**
+ * Nilai form tambah vendor. Backend memakai snake_case.
+ *
+ * `email` adalah email akun Google calon vendor — harus belum terdaftar
+ * (backend menolak dengan 422 bila sudah dipakai akun lain).
+ */
+export interface CreateAdminVendorPayload {
+  name: string
+  owner_name: string
+  email: string
+  category: string
+  city: string | null
+}
+
+export async function createAdminVendor(
+  payload: CreateAdminVendorPayload,
+): Promise<AdminVendorSummary> {
+  return apiRequest<AdminVendorSummary>('/admin/vendors', {
+    method: 'POST',
+    body: payload,
+  })
+}
+
+/* ------------------------------------------------------------------ *
+ * Aktivasi / perpanjangan langganan manual
+ * ------------------------------------------------------------------ */
+
+export interface RenewSubscriptionResult {
+  id: string
+  status: string
+  planName: string | null
+  /** ISO date `YYYY-MM-DD`. */
+  startsAt: string | null
+  /** ISO date `YYYY-MM-DD`. */
+  endsAt: string | null
+  amountPaid: number
+}
+
+/**
+ * Aktifkan/perpanjang langganan vendor tanpa lewat gateway.
+ *
+ * Dipakai saat webhook gateway gagal atau vendor membayar di luar gateway.
+ * Backend menghitung masa aktif dari tanggal berakhir yang masih berlaku
+ * (menumpuk), atau dari hari ini bila langganan sudah lewat — jadi UI tidak
+ * perlu menghitung sendiri, cukup menampilkan hasilnya.
+ */
+export async function renewAdminVendorSubscription(
+  vendorId: string,
+  planId: string,
+): Promise<RenewSubscriptionResult> {
+  return apiRequest<RenewSubscriptionResult>(`/admin/vendors/${vendorId}/subscriptions/renew`, {
+    method: 'POST',
+    body: { plan_id: planId },
+  })
+}
+
 /** Nilai form edit vendor. Backend memakai snake_case. */
 export interface UpdateAdminVendorPayload {
   name: string

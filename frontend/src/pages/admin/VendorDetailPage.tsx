@@ -12,7 +12,7 @@ import {
   XCircle,
   type IconComponent,
 } from '@/components/ui/icons'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Badge } from '@/components/ui/Badge'
 import { Button, ButtonLink } from '@/components/ui/Button'
@@ -21,14 +21,19 @@ import { DetailGrid, DetailItem } from '@/components/ui/DetailGrid'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { useToast } from '@/components/ui/Toast'
 import {
-  sortPayments,
-  subscriptionDaysLeft,
+  fetchAdminVendor,
+  fetchAdminVendorPayments,
+  renewAdminVendorSubscription,
+  setAdminVendorActive,
   type AdminPaymentStatus,
   type AdminSubscriptionPayment,
   type AdminSubscriptionStatus,
-  type AdminVendorDetail,
-} from '@/lib/admin-vendors'
-import { getMockAdminVendor, listMockVendorPayments, setMockAdminVendorActive } from '@/lib/mock/admin'
+  type AdminVendorSummary,
+  type RenewSubscriptionResult,
+} from '@/lib/api/admin-vendors'
+import { fetchAdminPlans, type AdminPlan } from '@/lib/api/admin-plans'
+import { ApiError } from '@/lib/api/client'
+import { subscriptionDaysLeft } from '@/lib/admin-vendors'
 import { formatCurrency, formatLongDate, formatShortDate, initials, toIsoDate } from '@/lib/format'
 import { cn } from '@/lib/cn'
 
@@ -36,11 +41,13 @@ import { cn } from '@/lib/cn'
  * Detail profil & langganan vendor (`/admin/vendors/:id`).
  *
  * Vendor datang dari daftar admin untuk melihat identitas usaha dan mengatur
- * langgangannya. Sesuai PRD: admin TIDAK membaca booking/invoice vendor — kartu
+ * langganannya. Sesuai PRD: admin TIDAK membaca booking/invoice vendor — kartu
  * aktivitas hanya menampilkan jumlah, bukan isinya.
  *
- * Fase frontend: data dari `lib/mock/admin`; aksi ubah langganan menyusul di
- * task backend/berikutnya sehingga tombolnya ditandai "soon".
+ * Data diambil dari API nyata (`GET /admin/vendors/{id}` dan
+ * `GET /admin/vendors/{id}/payments`). Sebelumnya halaman ini memakai data
+ * contoh ber-ID `vd-1`, sehingga vendor sungguhan (ID numerik) selalu tampil
+ * "tidak ditemukan" meski datanya ada di database.
  */
 
 const SUBSCRIPTION_META: Record<
@@ -92,13 +99,88 @@ const PAYMENT_STATUS_META: Record<
 export function VendorDetailPage() {
   const { vendorId = '' } = useParams()
   const { notify } = useToast()
-  const [vendor, setVendor] = useState<AdminVendorDetail | null>(() =>
-    getMockAdminVendor(vendorId),
-  )
-  const [todayIso] = useState(() => toIsoDate(new Date()))
-  const [payments] = useState(() => sortPayments(listMockVendorPayments(vendorId)))
 
-  if (vendor === null) {
+  const [vendor, setVendor] = useState<AdminVendorSummary | null>(null)
+  const [payments, setPayments] = useState<AdminSubscriptionPayment[]>([])
+  const [loading, setLoading] = useState(true)
+  /** True bila backend menjawab 404 — beda dari galat jaringan. */
+  const [notFound, setNotFound] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [toggling, setToggling] = useState(false)
+  /** Dialog "Atur langganan" terbuka. */
+  const [renewing, setRenewing] = useState(false)
+  const [todayIso] = useState(() => toIsoDate(new Date()))
+
+  useEffect(() => {
+    let active = true
+    const controller = new AbortController()
+
+    setLoading(true)
+    setNotFound(false)
+    setError(null)
+
+    // Detail & riwayat dimuat bersamaan: halaman butuh keduanya sekaligus.
+    Promise.all([
+      fetchAdminVendor(vendorId, controller.signal),
+      fetchAdminVendorPayments(vendorId, controller.signal),
+    ])
+      .then(([detail, paymentList]) => {
+        if (!active) return
+        setVendor(detail)
+        setPayments(paymentList)
+      })
+      .catch((cause: unknown) => {
+        if (!active) return
+        if (cause instanceof DOMException && cause.name === 'AbortError') return
+
+        if (cause instanceof ApiError && cause.status === 404) {
+          setNotFound(true)
+          return
+        }
+        setError(
+          cause instanceof ApiError
+            ? cause.message
+            : 'Gagal memuat data vendor. Periksa koneksi lalu coba lagi.',
+        )
+      })
+      .finally(() => {
+        if (active) setLoading(false)
+      })
+
+    return () => {
+      active = false
+      controller.abort()
+    }
+  }, [vendorId])
+
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        <div className="h-4 w-32 animate-pulse rounded bg-white" />
+        <div className="h-24 animate-pulse rounded-xl bg-white" />
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_20rem]">
+          <div className="h-64 animate-pulse rounded-xl bg-white" />
+          <div className="h-64 animate-pulse rounded-xl bg-white" />
+        </div>
+      </div>
+    )
+  }
+
+  if (error !== null) {
+    return (
+      <div className="space-y-3">
+        <div role="alert" className="rounded-xl border border-rose-200 bg-rose-50/70 px-4 py-3">
+          <p className="text-meta text-rose-900">{error}</p>
+        </div>
+        <ButtonLink to="/admin/vendors" variant="secondary" size="sm">
+          <ArrowLeft className="size-3.5" />
+          Daftar vendor
+        </ButtonLink>
+      </div>
+    )
+  }
+
+  if (notFound || vendor === null) {
     return (
       <EmptyState
         icon={<ShieldCheck className="size-5" />}
@@ -119,15 +201,30 @@ export function VendorDetailPage() {
   const waDigits = vendor.contact?.replace(/\D/g, '').replace(/^0/, '62') ?? ''
   const waLink = waDigits ? `https://wa.me/${waDigits}` : null
 
-  function toggleActive() {
-    const updated = setMockAdminVendorActive(vendor!.id, !vendor!.isActive)
-    if (updated) setVendor(updated)
-    notify(
-      updated?.isActive
-        ? `"${updated.name}" diaktifkan kembali.`
-        : `"${updated?.name}" dinonaktifkan — vendor tidak bisa masuk sementara data tetap utuh.`,
-      { tone: 'success' },
-    )
+  async function toggleActive() {
+    if (vendor === null || toggling) return
+
+    const nextActive = !vendor.isActive
+    setToggling(true)
+    try {
+      const updated = await setAdminVendorActive(vendor.id, nextActive)
+      setVendor(updated)
+      notify(
+        updated.isActive
+          ? `"${updated.name}" diaktifkan kembali.`
+          : `"${updated.name}" dinonaktifkan — vendor tidak bisa masuk sementara data tetap utuh.`,
+        { tone: 'success' },
+      )
+    } catch (cause) {
+      notify(
+        cause instanceof ApiError
+          ? cause.message
+          : 'Gagal mengubah status akun. Coba lagi.',
+        { tone: 'error' },
+      )
+    } finally {
+      setToggling(false)
+    }
   }
 
   return (
@@ -237,7 +334,8 @@ export function VendorDetailPage() {
                 <DetailItem
                   label="Bergabung"
                   icon={<CalendarDays className="size-3.5" />}
-                  value={formatLongDate(vendor.createdAt)}
+                  value={vendor.createdAt ? formatLongDate(vendor.createdAt) : 'Tidak tercatat'}
+                  muted={!vendor.createdAt}
                 />
               </DetailGrid>
 
@@ -295,8 +393,13 @@ export function VendorDetailPage() {
               ) : null}
             </CardBody>
             <CardBody className="border-t border-ink-100">
-              <Button size="sm" variant="secondary" disabled title="Belum tersedia">
-                Atur langganan · soon
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() => setRenewing(true)}
+                disabled={toggling}
+              >
+                Atur langganan
               </Button>
             </CardBody>
           </Card>
@@ -315,7 +418,7 @@ export function VendorDetailPage() {
       <Card>
         <CardHeader
           title="Riwayat Transaksi Langganan"
-          description="Pembayaran paket lewat payment gateway. Konfirmasi manual & pengaturan masa aktif menyusul."
+          description="Pembayaran paket lewat payment gateway. Masa aktif yang diaktifkan manual dari tombol Atur langganan tidak membuat baris transaksi."
         />
         {payments.length === 0 ? (
           <EmptyState
@@ -331,6 +434,219 @@ export function VendorDetailPage() {
           </ul>
         )}
       </Card>
+
+      {renewing ? (
+        <RenewDialog
+          vendorId={vendor.id}
+          vendorName={vendor.name}
+          currentStatus={vendor.subscription.status}
+          onClose={() => setRenewing(false)}
+          onDone={async (result) => {
+            setRenewing(false)
+            notify(
+              result.endsAt
+                ? `Langganan "${vendor.name}" diperpanjang sampai ${formatLongDate(result.endsAt)}.`
+                : `Langganan "${vendor.name}" diaktifkan.`,
+              { tone: 'success' },
+            )
+            // Muat ulang dari server: status & tanggal dihitung backend.
+            try {
+              const [detail, paymentList] = await Promise.all([
+                fetchAdminVendor(vendor.id),
+                fetchAdminVendorPayments(vendor.id),
+              ])
+              setVendor(detail)
+              setPayments(paymentList)
+            } catch {
+              notify('Perubahan tersimpan, tetapi data terbaru gagal dimuat. Muat ulang halaman.', {
+                tone: 'error',
+              })
+            }
+          }}
+        />
+      ) : null}
+    </div>
+  )
+}
+
+/**
+ * Dialog aktivasi/perpanjangan langganan manual.
+ *
+ * Hanya menampilkan paket aktif — paket nonaktif ditolak backend, jadi tidak
+ * perlu ditawarkan. Masa aktif dihitung backend (menumpuk dari tanggal
+ * berakhir yang masih berlaku), UI hanya menampilkan hasilnya.
+ */
+function RenewDialog({
+  vendorId,
+  vendorName,
+  currentStatus,
+  onClose,
+  onDone,
+}: {
+  vendorId: string
+  vendorName: string
+  currentStatus: AdminSubscriptionStatus
+  onClose: () => void
+  onDone: (result: RenewSubscriptionResult) => void | Promise<void>
+}) {
+  const dialogRef = useRef<HTMLDivElement>(null)
+  const [plans, setPlans] = useState<AdminPlan[]>([])
+  const [planId, setPlanId] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    let active = true
+    const controller = new AbortController()
+
+    fetchAdminPlans(controller.signal)
+      .then((list) => {
+        if (!active) return
+        const usable = list.filter((plan) => plan.isActive && plan.price !== null)
+        setPlans(usable)
+        setPlanId(usable[0]?.id ?? '')
+      })
+      .catch(() => {
+        if (active) setError('Gagal memuat daftar paket. Tutup lalu coba lagi.')
+      })
+      .finally(() => {
+        if (active) setLoading(false)
+      })
+
+    return () => {
+      active = false
+      controller.abort()
+    }
+  }, [])
+
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape' && !saving) onClose()
+    }
+    document.addEventListener('keydown', onKeyDown)
+    document.body.style.overflow = 'hidden'
+    dialogRef.current?.querySelector<HTMLButtonElement>('[data-autofocus]')?.focus()
+    return () => {
+      document.removeEventListener('keydown', onKeyDown)
+      document.body.style.overflow = ''
+    }
+  }, [saving, onClose])
+
+  async function submit() {
+    if (planId === '' || saving) return
+    setSaving(true)
+    setError(null)
+    try {
+      const result = await renewAdminVendorSubscription(vendorId, planId)
+      await onDone(result)
+    } catch (cause) {
+      setError(
+        cause instanceof ApiError
+          ? cause.message
+          : 'Gagal mengaktifkan langganan. Periksa koneksi lalu coba lagi.',
+      )
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-4">
+      <button
+        type="button"
+        aria-label="Tutup"
+        onClick={saving ? undefined : onClose}
+        className="absolute inset-0 bg-ink-900/50 backdrop-blur-sm"
+      />
+
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="renew-title"
+        className="relative w-full max-w-md rounded-t-2xl bg-white p-5 shadow-xl sm:rounded-2xl"
+      >
+        <h2 id="renew-title" className="text-lead font-semibold text-ink-900">
+          Atur langganan
+        </h2>
+        <p className="mt-1 text-meta leading-relaxed text-ink-500">
+          Aktifkan atau perpanjang langganan <span className="font-medium text-ink-700">{vendorName}</span>{' '}
+          tanpa lewat payment gateway. Masa aktif ditambahkan dari tanggal berakhir yang masih
+          berlaku.
+        </p>
+
+        {currentStatus === 'trial' ? (
+          <p className="mt-2 rounded-lg border border-amber-200 bg-amber-50 px-2.5 py-2 text-caption leading-relaxed text-amber-900">
+            Vendor masih di masa trial. Mengaktifkan paket langsung menghapus batas trial.
+          </p>
+        ) : null}
+
+        {loading ? (
+          <p className="mt-4 text-meta text-ink-500">Memuat paket…</p>
+        ) : plans.length === 0 ? (
+          <p className="mt-4 rounded-lg border border-ink-200 bg-ink-50 px-3 py-2 text-meta text-ink-600">
+            Belum ada paket aktif yang punya harga. Atur dulu di halaman Paket Langganan.
+          </p>
+        ) : (
+          <div className="mt-4 space-y-2">
+            <span className="text-caption font-medium uppercase tracking-wide text-ink-400">
+              Pilih paket
+            </span>
+            {plans.map((plan) => (
+              <label
+                key={plan.id}
+                className={cn(
+                  'flex cursor-pointer items-center justify-between gap-3 rounded-lg border px-3 py-2.5 transition-colors',
+                  planId === plan.id
+                    ? 'border-brand-400 bg-brand-50/60'
+                    : 'border-ink-200 hover:bg-ink-50',
+                )}
+              >
+                <span className="flex items-center gap-2.5">
+                  <input
+                    type="radio"
+                    name="renew-plan"
+                    value={plan.id}
+                    checked={planId === plan.id}
+                    onChange={() => setPlanId(plan.id)}
+                    className="size-4 accent-brand-700"
+                  />
+                  <span className="min-w-0">
+                    <span className="block text-body font-medium text-ink-900">{plan.name}</span>
+                    <span className="block text-caption text-ink-500">
+                      {plan.durationMonths} bulan
+                    </span>
+                  </span>
+                </span>
+                <span className="shrink-0 text-meta font-semibold tabular-nums text-ink-800">
+                  {plan.price === null ? '-' : formatCurrency(plan.price)}
+                </span>
+              </label>
+            ))}
+          </div>
+        )}
+
+        {error !== null ? (
+          <p role="alert" className="mt-3 rounded-lg bg-rose-50 px-3 py-2 text-meta text-rose-900">
+            {error}
+          </p>
+        ) : null}
+
+        <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <Button
+            variant="secondary"
+            onClick={onClose}
+            disabled={saving}
+            data-autofocus
+          >
+            Batal
+          </Button>
+          <Button onClick={submit} disabled={saving || loading || planId === ''}>
+            {saving ? 'Menyimpan…' : 'Aktifkan paket'}
+          </Button>
+        </div>
+      </div>
     </div>
   )
 }

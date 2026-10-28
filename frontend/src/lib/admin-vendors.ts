@@ -74,10 +74,6 @@ export interface AdminSubscriptionPayment {
   paidAt: string | null
 }
 
-/** Riwayat transaksi terbaru di atas. */
-export function sortPayments(payments: AdminSubscriptionPayment[]): AdminSubscriptionPayment[] {
-  return [...payments].sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-}
 
 export type AdminVendorFilters = {
   search: string
@@ -91,68 +87,9 @@ export const EMPTY_ADMIN_VENDOR_FILTERS: AdminVendorFilters = {
   account: 'all',
 }
 
-/** Cari berdasarkan nama usaha, pemilik, email, atau kota (tanpa case). */
-export function matchesAdminVendorSearch(vendor: AdminVendorSummary, keyword: string): boolean {
-  const query = keyword.trim().toLowerCase()
-  if (query === '') return true
 
-  return [
-    vendor.name,
-    vendor.ownerName,
-    vendor.email,
-    vendor.category ?? '',
-    vendor.city ?? '',
-  ]
-    .some((field) => field.toLowerCase().includes(query))
-}
 
-/**
- * Saring daftar vendor untuk admin.
- * Urutan: nonaktif di bawah, lalu terbaru ditambahkan di atas.
- */
-export function filterAdminVendors(
-  vendors: AdminVendorSummary[],
-  filters: AdminVendorFilters,
-): AdminVendorSummary[] {
-  return vendors
-    .filter((vendor) => {
-      if (filters.subscription !== 'all' && vendor.subscription.status !== filters.subscription) {
-        return false
-      }
-      if (filters.account === 'active' && !vendor.isActive) return false
-      if (filters.account === 'inactive' && vendor.isActive) return false
 
-      return matchesAdminVendorSearch(vendor, filters.search)
-    })
-    .sort(
-      (a, b) =>
-        Number(b.isActive) - Number(a.isActive) || b.createdAt.localeCompare(a.createdAt),
-    )
-}
-
-/** True bila ada filter aktif selain default — dipakai tombol "Reset". */
-export function hasActiveAdminVendorFilters(filters: AdminVendorFilters): boolean {
-  return (
-    filters.search.trim() !== '' ||
-    filters.subscription !== 'all' ||
-    filters.account !== 'all'
-  )
-}
-
-/** Rekap ringkas untuk strip di atas daftar. */
-export function summarizeAdminVendors(vendors: AdminVendorSummary[]): {
-  total: number
-  active: number
-  activeSubscription: number
-  trial: number
-} {
-  return {
-    total: vendors.length,
-    active: vendors.filter((vendor) => vendor.isActive).length,
-    activeSubscription: vendors.filter((vendor) => vendor.subscription.status === 'active').length,
-    trial: vendors.filter((vendor) => vendor.subscription.status === 'trial').length,
-  }
-}
 
 /** Tanggal hari ini sebagai `YYYY-MM-DD` (dipakai saat menambah vendor). */
 export const todayIso = (): string => toIsoDate(new Date())

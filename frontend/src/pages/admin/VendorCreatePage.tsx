@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/Button'
 import { Card, CardBody, CardFooter, CardHeader } from '@/components/ui/Card'
 import { Field, FormSection, inputClass } from '@/components/ui/Field'
 import { useToast } from '@/components/ui/Toast'
-import { addMockAdminVendor } from '@/lib/mock/admin'
+import { createAdminVendor } from '@/lib/api/admin-vendors'
+import { ApiError } from '@/lib/api/client'
 import { VENDOR_CATEGORIES } from '@/lib/vendor-profile'
 
 /**
@@ -14,8 +15,10 @@ import { VENDOR_CATEGORIES } from '@/lib/vendor-profile'
  * (PRD: tidak ada registrasi publik). Vendor baru langsung mendapat masa
  * trial 2 booking + 2 invoice tanpa perlu verifikasi.
  *
- * Fase frontend: submit menyimpan ke state mock; begitu API admin tersedia,
- * `addMockAdminVendor` diganti panggilan `POST /api/admin/vendors`.
+ * Data dikirim ke `POST /admin/vendors`. Sebelumnya form ini hanya menulis ke
+ * state contoh: notifikasi "berhasil" muncul dan pengguna dialihkan ke daftar,
+ * padahal tidak ada baris baru di database. Galat validasi dari server (mis.
+ * email sudah dipakai) sekarang ditampilkan per field, bukan ditelan diam-diam.
  */
 
 interface VendorCreateValues {
@@ -93,18 +96,43 @@ export function VendorCreatePage() {
 
     setSaving(true)
     try {
-      addMockAdminVendor({
+      const created = await createAdminVendor({
         name: values.name.trim(),
-        ownerName: values.ownerName.trim(),
+        owner_name: values.ownerName.trim(),
         email: values.email.trim(),
         category: values.category,
-        city: values.city.trim(),
+        city: values.city.trim() || null,
       })
 
-      notify(`Vendor "${values.name.trim()}" ditambahkan — akun siap dengan masa trial.`, {
+      notify(`Vendor "${created.name}" ditambahkan — akun siap dengan masa trial.`, {
         tone: 'success',
       })
       navigate('/admin/vendors')
+    } catch (cause) {
+      /*
+       * Galat validasi Laravel (422) datang sebagai `fieldErrors` dengan nama
+       * field snake_case. Form ini memakai camelCase, jadi dipetakan dulu —
+       * tanpa pemetaan, pesan "email sudah dipakai" tidak muncul di kolom mana
+       * pun dan pengguna hanya melihat form yang diam.
+       */
+      if (cause instanceof ApiError) {
+        const mapped: VendorCreateErrors = {}
+        if (cause.fieldErrors.name) mapped.name = cause.fieldErrors.name
+        if (cause.fieldErrors.owner_name) mapped.ownerName = cause.fieldErrors.owner_name
+        if (cause.fieldErrors.email) mapped.email = cause.fieldErrors.email
+        if (cause.fieldErrors.category) mapped.category = cause.fieldErrors.category
+        if (cause.fieldErrors.city) mapped.city = cause.fieldErrors.city
+
+        if (Object.keys(mapped).length > 0) {
+          setErrors(mapped)
+          const first = Object.keys(mapped)[0]
+          formRef.current?.querySelector<HTMLElement>(`[data-field="${first}"]`)?.focus()
+        } else {
+          notify(cause.message, { tone: 'error' })
+        }
+      } else {
+        notify('Gagal menyimpan vendor. Periksa koneksi lalu coba lagi.', { tone: 'error' })
+      }
     } finally {
       setSaving(false)
     }
