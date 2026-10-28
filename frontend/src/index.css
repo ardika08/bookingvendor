@@ -236,6 +236,18 @@
   display: none;
 }
 
+/*
+ * Dokumen laporan admin untuk cetak/PDF.
+ *
+ * `body *` disembunyikan saat mencetak, jadi setiap dokumen cetak harus
+ * menyatakan dirinya sendiri sebagai satu-satunya elemen yang terlihat.
+ * Aturannya ditulis terpisah dari invoice supaya keduanya tidak saling
+ * menimpa: hanya satu yang ada di DOM pada satu waktu.
+ */
+.report-print-document {
+  display: none;
+}
+
 @media print {
   @page {
     size: A4;
@@ -264,6 +276,106 @@
     color: #1a1e24;
     font-family: Arial, sans-serif;
     font-size: 11pt;
+  }
+
+  /*
+   * Laporan: sama seperti invoice, hanya dokumen ini yang terlihat. Tabel
+   * dipakai karena kertas tidak punya tab dan tidak bisa di-scroll — semua
+   * data harus tercetak berurutan.
+   */
+  .report-print-document,
+  .report-print-document * {
+    visibility: visible !important;
+  }
+
+  .report-print-document {
+    position: absolute;
+    inset: 0 auto auto 0;
+    display: block !important;
+    width: 100%;
+    color: #1a1e24;
+    font-family: Arial, sans-serif;
+    font-size: 10pt;
+  }
+
+  .report-print-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid #d9dde2;
+  }
+
+  .report-print-title {
+    margin: 0;
+    font-size: 16pt;
+    font-weight: 700;
+  }
+
+  .report-print-subtitle {
+    margin: 3px 0 0;
+    color: #5f6a77;
+  }
+
+  .report-print-meta {
+    text-align: right;
+    color: #5f6a77;
+  }
+
+  .report-print-section {
+    margin-top: 18px;
+    /* Judul bagian tidak boleh terpisah dari tabelnya di halaman baru. */
+    break-inside: avoid;
+  }
+
+  .report-print-section h2 {
+    margin: 0 0 6px;
+    font-size: 11pt;
+    font-weight: 700;
+  }
+
+  .report-print-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .report-print-table th,
+  .report-print-table td {
+    padding: 4px 6px;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .report-print-table--grid th,
+  .report-print-table--grid td {
+    border-bottom: 1px solid #e4e7eb;
+  }
+
+  .report-print-table--grid thead th {
+    border-bottom: 1.5px solid #c8cdd4;
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #5f6a77;
+  }
+
+  .report-print-table tfoot th,
+  .report-print-table tfoot td {
+    border-top: 1.5px solid #c8cdd4;
+    font-weight: 700;
+  }
+
+  .report-print-number {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .report-print-footer {
+    margin-top: 20px;
+    padding-top: 10px;
+    border-top: 1px solid #d9dde2;
+    color: #5f6a77;
+    font-size: 9pt;
   }
 
   .invoice-print-header {

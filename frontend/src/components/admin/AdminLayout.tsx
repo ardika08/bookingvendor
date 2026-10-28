@@ -48,7 +48,7 @@ const ADMIN_NAV: AdminNavItem[] = [
   { label: 'Dashboard', to: '/admin', icon: LayoutDashboard },
   { label: 'Kelola Vendor', to: '/admin/vendors', icon: Users },
   { label: 'Paket Langganan', to: '/admin/plans', icon: CreditCard },
-  { label: 'Laporan', to: '/admin/reports', icon: BarChart3, soon: true },
+  { label: 'Laporan', to: '/admin/reports', icon: BarChart3 },
   { label: 'Akun Saya', to: '/admin/akun', icon: UserRound },
   { label: 'Pengaturan', to: '/admin/settings', icon: Settings2, soon: true },
 ]
@@ -63,6 +63,7 @@ function resolveTitle(pathname: string): string {
     return 'Kelola Vendor'
   }
   if (/^\/admin\/plans(\/|$)/.test(pathname)) return 'Konfigurasi Paket'
+  if (/^\/admin\/reports(\/|$)/.test(pathname)) return 'Laporan'
   if (/^\/admin\/akun(\/|$)/.test(pathname)) return 'Akun Saya'
   return 'Dashboard Admin'
 }

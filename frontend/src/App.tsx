@@ -14,6 +14,7 @@ import { VendorCreatePage } from '@/pages/admin/VendorCreatePage'
 import { VendorDetailPage } from '@/pages/admin/VendorDetailPage'
 import { VendorEditPage } from '@/pages/admin/VendorEditPage'
 import { AdminDashboardPage } from '@/pages/admin/AdminDashboardPage'
+import { AdminReportPage } from '@/pages/admin/AdminReportPage'
 import { PlanConfigPage } from '@/pages/admin/PlanConfigPage'
 import { BookingCreateRoute } from '@/pages/routes/BookingCreateRoute'
 import { BookingDetailRoute, BookingEditRoute } from '@/pages/routes/BookingDetailRoutes'
@@ -118,6 +119,7 @@ export function App() {
         <Route path="vendors/:vendorId" element={<VendorDetailPage />} />
         <Route path="vendors/:vendorId/edit" element={<VendorEditPage />} />
         <Route path="plans" element={<PlanConfigPage />} />
+        <Route path="reports" element={<AdminReportPage />} />
         <Route path="akun" element={<AccountProfilePage />} />
       </Route>
 

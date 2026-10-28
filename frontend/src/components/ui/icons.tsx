@@ -70,6 +70,7 @@ import {
   FileTextIcon,
   FileXIcon,
   HourglassIcon,
+  PrinterIcon,
   IdCardIcon,
   InfoIcon,
   LandmarkIcon,
@@ -186,6 +187,7 @@ export const ExternalLink = icon(ExternalLinkIcon, 'ExternalLink')
 export const FileText = icon(FileTextIcon, 'FileText')
 export const FileX2 = icon(FileXIcon, 'FileX2')
 export const Hourglass = icon(HourglassIcon, 'Hourglass')
+export const Printer = icon(PrinterIcon, 'Printer')
 export const IdCard = icon(IdCardIcon, 'IdCard')
 export const Info = icon(InfoIcon, 'Info')
 export const Landmark = icon(LandmarkIcon, 'Landmark')

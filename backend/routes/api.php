@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AdminDashboardController;
 use App\Http\Controllers\Api\AdminPlanController;
+use App\Http\Controllers\Api\AdminReportController;
 use App\Http\Controllers\Api\AdminSubscriptionController;
 use App\Http\Controllers\Api\AdminSubscriptionPaymentController;
 use App\Http\Controllers\Api\AdminVendorController;
@@ -87,6 +88,11 @@ Route::middleware(['auth:sanctum', 'admin.only'])->prefix('admin')->group(functi
         ->name('admin.dashboard.revenue-series');
     Route::get('dashboard/transactions', [AdminDashboardController::class, 'transactions'])
         ->name('admin.dashboard.transactions');
+
+    // Laporan tahunan: pendapatan, pertumbuhan vendor, dan langganan yang
+    // segera habis — satu respons untuk ketiga tab.
+    Route::get('reports', [AdminReportController::class, 'index'])
+        ->name('admin.reports.index');
 });
 
 /*
