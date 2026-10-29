@@ -4,9 +4,9 @@ import {
   FileText,
   LayoutDashboard,
   LifeBuoy,
-  MessageCircle,
   Package,
   Settings2,
+  Telegram,
   UserRound,
   Users,
   type IconComponent,
@@ -107,7 +107,7 @@ export function Sidebar({ onNavigate, className }: { onNavigate?: () => void; cl
               onClick={onNavigate}
               className="mt-2.5 flex h-9 items-center justify-center gap-2 rounded-lg bg-brand-400 px-3 text-meta font-semibold text-ink-900 transition-colors hover:bg-brand-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-800"
             >
-              <MessageCircle className="size-4 shrink-0" />
+              <Telegram className="size-4 shrink-0" />
               Gabung grup support
             </a>
           ) : null}

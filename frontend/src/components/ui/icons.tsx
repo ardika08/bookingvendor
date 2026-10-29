@@ -90,6 +90,7 @@ import {
   PencilIcon,
   Delete02Icon,
   PhoneIcon,
+  TelegramIcon,
   PlusIcon,
   QrCodeIcon,
   ReceiptIcon,
@@ -204,6 +205,7 @@ export const Mail = icon(MailIcon, 'Mail')
 export const MapPin = icon(MapPinIcon, 'MapPin')
 export const Menu = icon(MenuIcon, 'Menu')
 export const MessageCircle = icon(MessageCircleIcon, 'MessageCircle')
+export const Telegram = icon(TelegramIcon, 'Telegram')
 export const Package = icon(PackageIcon, 'Package')
 export const Pencil = icon(PencilIcon, 'Pencil')
 /** Hugeicons tidak punya "Trash2"; Delete02 adalah bentuk tempat sampah. */
