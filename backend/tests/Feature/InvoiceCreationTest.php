@@ -32,6 +32,9 @@ class InvoiceCreationTest extends TestCase
             'user_id' => $user->id,
             'name' => 'Lumen Wedding Story',
             'slug' => 'lumen-wedding-story',
+            'bank_name' => 'BCA',
+            'bank_account_number' => '1234567890',
+            'bank_account_name' => 'Lumen Wedding Story',
         ]);
 
         $client = Client::create([

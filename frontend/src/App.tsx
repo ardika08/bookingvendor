@@ -4,6 +4,7 @@ import { applyDocumentTitle } from '@/lib/document-title'
 import { DashboardLayout } from '@/components/layout/DashboardLayout'
 import { AdminLayout } from '@/components/admin/AdminLayout'
 import { RoleGate } from '@/components/auth/RoleGate'
+import { RequireOnboarding } from '@/components/auth/RequireOnboarding'
 import { DashboardHomePage, useDashboardUser } from '@/pages/DashboardHomePage'
 import { BookingsPage } from '@/pages/BookingsPage'
 import { CalendarPage } from '@/pages/CalendarPage'
@@ -21,6 +22,7 @@ import { BookingCreateRoute } from '@/pages/routes/BookingCreateRoute'
 import { BookingDetailRoute, BookingEditRoute } from '@/pages/routes/BookingDetailRoutes'
 import { InvoiceDetailRoute } from '@/pages/routes/InvoiceDetailRoute'
 import { PublicInvoiceRoute } from '@/pages/routes/PublicInvoiceRoute'
+import { OnboardingPage } from '@/pages/OnboardingPage'
 import { PublicScheduleRoute } from '@/pages/routes/PublicScheduleRoute'
 import { InvoiceCreateRoute } from '@/pages/routes/InvoiceCreateRoute'
 import { VendorProfileRoute } from '@/pages/routes/VendorProfileRoute'
@@ -64,6 +66,19 @@ export function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/invoice/:token" element={<PublicInvoiceRoute />} />
       <Route path="/jadwal/:slug" element={<PublicScheduleRoute />} />
+      {/*
+        Onboarding sengaja di luar `<RoleGate role="vendor">`: halaman ini tidak
+        memakai `DashboardLayout`, karena vendor yang belum lengkap belum boleh
+        melihat menu penuh. Polanya sama dengan `/login` dan `/invoice/:token`.
+      */}
+      <Route
+        path="/onboarding"
+        element={
+          <RoleGate role="vendor">
+            <OnboardingPage />
+          </RoleGate>
+        }
+      />
       {/* Tujuan redirect Duitku setelah pembayaran (DUITKU_RETURN_URL). */}
       <Route path="/subscription/success" element={<SubscriptionSuccessPage />} />
 
@@ -71,7 +86,9 @@ export function App() {
         path="/"
         element={
           <RoleGate role="vendor">
-            <DashboardLayout />
+            <RequireOnboarding>
+              <DashboardLayout />
+            </RequireOnboarding>
           </RoleGate>
         }
       >

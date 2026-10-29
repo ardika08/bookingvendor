@@ -1,6 +1,6 @@
 # Rancangan — Onboarding Vendor
 
-**Status:** rancangan, belum ada kode yang ditulis.
+**Status:** **Fase 1 dan Fase 2 selesai diimplementasikan** (29 Oktober 2026). Fase 3–4 belum.
 **Tanggal:** 29 Oktober 2026
 **Prasyarat:** dokumen ini menjawab *apa* dan *bagaimana*, bukan *kerjakan sekarang*.
 
@@ -81,13 +81,26 @@ Vendor bekerja             → /bookings, /invoices, dst.
 
 ### 4.3 Perilaku tiap langkah
 
-**Simpan per langkah.** Setiap tombol "Lanjut" memanggil `PATCH /api/vendor/profile` yang sudah ada, dengan **hanya field langkah itu**. Tidak ada endpoint baru untuk menyimpan.
+**Simpan per langkah memakai `PATCH`, bukan `PUT`.** Ini koreksi penting terhadap rancangan awal.
+
+`PUT /api/vendor/profile` menimpa **seluruh** profil: field yang tidak dikirim dianggap "kosongkan" (`VendorProfileController` versi lama memakai `$validated['x'] ?? null`). Kalau onboarding menyimpan langkah rekening lewat `PUT`, kontak dan deskripsi yang sudah diisi di langkah sebelumnya akan terhapus.
+
+Karena itu endpoint `PUT|PATCH` sekarang membedakan keduanya:
+
+| Method | Perilaku | Dipakai oleh |
+|---|---|---|
+| `PUT` | Timpa seluruh profil (field yang tidak dikirim = dikosongkan) | Form `/settings` (perilaku lama, tidak berubah) |
+| `PATCH` | Tambal — hanya field yang dikirim yang diubah | Onboarding |
+
+Validasi `business_name` juga menyesuaikan: wajib di `PUT`, `sometimes|required` di `PATCH`. Tanpa itu langkah rekening tidak akan pernah lolos validasi karena tidak mengirim nama usaha.
 
 **Validasi sama dengan yang sudah berjalan.** Memakai `UpdateVendorProfileRequest` yang sudah ada (`business_name` min 2 max 80, `contact_phone` regex `^(\+62|62|0)8[1-9][0-9]{6,11}$`, `bank.account_number` 6–20 digit). Tidak ada aturan baru yang perlu dipelajari vendor.
 
 **Boleh mundur.** Tombol "Kembali" ke langkah sebelumnya tanpa kehilangan isian.
 
 **Boleh keluar.** Menutup browser di langkah 3 lalu kembali → dibuka lagi di langkah 3 dengan isian yang sudah tersimpan.
+
+**Tombol "Selesai" menyimpan dulu, baru berpindah.** Rancangan awal tidak menyebut ini dan implementasi pertama salah: "Selesai" hanya bernavigasi, sehingga isian rekening yang baru diketik hilang tanpa pesan. Sekarang "Selesai" memakai jalur simpan yang sama dengan "Lanjut", dan hanya berpindah setelah server memastikan `blockingStep === null`.
 
 **Tidak bisa melewati rekening.** Kalau vendor mencoba menutup paksa atau mengubah URL ke `/dashboard`, diarahkan kembali ke `/onboarding`. Ini ditegakkan **di frontend dan backend** — frontend saja tidak cukup karena API bisa dipanggil langsung.
 

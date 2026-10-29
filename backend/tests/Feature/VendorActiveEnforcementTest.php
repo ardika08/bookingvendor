@@ -39,6 +39,9 @@ class VendorActiveEnforcementTest extends TestCase
             'name' => 'Lumen Wedding Story',
             'slug' => 'lumen-wedding-story',
             'is_active' => true,
+            'bank_name' => 'BCA',
+            'bank_account_number' => '1234567890',
+            'bank_account_name' => 'Lumen Wedding Story',
         ]);
 
         $this->client = Client::create([

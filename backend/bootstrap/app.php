@@ -27,6 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'invoice.trial' => \App\Http\Middleware\EnsureInvoiceTrialQuota::class,
             'vendor.active' => \App\Http\Middleware\EnsureVendorIsActive::class,
             'admin.only' => \App\Http\Middleware\EnsureUserIsAdmin::class,
+            'onboarding.complete' => \App\Http\Middleware\EnsureOnboardingComplete::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

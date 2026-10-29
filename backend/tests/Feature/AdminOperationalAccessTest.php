@@ -47,6 +47,9 @@ class AdminOperationalAccessTest extends TestCase
             'slug' => 'lumen-wedding-story',
             'location' => 'Jakarta Selatan',
             'contact' => '0812-9000-1122',
+            'bank_name' => 'BCA',
+            'bank_account_number' => '1234567890',
+            'bank_account_name' => 'Lumen Wedding Story',
         ]);
 
         $client = Client::create([

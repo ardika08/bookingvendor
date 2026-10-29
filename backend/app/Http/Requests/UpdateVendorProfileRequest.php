@@ -28,8 +28,18 @@ class UpdateVendorProfileRequest extends FormRequest
      */
     public function rules(): array
     {
+        /*
+         * `PUT` datang dari form Pengaturan yang mengirim seluruh profil, jadi
+         * nama usaha wajib ada. `PATCH` datang dari onboarding yang mengirim
+         * satu langkah saja; mewajibkan nama usaha di sana membuat langkah
+         * rekening tidak akan pernah lolos validasi.
+         */
+        $partial = $this->isMethod('PATCH');
+
         return [
-            'business_name' => ['required', 'string', 'min:2', 'max:80'],
+            'business_name' => $partial
+                ? ['sometimes', 'required', 'string', 'min:2', 'max:80']
+                : ['required', 'string', 'min:2', 'max:80'],
             'category' => ['nullable', 'string', 'max:60'],
             'description' => ['nullable', 'string', 'max:2000'],
             'contact_phone' => ['nullable', 'string', 'max:20', 'regex:/^(\+62|62|0)8[1-9][0-9]{6,11}$/'],

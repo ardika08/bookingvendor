@@ -133,7 +133,7 @@ Route::middleware(['auth:sanctum', 'vendor.active'])->group(function () {
     Route::prefix('bookings/{booking}')->group(function () {
         Route::get('invoices', [InvoiceController::class, 'byBooking'])->name('bookings.invoices.index');
         Route::post('invoices', [InvoiceController::class, 'store'])
-            ->middleware('invoice.trial')
+            ->middleware(['invoice.trial', 'onboarding.complete'])
             ->name('bookings.invoices.store');
     });
 
@@ -184,6 +184,13 @@ Route::middleware(['auth:sanctum', 'vendor.active'])->group(function () {
         Route::get('profile', [VendorProfileController::class, 'show'])->name('vendor.profile.show');
         Route::match(['put', 'patch'], 'profile', [VendorProfileController::class, 'update'])
             ->name('vendor.profile.update');
+
+        /*
+         * Status kelengkapan onboarding. Dipisah dari `/api/me` supaya data
+         * rekening tidak ikut terkirim pada setiap muat halaman.
+         */
+        Route::get('onboarding', [VendorProfileController::class, 'onboarding'])
+            ->name('vendor.onboarding.show');
     });
 
     Route::prefix('user')->group(function () {
