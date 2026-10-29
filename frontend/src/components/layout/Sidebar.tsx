@@ -4,6 +4,7 @@ import {
   FileText,
   LayoutDashboard,
   LifeBuoy,
+  MessageCircle,
   Package,
   Settings2,
   UserRound,
@@ -12,6 +13,15 @@ import {
 } from '@/components/ui/icons'
 import { NavLink } from 'react-router-dom'
 import { cn } from '@/lib/cn'
+
+/**
+ * Tautan grup Telegram support.
+ *
+ * Dipasang lewat env var `VITE_SUPPORT_URL` supaya bisa diganti tanpa
+ * mengubah kode. Fallback string kosong menyebabkan tombol tidak dirender —
+ * kalau env belum diset, sidebar tidak menampilkan link yang menuju ke mana-mana.
+ */
+const SUPPORT_URL: string = import.meta.env.VITE_SUPPORT_URL ?? ''
 
 /**
  * Sidebar navigasi dashboard vendor.
@@ -87,8 +97,20 @@ export function Sidebar({ onNavigate, className }: { onNavigate?: () => void; cl
             Butuh bantuan?
           </p>
           <p className="mt-1 text-caption leading-relaxed text-ink-500">
-            Panduan singkat booking, invoice, dan link jadwal publik.
+            Tanya jawab, request fitur, atau kirim masukan ke tim kami.
           </p>
+          {SUPPORT_URL ? (
+            <a
+              href={SUPPORT_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={onNavigate}
+              className="mt-2.5 flex h-9 items-center justify-center gap-2 rounded-lg bg-brand-400 px-3 text-meta font-semibold text-ink-900 transition-colors hover:bg-brand-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-800"
+            >
+              <MessageCircle className="size-4 shrink-0" />
+              Gabung grup support
+            </a>
+          ) : null}
         </div>
       </div>
     </div>
