@@ -35,6 +35,22 @@ const monthYearFormatter = new Intl.DateTimeFormat('id-ID', {
   timeZone: JAKARTA_TZ,
 })
 
+/**
+ * Tanggal + jam, mis. `29 Oktober 2026 pukul 14.05`.
+ *
+ * Dipakai untuk mencatat kapan sesuatu terjadi (riwayat perubahan), bukan
+ * untuk tanggal kalender biasa — di sana `formatDate` lebih tepat karena
+ * tidak menampilkan jam yang tidak relevan.
+ */
+const dateTimeFormatter = new Intl.DateTimeFormat('id-ID', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  timeZone: JAKARTA_TZ,
+})
+
 const currencyFormatter = new Intl.NumberFormat('id-ID', {
   style: 'currency',
   currency: 'IDR',
@@ -55,6 +71,11 @@ export function formatShortDate(isoDate: string): string {
 /** `2026-11-14` → `Sabtu, 14 November 2026`. */
 export function formatLongDate(isoDate: string): string {
   return dayMonthFormatter.format(toDate(isoDate))
+}
+
+/** `2026-11-14T07:05:00Z` → `14 November 2026 pukul 14.05` (WIB). */
+export function formatDateTime(isoDateTime: string): string {
+  return dateTimeFormatter.format(new Date(isoDateTime))
 }
 
 /** `2026-11` (atau `2026-11-14`) → `November 2026`. */

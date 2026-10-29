@@ -260,7 +260,14 @@ export function AdminReportPage() {
           <div
             role="tablist"
             aria-label="Kelompok laporan"
-            className="flex gap-1 overflow-x-auto rounded-xl border border-ink-200/80 bg-white p-1 print:hidden"
+            /*
+             * Di layar sempit tab dibungkus ke baris berikutnya, bukan digeser
+             * ke samping. Sebelumnya tablist ini melebar 375px di layar 320px
+             * sehingga tab ketiga terpotong di tepi — labelnya tidak terbaca
+             * dan tidak ada petunjuk bahwa area itu bisa digeser. Membungkus
+             * membuat ketiga label utuh tanpa perlu gestur tersembunyi.
+             */
+            className="flex flex-wrap gap-1 rounded-xl border border-ink-200/80 bg-white p-1 sm:flex-nowrap sm:overflow-x-auto sm:scroll-px-1 print:hidden"
           >
             {TABS.map((item, index) => {
               const Icon = item.icon
@@ -299,16 +306,29 @@ export function AdminReportPage() {
             })}
           </div>
 
-          <div
-            role="tabpanel"
-            id={`panel-${tab}`}
-            aria-labelledby={`tab-${tab}`}
-            className="space-y-4"
-          >
-            {tab === 'revenue' ? <RevenueTab report={report} /> : null}
-            {tab === 'vendors' ? <VendorsTab report={report} /> : null}
-            {tab === 'action' ? <ActionTab report={report} /> : null}
-          </div>
+          {/*
+            Ketiga panel selalu dirender, yang tidak aktif diberi `hidden`.
+            Sebelumnya hanya panel aktif yang ada di DOM, sehingga
+            `aria-controls` pada dua tab lain menunjuk id yang tidak ada —
+            tab mengklaim mengendalikan panel yang tidak berwujud. `hidden`
+            juga mengeluarkan panel non-aktif dari pohon aksesibilitas, jadi
+            pembaca layar tidak membacakan isi tab yang tidak dipilih.
+          */}
+          {TABS.map((item) => (
+            <div
+              key={item.id}
+              role="tabpanel"
+              id={`panel-${item.id}`}
+              aria-labelledby={`tab-${item.id}`}
+              hidden={tab !== item.id}
+              tabIndex={0}
+              className="space-y-4"
+            >
+              {item.id === 'revenue' ? <RevenueTab report={report} /> : null}
+              {item.id === 'vendors' ? <VendorsTab report={report} /> : null}
+              {item.id === 'action' ? <ActionTab report={report} /> : null}
+            </div>
+          ))}
         </>
       )}
 

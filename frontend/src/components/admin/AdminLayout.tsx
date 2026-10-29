@@ -50,7 +50,7 @@ const ADMIN_NAV: AdminNavItem[] = [
   { label: 'Paket Langganan', to: '/admin/plans', icon: CreditCard },
   { label: 'Laporan', to: '/admin/reports', icon: BarChart3 },
   { label: 'Akun Saya', to: '/admin/akun', icon: UserRound },
-  { label: 'Pengaturan', to: '/admin/settings', icon: Settings2, soon: true },
+  { label: 'Pengaturan', to: '/admin/settings', icon: Settings2 },
 ]
 
 /** Judul topbar untuk route admin. */
@@ -64,6 +64,7 @@ function resolveTitle(pathname: string): string {
   }
   if (/^\/admin\/plans(\/|$)/.test(pathname)) return 'Konfigurasi Paket'
   if (/^\/admin\/reports(\/|$)/.test(pathname)) return 'Laporan'
+  if (/^\/admin\/settings(\/|$)/.test(pathname)) return 'Pengaturan'
   if (/^\/admin\/akun(\/|$)/.test(pathname)) return 'Akun Saya'
   return 'Dashboard Admin'
 }

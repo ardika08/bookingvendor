@@ -224,6 +224,31 @@
   }
 }
 
+/*
+ * Hormati preferensi "kurangi gerakan".
+ *
+ * `animate-pulse` dipakai di seluruh skeleton pemuatan (50 tempat) dan
+ * `animate-spin` di indikator proses. Keduanya berulang tanpa henti, jadi
+ * tidak bisa diabaikan oleh pengguna yang memilih `prefers-reduced-motion`
+ * (WCAG 2.3.3). Gerakan berulang adalah pemicu pusing/mual bagi sebagian
+ * orang, terutama pada migraine dan gangguan vestibular.
+ *
+ * Dimatikan di satu tempat, bukan dengan mengganti 50 kelas menjadi
+ * `motion-safe:animate-pulse`: satu aturan ini juga menutup animasi baru
+ * yang ditambahkan nanti. Elemen tetap terlihat (opacity 1), hanya tidak
+ * berdenyut — jadi skeleton masih terbaca sebagai "sedang memuat".
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* Thin, quiet scrollbars for the dashboard tables. */
 @layer utilities {
   .scrollbar-slim {

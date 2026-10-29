@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AdminDashboardController;
 use App\Http\Controllers\Api\AdminPlanController;
 use App\Http\Controllers\Api\AdminReportController;
+use App\Http\Controllers\Api\AdminSettingController;
 use App\Http\Controllers\Api\AdminSubscriptionController;
 use App\Http\Controllers\Api\AdminSubscriptionPaymentController;
 use App\Http\Controllers\Api\AdminVendorController;
@@ -93,6 +94,13 @@ Route::middleware(['auth:sanctum', 'admin.only'])->prefix('admin')->group(functi
     // segera habis — satu respons untuk ketiga tab.
     Route::get('reports', [AdminReportController::class, 'index'])
         ->name('admin.reports.index');
+
+    // Aturan platform: masa tenggang langganan & kuota trial. Perubahan
+    // dicatat di riwayat karena berdampak ke seluruh vendor.
+    Route::get('settings', [AdminSettingController::class, 'index'])
+        ->name('admin.settings.index');
+    Route::put('settings', [AdminSettingController::class, 'update'])
+        ->name('admin.settings.update');
 });
 
 /*

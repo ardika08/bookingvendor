@@ -34,7 +34,9 @@ export function Field({
   id,
   label,
   hint,
+  hintId,
   error,
+  errorId,
   required,
   children,
   className,
@@ -42,7 +44,18 @@ export function Field({
   id: string
   label: string
   hint?: string
+  /**
+   * Id untuk teks bantuan. Dipakai saat kontrol membutuhkan
+   * `aria-describedby`: tanpa id, teks bantuan terlihat di layar tetapi tidak
+   * pernah dibacakan karena tidak ada yang bisa ditunjuk.
+   */
+  hintId?: string
   error?: string
+  /**
+   * Id untuk pesan galat. Kontrol wajib menunjuk id ini lewat
+   * `aria-describedby` supaya pesan galat ikut dibacakan, bukan hanya terlihat.
+   */
+  errorId?: string
   required?: boolean
   children: ReactNode
   className?: string
@@ -55,12 +68,17 @@ export function Field({
       </label>
       {children}
       {error ? (
-        <p className="flex items-center gap-1 text-caption font-medium text-rose-600">
-          <AlertCircle className="size-3" />
+        <p
+          id={errorId}
+          className="flex items-center gap-1 text-caption font-medium text-rose-600"
+        >
+          <AlertCircle className="size-3.5" />
           {error}
         </p>
       ) : hint ? (
-        <p className="text-caption text-ink-400">{hint}</p>
+        <p id={hintId} className="text-caption text-ink-400">
+          {hint}
+        </p>
       ) : null}
     </div>
   )

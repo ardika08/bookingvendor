@@ -38,6 +38,8 @@ const STATIC_TITLES: Record<string, string> = {
   '/admin/vendors': 'Kelola Vendor',
   '/admin/vendors/new': 'Tambah Vendor',
   '/admin/plans': 'Konfigurasi Paket',
+  '/admin/reports': 'Laporan',
+  '/admin/settings': 'Pengaturan',
   '/admin/akun': 'Akun Saya',
 }
 

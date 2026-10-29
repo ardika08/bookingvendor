@@ -14,6 +14,7 @@ import {
   type AdminVendorSummary,
 } from '@/lib/api/admin-vendors'
 import { formatShortDate } from '@/lib/format'
+import { useRestoreFocus } from '@/lib/use-restore-focus'
 import { cn } from '@/lib/cn'
 
 /**
@@ -51,6 +52,8 @@ export function ManageVendorsPage() {
   const [error, setError] = useState<Error | null>(null)
   const [pendingId, setPendingId] = useState<string | null>(null)
   const [confirmTarget, setConfirmTarget] = useState<AdminVendorSummary | null>(null)
+  /** Fokus kembali ke tombol Nonaktifkan pada kartu vendor yang bersangkutan. */
+  const captureFocus = useRestoreFocus(confirmTarget !== null)
 
   /*
    * Filter dikerjakan server. Pencarian ditahan ~300ms supaya tidak
@@ -286,7 +289,7 @@ export function ManageVendorsPage() {
                   key={vendor.id}
                   vendor={vendor}
                   busy={pendingId === vendor.id}
-                  onRequestDeactivate={() => setConfirmTarget(vendor)}
+                  onRequestDeactivate={captureFocus(() => setConfirmTarget(vendor))}
                   onReactivate={() => reactivate(vendor)}
                 />
               ))}

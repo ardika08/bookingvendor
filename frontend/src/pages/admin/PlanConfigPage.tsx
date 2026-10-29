@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/Card'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Field, inputClass } from '@/components/ui/Field'
 import { useToast } from '@/components/ui/Toast'
+import { useRestoreFocus } from '@/lib/use-restore-focus'
 import {
   createAdminPlan,
   deleteAdminPlan,
@@ -38,6 +39,13 @@ export function PlanConfigPage() {
   const [creating, setCreating] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState<AdminPlan | null>(null)
   const [deleting, setDeleting] = useState(false)
+  /*
+   * Dua pemicu berbeda membuka dua dialog berbeda, jadi masing-masing punya
+   * pencatat fokusnya sendiri. Satu hook bersama akan menimpa catatan yang
+   * lain ketika admin membuka dialog kedua sebelum menutup yang pertama.
+   */
+  const captureEditFocus = useRestoreFocus(editing !== null || creating)
+  const captureDeleteFocus = useRestoreFocus(confirmDelete !== null)
 
   const load = useCallback((signal?: AbortSignal) => {
     setLoading(true)
@@ -106,7 +114,7 @@ export function PlanConfigPage() {
             Katalog paket untuk vendor. Harga normal tampil dicoret, harga coret yang dibayar.
           </p>
         </div>
-        <Button onClick={() => setCreating(true)} className="shrink-0">
+        <Button onClick={captureEditFocus(() => setCreating(true))} className="shrink-0">
           <Plus className="size-4" />
           Tambah Paket
         </Button>
@@ -135,7 +143,7 @@ export function PlanConfigPage() {
             title="Belum ada paket"
             description="Tambahkan paket pertama untuk mulai berjualan langganan."
             action={
-              <Button size="sm" onClick={() => setCreating(true)}>
+              <Button size="sm" onClick={captureEditFocus(() => setCreating(true))}>
                 <Plus className="size-3.5" />
                 Tambah paket pertama
               </Button>
@@ -159,7 +167,7 @@ export function PlanConfigPage() {
                     size="sm"
                     variant="secondary"
                     className="flex-1"
-                    onClick={() => setEditing(plan)}
+                    onClick={captureEditFocus(() => setEditing(plan))}
                     aria-label={`Edit ${plan.name}`}
                   >
                     <Pencil className="size-3.5" />
@@ -169,7 +177,7 @@ export function PlanConfigPage() {
                     size="sm"
                     variant="danger"
                     className="flex-1"
-                    onClick={() => setConfirmDelete(plan)}
+                    onClick={captureDeleteFocus(() => setConfirmDelete(plan))}
                     aria-label={`Hapus ${plan.name}`}
                   >
                     <Trash2 className="size-3.5" />

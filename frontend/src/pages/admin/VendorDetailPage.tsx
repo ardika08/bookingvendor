@@ -18,6 +18,7 @@ import { Badge } from '@/components/ui/Badge'
 import { Button, ButtonLink } from '@/components/ui/Button'
 import { Card, CardBody, CardHeader } from '@/components/ui/Card'
 import { DetailGrid, DetailItem } from '@/components/ui/DetailGrid'
+import { useRestoreFocus } from '@/lib/use-restore-focus'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { useToast } from '@/components/ui/Toast'
 import {
@@ -109,6 +110,8 @@ export function VendorDetailPage() {
   const [toggling, setToggling] = useState(false)
   /** Dialog "Atur langganan" terbuka. */
   const [renewing, setRenewing] = useState(false)
+  /** Fokus kembali ke tombol "Atur langganan" setelah dialog ditutup. */
+  const captureFocus = useRestoreFocus(renewing)
   const [todayIso] = useState(() => toIsoDate(new Date()))
 
   useEffect(() => {
@@ -396,7 +399,7 @@ export function VendorDetailPage() {
               <Button
                 size="sm"
                 variant="secondary"
-                onClick={() => setRenewing(true)}
+                onClick={captureFocus(() => setRenewing(true))}
                 disabled={toggling}
               >
                 Atur langganan

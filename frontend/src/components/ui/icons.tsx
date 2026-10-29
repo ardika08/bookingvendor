@@ -69,6 +69,7 @@ import {
   ExternalLinkIcon,
   FileTextIcon,
   FileXIcon,
+  HistoryIcon,
   HourglassIcon,
   PrinterIcon,
   IdCardIcon,
@@ -186,6 +187,7 @@ export const Download = icon(DownloadIcon, 'Download')
 export const ExternalLink = icon(ExternalLinkIcon, 'ExternalLink')
 export const FileText = icon(FileTextIcon, 'FileText')
 export const FileX2 = icon(FileXIcon, 'FileX2')
+export const History = icon(HistoryIcon, 'History')
 export const Hourglass = icon(HourglassIcon, 'Hourglass')
 export const Printer = icon(PrinterIcon, 'Printer')
 export const IdCard = icon(IdCardIcon, 'IdCard')
