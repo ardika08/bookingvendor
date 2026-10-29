@@ -158,6 +158,31 @@ export async function fetchBookingInvoices(
 }
 
 /**
+ * Susun ulang nomor term invoice pada satu booking.
+ *
+ * `terms` berisi seluruh invoice booking beserta nomor term barunya. Server
+ * menolak bila ada nomor yang duplikat atau invoice milik booking lain.
+ */
+export async function reorderInvoiceTerms(
+  bookingId: string,
+  terms: { id: string; term_number: number }[],
+): Promise<Invoice[]> {
+  if (USE_MOCK_DATA) {
+    await delay(200)
+    for (const row of terms) {
+      const invoice = mockInvoices.find((item) => item.id === row.id)
+      if (invoice) invoice.term = { term: row.term_number, total: terms.length }
+    }
+    return structuredClone(mockInvoices.filter((item) => item.bookingId === bookingId))
+  }
+
+  return apiRequest<Invoice[]>(`/bookings/${bookingId}/invoices/reorder`, {
+    method: 'PATCH',
+    body: { terms },
+  })
+}
+
+/**
  * Terbitkan invoice baru untuk satu booking.
  *
  * Melempar `ApiError` dengan `isTrialLimit === true` bila server menolak karena

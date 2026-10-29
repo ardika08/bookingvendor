@@ -135,6 +135,8 @@ Route::middleware(['auth:sanctum', 'vendor.active'])->group(function () {
         Route::post('invoices', [InvoiceController::class, 'store'])
             ->middleware(['invoice.trial', 'onboarding.complete'])
             ->name('bookings.invoices.store');
+        Route::patch('invoices/reorder', [InvoiceController::class, 'reorderTerms'])
+            ->name('bookings.invoices.reorder');
     });
 
     /*

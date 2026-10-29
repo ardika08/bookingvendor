@@ -25,6 +25,7 @@ class Invoice extends Model
         'invoice_number',
         'public_token',
         'type',
+        'term_number',
         'amount',
         'paid_amount',
         'status',
@@ -36,6 +37,7 @@ class Invoice extends Model
     protected function casts(): array
     {
         return [
+            'term_number' => 'integer',
             'amount' => 'decimal:2',
             'paid_amount' => 'decimal:2',
             'due_date' => 'date',

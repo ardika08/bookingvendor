@@ -164,12 +164,11 @@ class InvoiceCalculator
     /**
      * Posisi dan total term untuk satu invoice.
      *
-     * Term dihitung dari **semua** invoice booking yang terurut menaik
-     * (tanggal terbit lalu id), termasuk yang dibatalkan. Alasan memasukkan
-     * invoice batal: nomor term tidak boleh bergeser — kalau invoice term 2
-     * dibatalkan, invoice term 3 tetap "term 3", bukan menjadi "term 2".
-     * Kalau yang batal dikeluarkan dari perhitungan, label term bisa berubah
-     * dari hari ke hari dan membuat vendor/klien bingung.
+     * Nomor term diambil dari kolom `term_number` — vendor bisa menempatkan
+     * invoice sebagai term mana saja, terlepas dari urutan terbit. `total`
+     * menghitung semua invoice booking, termasuk yang dibatalkan: kalau
+     * invoice batal dikeluarkan, nomor term invoice lain bergeser dan klien
+     * melihat label yang berubah-ubah.
      *
      * @return array{term: int, total: int}  `term` mulai dari 1; `total` ≥ 1.
      */
@@ -181,22 +180,25 @@ class InvoiceCalculator
             return ['term' => 1, 'total' => 1];
         }
 
-        $invoices = $booking->invoices()
-            ->orderBy('created_at')
-            ->orderBy('id')
-            ->get(['id']);
+        $invoices = $booking->invoices()->get(['id', 'term_number']);
+        $total = $invoices->count();
 
-        $position = 1;
-        foreach ($invoices as $index => $row) {
-            if ($row->id === $invoice->id) {
-                $position = $index + 1;
-                break;
-            }
+        if ($total === 0) {
+            return ['term' => 1, 'total' => 1];
         }
 
-        return [
-            'term' => $position,
-            'total' => $invoices->count(),
-        ];
+        // Cadangan untuk invoice lama tanpa term_number: posisi dalam urutan
+        // term_number lalu id — sama dengan urutan terbit sebelum migrasi.
+        $position = $invoice->term_number;
+        if ($position === null) {
+            $sorted = $invoices
+                ->sortBy([['term_number', 'asc'], ['id', 'asc']])
+                ->values();
+
+            $index = $sorted->search(fn ($row) => $row->id === $invoice->id);
+            $position = $index === false ? 1 : $index + 1;
+        }
+
+        return ['term' => (int) $position, 'total' => $total];
     }
 }

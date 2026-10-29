@@ -17,6 +17,11 @@ export const DP_PERCENTAGE = 0.4
 export interface InvoiceFormValues {
   bookingId: string
   type: InvoiceType
+  /**
+   * Nomor term pilihan vendor. String kosong = isi otomatis urutan berikutnya.
+   * Disimpan sebagai string karena berasal dari input teks.
+   */
+  termNumber: string
   /** Nominal invoice dalam format ribuan (`6.000.000`). */
   amount: string
   /** ISO date `YYYY-MM-DD`. */
@@ -31,6 +36,8 @@ export type InvoiceFormErrors = Partial<Record<keyof InvoiceFormValues, string>>
 export interface InvoicePayload {
   booking_id: string
   type: InvoiceType
+  /** Opsional: kosongkan agar server memakai urutan term berikutnya. */
+  term_number?: number
   amount: number
   issued_at: string
   due_at: string
@@ -124,6 +131,7 @@ export function initialInvoiceForm(
   return {
     bookingId: booking.id,
     type,
+    termNumber: '',
     amount: formatCurrencyInput(defaultAmount),
     issuedAt: todayIso,
     dueAt: addDaysIso(todayIso, 7),
@@ -173,9 +181,13 @@ export function validateInvoiceForm(
 }
 
 export function toInvoicePayload(values: InvoiceFormValues): InvoicePayload {
+  const termNumber = Number.parseInt(values.termNumber.trim(), 10)
+
   return {
     booking_id: values.bookingId,
     type: values.type,
+    // Kosong = serahkan ke server (urutan term berikutnya).
+    ...(Number.isFinite(termNumber) && termNumber > 0 ? { term_number: termNumber } : {}),
     amount: parseCurrencyInput(values.amount),
     issued_at: values.issuedAt,
     due_at: values.dueAt,
@@ -191,6 +203,7 @@ const INVOICE_SERVER_FIELD_MAP: Record<string, keyof InvoiceFormErrors> = {
   due_at: 'dueAt',
   due_date: 'dueAt',
   type: 'type',
+  term_number: 'termNumber',
 }
 
 /** Ubah error validasi server menjadi error di bawah input yang tepat. */

@@ -86,6 +86,12 @@ export function InvoiceCreateFormPage({
     [booking, billedAmounts, amount],
   )
 
+  /** Nomor term yang akan dipakai: dari input vendor, atau urutan berikutnya. */
+  const effectiveTerm = (() => {
+    const manual = Number.parseInt(values.termNumber.trim(), 10)
+    return Number.isFinite(manual) && manual > 0 ? manual : existingInvoices.length + 1
+  })()
+
   function update<K extends keyof InvoiceFormValues>(key: K, value: InvoiceFormValues[K]) {
     const next = { ...values, [key]: value }
     setValues(next)
@@ -289,6 +295,21 @@ export function InvoiceCreateFormPage({
                 </div>
               </Field>
 
+              <Field id="invoiceTerm" label="Term ke" error={errors.termNumber} hint={existingInvoices.length === 0 ? 'Kosongkan untuk Term 1 (otomatis).' : `Kosongkan untuk Term ${existingInvoices.length + 1} (otomatis).`}>
+                <input
+                  id="invoiceTerm"
+                  data-field="termNumber"
+                  type="number"
+                  min={1}
+                  max={50}
+                  step={1}
+                  value={values.termNumber}
+                  onChange={(event) => update('termNumber', event.target.value)}
+                  placeholder="Otomatis"
+                  className={cn(inputClass(Boolean(errors.termNumber)), 'tabular-nums')}
+                />
+              </Field>
+
               <Field id="invoiceIssuedAt" label="Tanggal terbit" required error={errors.issuedAt}>
                 <input
                   id="invoiceIssuedAt"
@@ -379,18 +400,20 @@ export function InvoiceCreateFormPage({
           ) : null}
 
           {/*
-            Term tidak dipilih manual: nomornya mengikuti urutan penerbitan.
-            Vendor perlu tahu invoice ini akan jadi term ke berapa SEBELUM
-            menerbitkan, karena itulah yang dilihat klien di halaman publik.
+            Term bisa dipilih manual. Kalau kosong, server memakai urutan
+            berikutnya — penanda ini menunjukkan hasil akhirnya supaya vendor
+            tahu label apa yang akan dilihat klien.
           */}
           <div className="rounded-xl border border-brand-200 bg-brand-50/60 px-3 py-2.5">
             <p className="text-meta font-medium text-ink-900">
-              Invoice ini akan menjadi Term {existingInvoices.length + 1}
+              Invoice ini akan menjadi Term {effectiveTerm}
             </p>
             <p className="mt-0.5 text-caption leading-relaxed text-ink-600">
-              {existingInvoices.length === 0
-                ? 'Ini tagihan pertama untuk booking ini.'
-                : `Sudah ada ${existingInvoices.length} tagihan untuk booking ini. Nomor term mengikuti urutan terbit dan tidak bisa diatur ulang.`}
+              {values.termNumber.trim()
+                ? `Kamu memilih Term ${effectiveTerm} secara manual. Nomor ini belum dipakai invoice lain pada booking ini.`
+                : existingInvoices.length === 0
+                  ? 'Ini tagihan pertama untuk booking ini. Isi kolom "Term ke" kalau ingin nomor lain.'
+                  : `Otomatis melanjutkan dari ${existingInvoices.length} tagihan yang sudah ada. Isi kolom "Term ke" untuk menimpanya.`}
             </p>
           </div>
 

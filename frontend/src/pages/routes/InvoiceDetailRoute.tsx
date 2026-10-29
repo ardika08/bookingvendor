@@ -55,6 +55,7 @@ export function InvoiceDetailRoute() {
         })
         reload()
       }}
+      onReorderTerms={() => reload()}
     />
   )
 }

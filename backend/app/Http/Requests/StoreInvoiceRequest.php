@@ -32,6 +32,7 @@ class StoreInvoiceRequest extends FormRequest
     {
         return [
             'type' => ['required', 'string', 'in:dp,pelunasan,full'],
+            'term_number' => ['nullable', 'integer', 'min:1', 'max:50'],
             'amount' => ['required', 'numeric', 'min:0.01'],
             'issued_at' => ['required', 'date_format:Y-m-d'],
             'due_at' => ['required', 'date_format:Y-m-d', 'after_or_equal:issued_at'],
@@ -56,7 +57,7 @@ class StoreInvoiceRequest extends FormRequest
         ];
     }
 
-    /** Cek sisa kontrak: nominal tidak boleh melebihi yang belum ditagihkan. */
+    /** Cek sisa kontrak dan nomor term. */
     public function after(): array
     {
         return [
@@ -76,6 +77,24 @@ class StoreInvoiceRequest extends FormRequest
                         'Nominal melebihi sisa kontrak yang belum ditagihkan (Rp'
                         . number_format($remaining, 0, ',', '.') . ').',
                     );
+                }
+
+                // Kalau vendor memilih term_number, pastikan belum dipakai
+                // invoice lain pada booking yang sama. Term_number null berarti
+                // "isi otomatis urutan berikutnya" — itu diurus di controller.
+                $termNumber = $this->input('term_number');
+
+                if ($termNumber !== null && $termNumber !== '') {
+                    $exists = $booking->invoices()
+                        ->where('term_number', (int) $termNumber)
+                        ->exists();
+
+                    if ($exists) {
+                        $validator->errors()->add(
+                            'term_number',
+                            'Term ' . $termNumber . ' sudah dipakai invoice lain pada booking ini.',
+                        );
+                    }
                 }
             },
         ];

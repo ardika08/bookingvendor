@@ -23,6 +23,7 @@ import { DetailGrid, DetailItem } from '@/components/ui/DetailGrid'
 import { PaymentRecordModal } from '@/components/invoices/PaymentRecordModal'
 import { InvoicePaymentHistory } from '@/components/invoices/InvoicePaymentHistory'
 import { InvoiceShareLinkCard } from '@/components/invoices/InvoiceShareLinkCard'
+import { ReorderTermsButton } from '@/components/invoices/ReorderTermsModal'
 import type { PaymentPayload } from '@/lib/payment-form'
 import {
   INVOICE_STATUS_META,
@@ -53,6 +54,7 @@ export function InvoiceDetailPage({
   vendorProfile = null,
   onRecordPayment,
   onMarkPaid,
+  onReorderTerms,
 }: {
   invoice: Invoice
   /** Invoice lain pada booking yang sama (urut terbit). */
@@ -65,6 +67,8 @@ export function InvoiceDetailPage({
   onRecordPayment?: (payload: PaymentPayload) => Promise<void>
   /** Catat seluruh sisa tagihan sebagai transfer yang sudah diterima. */
   onMarkPaid?: (amount: number) => Promise<void>
+  /** Dipanggil setelah urutan term disimpan; parent memuat ulang data. */
+  onReorderTerms?: (invoices: Invoice[]) => void
 }) {
   const [paymentOpen, setPaymentOpen] = useState(false)
   const [markPaidOpen, setMarkPaidOpen] = useState(false)
@@ -403,7 +407,7 @@ export function InvoiceDetailPage({
                 </p>
               )}
             </CardBody>
-            <CardFooter>
+            <CardFooter className="flex items-center justify-between">
               <Link
                 to={`/bookings/${invoice.bookingId}`}
                 className="inline-flex items-center gap-1 text-meta font-medium text-brand-700 hover:underline"
@@ -411,6 +415,11 @@ export function InvoiceDetailPage({
                 Buka booking
                 <ArrowUpRight className="size-3.5" />
               </Link>
+              <ReorderTermsButton
+                bookingId={invoice.bookingId}
+                invoices={siblings}
+                onReordered={onReorderTerms ?? (() => {})}
+              />
             </CardFooter>
           </Card>
         </div>

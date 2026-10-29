@@ -250,4 +250,124 @@ class InvoiceTermsTest extends TestCase
             ->assertJsonPath('term.term', 2)
             ->assertJsonPath('term.total', 2);
     }
+
+    public function test_vendor_bisa_memilih_nomor_term_saat_terbit(): void
+    {
+        // Vendor menerbitkan pelunasan dan menempatkannya sebagai term 3
+        // (mis. DP dan term 2 akan menyusul nanti).
+        $response = $this->postJson("/api/bookings/{$this->booking->id}/invoices", [
+            'type' => 'pelunasan',
+            'amount' => 70000000,
+            'term_number' => 3,
+            'issued_at' => '2026-10-29',
+            'due_at' => '2026-11-29',
+        ]);
+
+        $response->assertCreated()
+            ->assertJsonPath('term.term', 3)
+            ->assertJsonPath('term.total', 1);
+
+        // Term 3 tapi total masih 1 karena baru satu invoice.
+        $this->assertSame(3, Invoice::findOrFail($response->json('id'))->term_number);
+    }
+
+    public function test_nomor_term_yang_sudah_dipakai_ditolak(): void
+    {
+        $this->issue('dp', 60000000); // term 1 (otomatis)
+
+        $this->postJson("/api/bookings/{$this->booking->id}/invoices", [
+            'type' => 'pelunasan',
+            'amount' => 70000000,
+            'term_number' => 1, // sudah dipakai
+            'issued_at' => '2026-10-29',
+            'due_at' => '2026-11-29',
+        ])->assertStatus(422)->assertJsonValidationErrors('term_number');
+    }
+
+    public function test_susun_ulang_urutan_term(): void
+    {
+        $term1 = $this->issue('dp', 60000000);
+        $term2 = $this->issue('pelunasan', 70000000);
+        $term3 = $this->issue('pelunasan', 70000000);
+
+        // Vendor ingin menukar urutan: term 3 jadi term 1, dst.
+        $this->patchJson("/api/bookings/{$this->booking->id}/invoices/reorder", [
+            'terms' => [
+                ['id' => $term3->id, 'term_number' => 1],
+                ['id' => $term1->id, 'term_number' => 2],
+                ['id' => $term2->id, 'term_number' => 3],
+            ],
+        ])->assertOk()
+            ->assertJsonPath('0.term.term', 1)
+            ->assertJsonPath('1.term.term', 2)
+            ->assertJsonPath('2.term.term', 3);
+
+        // Perubahan tersimpan di database.
+        $this->assertSame(1, (int) $term3->fresh()->term_number);
+        $this->assertSame(2, (int) $term1->fresh()->term_number);
+        $this->assertSame(3, (int) $term2->fresh()->term_number);
+    }
+
+    public function test_susun_ulang_menolak_nomor_term_duplikat(): void
+    {
+        $term1 = $this->issue('dp', 60000000);
+        $term2 = $this->issue('pelunasan', 70000000);
+
+        $this->patchJson("/api/bookings/{$this->booking->id}/invoices/reorder", [
+            'terms' => [
+                ['id' => $term1->id, 'term_number' => 1],
+                ['id' => $term2->id, 'term_number' => 1], // duplikat
+            ],
+        ])->assertStatus(422);
+    }
+
+    public function test_susun_ulang_menolak_invoice_vendor_lain(): void
+    {
+        $this->issue('dp', 60000000);
+
+        // Buat vendor dan booking lain.
+        $user2 = User::create([
+            'name' => 'Vendor Lain',
+            'email' => 'lain@example.test',
+            'password' => 'password',
+        ]);
+        $vendor2 = Vendor::create([
+            'user_id' => $user2->id,
+            'name' => 'Vendor Lain',
+            'slug' => 'vendor-lain',
+            'bank_name' => 'BNI',
+            'bank_account_number' => '9876543210',
+            'bank_account_name' => 'Vendor Lain',
+        ]);
+        $client2 = Client::create([
+            'vendor_id' => $vendor2->id,
+            'name' => 'Klien Lain',
+            'phone' => '6281299990000',
+        ]);
+        $booking2 = Booking::create([
+            'vendor_id' => $vendor2->id,
+            'client_id' => $client2->id,
+            'event_date' => '2027-07-01',
+            'status' => 'confirmed',
+            'total_price' => 50000000,
+        ]);
+        $invoiceLain = Invoice::create([
+            'booking_id' => $booking2->id,
+            'invoice_number' => 'INV/2026/10/9999',
+            'public_token' => str_repeat('x', 48),
+            'type' => 'dp',
+            'term_number' => 1,
+            'amount' => 10000000,
+            'paid_amount' => 0,
+            'status' => 'unpaid',
+            'due_date' => '2026-12-01',
+        ]);
+
+        // Vendor asli mencoba menyusupkan invoice vendor lain.
+        $this->patchJson("/api/bookings/{$this->booking->id}/invoices/reorder", [
+            'terms' => [
+                ['id' => $invoiceLain->id, 'term_number' => 1],
+            ],
+        ])->assertStatus(404);
+    }
 }
