@@ -7,6 +7,7 @@ import {
   isOverdue,
   paidPercent,
   remainingAmount,
+  termLabel,
 } from '@/lib/invoice-status'
 import { cn } from '@/lib/cn'
 import { formatCurrency, formatShortDate } from '@/lib/format'
@@ -139,9 +140,14 @@ function AmountBreakdown({ invoice }: { invoice: Invoice }) {
               : 'bg-ink-100 text-ink-600',
           )}
         >
-          <FileText className="size-3" />
+          <FileText className="size-3.5" />
           {INVOICE_TYPE_META[invoice.type].label}
         </Badge>
+        {termLabel(invoice.term) ? (
+          <Badge className="bg-ink-100 text-ink-600">
+            {termLabel(invoice.term)}
+          </Badge>
+        ) : null}
         <span className="tabular-nums text-ink-500">dari {formatCurrency(invoice.bookingTotal)}</span>
       </p>
       {invoice.status === 'void' ? (

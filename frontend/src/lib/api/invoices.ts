@@ -185,6 +185,7 @@ export async function createInvoice(
       amount: payload.amount,
       paidAmount: 0,
       eventDate: issuedAt,
+      term: { term: 1, total: 1 },
     })
   }
   return apiRequest<Invoice>(`/bookings/${bookingId}/invoices`, {

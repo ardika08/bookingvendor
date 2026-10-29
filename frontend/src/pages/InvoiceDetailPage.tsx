@@ -30,6 +30,7 @@ import {
   isOverdue,
   paidPercent,
   remainingAmount,
+  termLabel,
 } from '@/lib/invoice-status'
 import { cn } from '@/lib/cn'
 import { formatCurrency, formatLongDate, formatShortDate, initials } from '@/lib/format'
@@ -116,9 +117,9 @@ export function InvoiceDetailPage({
               <p className="text-caption font-medium uppercase tracking-wide text-ink-400">
                 Invoice
               </p>
-              <h2 className="text-title font-semibold tabular-nums tracking-tight text-ink-900">
+              <h1 className="text-title font-semibold tabular-nums tracking-tight text-ink-900">
                 {invoice.number}
-              </h2>
+              </h1>
               <div className="mt-1.5 flex flex-wrap items-center gap-2">
                 <span
                   className={cn(
@@ -135,9 +136,14 @@ export function InvoiceDetailPage({
                     invoice.type === 'dp' ? 'bg-brand-50 text-brand-700' : 'bg-ink-100 text-ink-600',
                   )}
                 >
-                  <FileText className="size-3" />
+                  <FileText className="size-3.5" />
                   {typeMeta.label}
                 </Badge>
+                {termLabel(invoice.term) ? (
+                  <Badge className="bg-ink-100 text-ink-600">
+                    {termLabel(invoice.term)}
+                  </Badge>
+                ) : null}
                 {overdue ? (
                   <Badge className="bg-rose-50 text-rose-700">
                     <AlertTriangle className="size-3" />
@@ -180,7 +186,7 @@ export function InvoiceDetailPage({
               }
             />
             <CardBody>
-              <ul className="space-y-2.5 text-body">
+              <div className="space-y-2.5 text-body">
                 <AmountRow
                   label="Nilai kontrak booking"
                   value={formatCurrency(invoice.bookingTotal)}
@@ -208,13 +214,13 @@ export function InvoiceDetailPage({
                   </span>
                   <span className="text-2xs tabular-nums text-ink-400">{percent}%</span>
                 </div>
-                <li className="flex items-baseline justify-between gap-3 border-t border-ink-100 pt-2.5">
+                <div className="flex items-baseline justify-between gap-3 border-t border-ink-100 pt-2.5">
                   <span className="font-medium text-ink-900">Sisa yang harus dibayar</span>
                   <span className="text-lead font-semibold tabular-nums text-ink-900">
                     {formatCurrency(remaining)}
                   </span>
-                </li>
-              </ul>
+                </div>
+              </div>
             </CardBody>
             <CardFooter className="sm:justify-between">
               <p className="text-meta text-ink-500">
@@ -586,7 +592,7 @@ function AmountRow({
   muted?: boolean
 }) {
   return (
-    <li className="flex items-baseline justify-between gap-3">
+    <div className="flex items-baseline justify-between gap-3">
       <span className="min-w-0">
         <span className={cn('block', muted ? 'text-ink-600' : 'text-ink-800')}>{label}</span>
         {hint ? <span className="block text-caption text-ink-400">{hint}</span> : null}
@@ -599,7 +605,7 @@ function AmountRow({
       >
         {value}
       </span>
-    </li>
+    </div>
   )
 }
 

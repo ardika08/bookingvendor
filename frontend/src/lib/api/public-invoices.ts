@@ -18,6 +18,7 @@ export interface PublicInvoiceData {
     | 'amount'
     | 'paidAmount'
     | 'eventDate'
+    | 'term'
   >
   vendor: {
     businessName: string
@@ -53,6 +54,7 @@ export async function fetchPublicInvoice(
         amount: invoice.amount,
         paidAmount: invoice.paidAmount,
         eventDate: invoice.eventDate,
+        term: invoice.term,
       },
       vendor: {
         businessName: profile.businessName,
@@ -82,6 +84,7 @@ interface PublicInvoiceResponse {
   dueAt: string | null
   amount: number
   paidAmount: number
+  term?: { term: number; total: number } | null
   booking?: {
     clientName?: string | null
     eventDate?: string | null
@@ -110,6 +113,7 @@ function mapPublicInvoice(raw: PublicInvoiceResponse): PublicInvoiceData {
       amount: raw.amount,
       paidAmount: raw.paidAmount,
       eventDate: raw.booking?.eventDate ?? '',
+      term: raw.term ?? { term: 1, total: 1 },
     },
     vendor: {
       businessName: raw.vendor?.name ?? '',

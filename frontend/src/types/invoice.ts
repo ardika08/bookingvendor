@@ -48,6 +48,8 @@ export interface Invoice {
   paidAmount: number
   /** ISO date `YYYY-MM-DD` — tanggal acara, dipakai sebagai kolom pengingat. */
   eventDate: string
+  /** Posisi invoice dalam urutan term booking; diturunkan server. */
+  term: { term: number; total: number }
 }
 
 export type InvoicePaymentMethod = 'transfer' | 'qris' | 'cash' | 'other'

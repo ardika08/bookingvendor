@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Invoice;
+use App\Services\InvoiceCalculator;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -41,6 +42,7 @@ class InvoiceResource extends JsonResource
             'amount' => (float) $this->amount,
             'paidAmount' => (float) $this->paid_amount,
             'eventDate' => optional($booking?->event_date)->toDateString(),
+            'term' => app(InvoiceCalculator::class)->termPosition($this->resource),
         ];
     }
 }

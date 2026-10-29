@@ -95,3 +95,14 @@ export function paidPercent(invoice: { amount: number; paidAmount: number }): nu
   if (invoice.amount <= 0) return invoice.paidAmount > 0 ? 100 : 0
   return Math.min(Math.round((invoice.paidAmount / invoice.amount) * 100), 100)
 }
+
+/**
+ * Label term untuk invoice, mis. "Term 2 dari 3".
+ *
+ * Hanya ditampilkan bila booking punya lebih dari satu invoice — invoice
+ * tunggal tidak perlu diberi label "Term 1 dari 1" karena hanya membingungkan.
+ */
+export function termLabel(term: { term: number; total: number } | undefined | null): string | null {
+  if (!term || term.total <= 1) return null
+  return `Term ${term.term} dari ${term.total}`
+}

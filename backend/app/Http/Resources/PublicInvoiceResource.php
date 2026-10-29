@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Invoice;
+use App\Services\InvoiceCalculator;
 use App\Services\InvoiceStatusResolver;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -54,6 +55,8 @@ class PublicInvoiceResource extends JsonResource
             'paidPercent' => $isVoid ? 0 : $statuses->paidPercent($invoice),
 
             'note' => $this->note,
+
+            'term' => app(InvoiceCalculator::class)->termPosition($invoice),
 
             'booking' => [
                 'clientName' => $client?->name,

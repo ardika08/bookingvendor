@@ -94,6 +94,7 @@ export const mockInvoices: Invoice[] = seeds
         paidAmount:
           seed.status === 'paid' ? amount : seed.status === 'void' ? 0 : (seed.paidAmount ?? 0),
         eventDate: booking.eventDate,
+        term: { term: 1, total: 1 },
       },
     ]
   })

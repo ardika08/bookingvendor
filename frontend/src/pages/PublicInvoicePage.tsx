@@ -14,6 +14,7 @@ import {
   INVOICE_TYPE_META,
   isOverdue,
   remainingAmount,
+  termLabel,
 } from '@/lib/invoice-status'
 import { formatCurrency, formatLongDate, formatShortDate } from '@/lib/format'
 import type { PublicInvoiceData } from '@/lib/api/public-invoices'
@@ -81,6 +82,7 @@ export function PublicInvoicePage({ data }: { data: PublicInvoiceData }) {
               {invoice.status !== 'paid' && invoice.status !== 'void' ? (
                 <p className="mt-1 text-meta text-white/75">
                   dari {formatCurrency(invoice.amount)} tagihan {INVOICE_TYPE_META[invoice.type].label.toLowerCase()}
+                  {termLabel(invoice.term) ? ` · ${termLabel(invoice.term)}` : ''}
                 </p>
               ) : null}
             </div>

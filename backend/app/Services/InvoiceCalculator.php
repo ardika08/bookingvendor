@@ -160,4 +160,43 @@ class InvoiceCalculator
     {
         return round(max((float) $invoice->amount - (float) $invoice->paid_amount, 0), 2);
     }
+
+    /**
+     * Posisi dan total term untuk satu invoice.
+     *
+     * Term dihitung dari **semua** invoice booking yang terurut menaik
+     * (tanggal terbit lalu id), termasuk yang dibatalkan. Alasan memasukkan
+     * invoice batal: nomor term tidak boleh bergeser — kalau invoice term 2
+     * dibatalkan, invoice term 3 tetap "term 3", bukan menjadi "term 2".
+     * Kalau yang batal dikeluarkan dari perhitungan, label term bisa berubah
+     * dari hari ke hari dan membuat vendor/klien bingung.
+     *
+     * @return array{term: int, total: int}  `term` mulai dari 1; `total` ≥ 1.
+     */
+    public function termPosition(Invoice $invoice): array
+    {
+        $booking = $invoice->booking;
+
+        if ($booking === null) {
+            return ['term' => 1, 'total' => 1];
+        }
+
+        $invoices = $booking->invoices()
+            ->orderBy('created_at')
+            ->orderBy('id')
+            ->get(['id']);
+
+        $position = 1;
+        foreach ($invoices as $index => $row) {
+            if ($row->id === $invoice->id) {
+                $position = $index + 1;
+                break;
+            }
+        }
+
+        return [
+            'term' => $position,
+            'total' => $invoices->count(),
+        ];
+    }
 }
