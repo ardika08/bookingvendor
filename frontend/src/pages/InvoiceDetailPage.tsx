@@ -75,6 +75,17 @@ export function InvoiceDetailPage({
   const overdue = isOverdue(invoice)
   const remaining = remainingAmount(invoice)
   const percent = paidPercent(invoice)
+  /**
+   * Persentase kontrak yang ditagihkan invoice ini.
+   *
+   * Dihitung dari nominal sebenarnya, bukan dari pembagian bawaan 40/60 —
+   * vendor boleh menimpa nominal, jadi label "DP (40%)" bisa berbohong
+   * kalau DP-nya ternyata 100% kontrak.
+   */
+  const billedPercent =
+    invoice.bookingTotal > 0
+      ? Math.round((invoice.amount / invoice.bookingTotal) * 100)
+      : 0
   const isVoid = invoice.status === 'void'
   const others = siblings.filter((item) => item.id !== invoice.id)
   const waLink = `https://wa.me/${invoice.clientPhone.replace(/\D/g, '').replace(/^0/, '62')}`
@@ -193,7 +204,7 @@ export function InvoiceDetailPage({
                   muted
                 />
                 <AmountRow
-                  label={invoice.type === 'dp' ? 'DP ditagihkan (40%)' : 'Pelunasan (60%)'}
+                  label={`Ditagihkan pada invoice ini (${billedPercent}% kontrak)`}
                   value={formatCurrency(invoice.amount)}
                   hint={invoice.packageName ?? 'Tanpa paket'}
                 />

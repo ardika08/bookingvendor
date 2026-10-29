@@ -359,12 +359,14 @@ export function InvoiceCreateFormPage({
                 Invoice sebelumnya
               </h3>
               <ul className="mt-2 space-y-1.5">
-                {existingInvoices.map((invoice) => (
+                {existingInvoices.map((invoice, index) => (
                   <li
                     key={invoice.id}
                     className="flex items-baseline justify-between gap-2 text-meta"
                   >
                     <span className="truncate text-ink-600">
+                      <span className="tabular-nums text-ink-400">Term {index + 1}</span>
+                      {' · '}
                       {INVOICE_TYPE_META[invoice.type].label}
                     </span>
                     <span className="shrink-0 tabular-nums text-ink-700">
@@ -375,6 +377,22 @@ export function InvoiceCreateFormPage({
               </ul>
             </div>
           ) : null}
+
+          {/*
+            Term tidak dipilih manual: nomornya mengikuti urutan penerbitan.
+            Vendor perlu tahu invoice ini akan jadi term ke berapa SEBELUM
+            menerbitkan, karena itulah yang dilihat klien di halaman publik.
+          */}
+          <div className="rounded-xl border border-brand-200 bg-brand-50/60 px-3 py-2.5">
+            <p className="text-meta font-medium text-ink-900">
+              Invoice ini akan menjadi Term {existingInvoices.length + 1}
+            </p>
+            <p className="mt-0.5 text-caption leading-relaxed text-ink-600">
+              {existingInvoices.length === 0
+                ? 'Ini tagihan pertama untuk booking ini.'
+                : `Sudah ada ${existingInvoices.length} tagihan untuk booking ini. Nomor term mengikuti urutan terbit dan tidak bisa diatur ulang.`}
+            </p>
+          </div>
 
           <div className="flex items-start gap-2 rounded-xl border border-sky-200 bg-sky-50 px-3 py-2.5">
             <Info className="mt-0.5 size-3.5 shrink-0 text-sky-600" />
