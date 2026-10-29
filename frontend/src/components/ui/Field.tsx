@@ -19,12 +19,22 @@ export function FormSection({
   children: ReactNode
   className?: string
 }) {
+  /*
+   * `title` kosong berarti pemanggil hanya ingin jarak antar kelompok field,
+   * tanpa judul. Jangan render `<h2>` kosong: heading tanpa teks muncul di
+   * daftar heading pembaca layar sebagai entri kosong dan ditandai axe
+   * sebagai `empty-heading`. Kalau tidak ada judul, tidak ada heading.
+   */
+  const hasHeading = title.trim().length > 0
+
   return (
     <section className={cn('space-y-4', className)}>
-      <div>
-        <h2 className="text-body font-semibold uppercase tracking-wide text-ink-500">{title}</h2>
-        {description ? <p className="mt-0.5 text-meta text-ink-400">{description}</p> : null}
-      </div>
+      {hasHeading ? (
+        <div>
+          <h2 className="text-body font-semibold uppercase tracking-wide text-ink-500">{title}</h2>
+          {description ? <p className="mt-0.5 text-meta text-ink-400">{description}</p> : null}
+        </div>
+      ) : null}
       {children}
     </section>
   )

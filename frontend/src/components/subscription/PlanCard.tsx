@@ -106,7 +106,12 @@ export function PlanCard({ plan, action, current = false, inactive = false }: Pl
       ) : null}
 
       {current ? (
-        <span className="absolute -top-3 right-5 inline-flex items-center gap-1 rounded-full bg-emerald-600 px-2.5 py-1 text-2xs font-semibold uppercase tracking-wide text-white shadow-sm">
+        /*
+         * `emerald-700`, bukan `emerald-600`: teks putih di atas `emerald-600`
+         * hanya 3.65:1, di bawah ambang 4.5:1 untuk teks 11px. `emerald-700`
+         * memberi 5.03:1 tanpa mengubah kesan "aktif".
+         */
+        <span className="absolute -top-3 right-5 inline-flex items-center gap-1 rounded-full bg-emerald-700 px-2.5 py-1 text-2xs font-semibold uppercase tracking-wide text-white shadow-sm">
           Paketmu
         </span>
       ) : null}
@@ -118,7 +123,13 @@ export function PlanCard({ plan, action, current = false, inactive = false }: Pl
         unggulan ~7px sehingga daftar fiturnya tidak sejajar dengan kartu lain.
       */}
       <header>
-        <h3 className="text-lead font-semibold text-ink-900">{plan.name}</h3>
+        {/*
+          `h2`, bukan `h3`: kartu ini berdiri langsung di bawah `<h1>` halaman
+          (baik di `/upgrade` maupun `/admin/plans`), tanpa heading perantara.
+          Melompat dari h1 ke h3 membuat pembaca layar kehilangan satu tingkat
+          dan ditandai axe sebagai `heading-order`.
+        */}
+        <h2 className="text-lead font-semibold text-ink-900">{plan.name}</h2>
         <p className="mt-0.5 text-meta text-ink-500">
           Aktif {plan.durationMonths} bulan
         </p>

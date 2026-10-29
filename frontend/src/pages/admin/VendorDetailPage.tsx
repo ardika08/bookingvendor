@@ -254,6 +254,11 @@ export function VendorDetailPage() {
         </div>
       </div>
 
+      <div>
+        <h1 className="text-title tracking-tight text-ink-900">Detail Vendor</h1>
+        <p className="mt-0.5 text-body text-ink-500">Data akun vendor dan riwayat langganannya.</p>
+      </div>
+
       <Card>
         <CardBody className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-3">
@@ -261,6 +266,11 @@ export function VendorDetailPage() {
               {initials(vendor.name)}
             </span>
             <div className="min-w-0">
+              {/*
+                Nama usaha adalah heading utama halaman ini: pembaca layar
+                menyebut nama vendor lebih dulu sebelum detail lain, dan
+                halaman tidak menampilkan nama itu dua kali.
+              */}
               <h2 className="text-title tracking-tight text-ink-900">{vendor.name}</h2>
               <div className="mt-1 flex flex-wrap items-center gap-2">
                 <span

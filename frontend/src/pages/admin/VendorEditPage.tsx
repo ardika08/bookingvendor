@@ -223,6 +223,13 @@ export function VendorEditPage() {
         </span>
       </div>
 
+      <div>
+        <h1 className="text-title tracking-tight text-ink-900">Edit Vendor</h1>
+        <p className="mt-0.5 text-body text-ink-500">
+          Perbarui identitas usaha {current.name} yang tampil di halaman publik.
+        </p>
+      </div>
+
       <Card>
         <CardHeader
           title="Identitas Usaha"
