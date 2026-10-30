@@ -18,7 +18,7 @@ import { FaqSection } from '@/components/promo/FaqSection'
  * semua fitur terbuka, dan pendaftaran mandiri.
  *
  * CTA utama mengarah ke `/daftar`, bukan `/login`. Sebelumnya hanya ada
- * "Masuk dengan Google", sehingga calon vendor yang belum punya akun harus
+ * "Masuk dengan Google" (sekarang diganti email+sandi), sehingga calon vendor yang belum punya akun harus
  * menemukan sendiri tautan kecil di halaman masuk — padahal justru pendaftaran
  * yang perlu ditonjolkan saat produk sedang mencari pengguna baru.
  */
@@ -76,7 +76,7 @@ export function PromoHomePage() {
             <Highlight
               icon={<ShieldCheck className="size-4" />}
               title="Masuk satu klik"
-              note="Setelah mendaftar, masuk berikutnya cukup dengan akun Google."
+              note="Setelah mendaftar, masuk berikutnya cukup dengan email dan kata sandi."
             />
           </ul>
         </div>

@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import { AlertTriangle, ArrowLeft, Check, Crown, LoaderCircle } from '@/components/ui/icons'
 import { Button } from '@/components/ui/Button'
 import { Field, inputClass } from '@/components/ui/Field'
-import { GoogleMark } from '@/components/auth/GoogleMark'
 import { ApiError } from '@/lib/api/client'
 import {
   fetchRegistrationCategories,
@@ -30,6 +29,7 @@ interface FormValues {
   categoryOther: string
   phone: string
   email: string
+  password: string
 }
 
 type FormErrors = Partial<Record<keyof FormValues, string>>
@@ -41,6 +41,7 @@ const INITIAL: FormValues = {
   categoryOther: '',
   phone: '',
   email: '',
+  password: '',
 }
 
 export function RegisterPage() {
@@ -107,6 +108,7 @@ export function RegisterPage() {
         category_other: needsOther ? values.categoryOther.trim() : undefined,
         phone: values.phone.trim(),
         email: values.email.trim().toLowerCase(),
+        password: values.password,
       })
 
       // Server sudah membuat sesi; pindah ke dashboard tanpa reload penuh.
@@ -277,6 +279,19 @@ export function RegisterPage() {
               />
             </Field>
 
+            <Field id="password" label="Kata sandi" required error={errors.password}>
+              <input
+                id="password"
+                type="password"
+                value={values.password}
+                onChange={(event) => update('password', event.target.value)}
+                autoComplete="new-password"
+                minLength={8}
+                placeholder="Minimal 8 karakter"
+                className={inputClass(Boolean(errors.password))}
+              />
+            </Field>
+
             <Button type="submit" disabled={saving} className="w-full">
               {saving ? (
                 <>
@@ -304,15 +319,10 @@ export function RegisterPage() {
             <p className="text-meta text-ink-500">
               Sudah punya akun?{' '}
               <Link to="/login" className="font-medium text-brand-700 hover:underline">
-                Masuk dengan Google
+                Masuk
               </Link>
             </p>
           </div>
-        </div>
-
-        <div className="mt-4 flex items-center justify-center gap-2 text-caption text-ink-400">
-          <GoogleMark className="size-3.5" />
-          <span>Masuk berikutnya memakai akun Google dengan email yang sama.</span>
         </div>
 
         <div className="mt-4 text-center">
@@ -361,8 +371,12 @@ function validate(values: FormValues, needsOther: boolean): FormErrors {
     errors.email = 'Email wajib diisi.'
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     errors.email = 'Format email tidak valid.'
-  } else if (!/@(gmail\.com|googlemail\.com)$/.test(email)) {
-    errors.email = 'Email harus memakai Gmail (@gmail.com).'
+  }
+
+  if (!values.password) {
+    errors.password = 'Kata sandi wajib diisi.'
+  } else if (values.password.length < 8) {
+    errors.password = 'Kata sandi minimal 8 karakter.'
   }
 
   return errors
@@ -376,6 +390,7 @@ const SERVER_FIELD_MAP: Record<string, keyof FormErrors> = {
   category_other: 'categoryOther',
   phone: 'phone',
   email: 'email',
+  password: 'password',
 }
 
 function mapServerErrors(fieldErrors: Record<string, string>): FormErrors {

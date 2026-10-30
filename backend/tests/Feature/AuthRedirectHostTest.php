@@ -7,7 +7,6 @@ use App\Services\UserAccessResolver;
 use App\Support\FrontendRedirect;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\RedirectResponse;
-use Laravel\Socialite\Facades\Socialite;
 use Tests\TestCase;
 
 /**
@@ -48,68 +47,6 @@ class AuthRedirectHostTest extends TestCase
         $target = $response->headers->get('Location');
         $this->assertStringStartsWith('/', $target);
         $this->assertStringNotContainsString('contoh-lain.test', $target);
-    }
-
-    public function test_callback_google_mengarah_ke_path_relatif_bukan_host_lain(): void
-    {
-        config(['app.frontend_url' => 'http://contoh-lain.test:4173']);
-
-        $admin = User::factory()->create([
-            'role' => User::ROLE_ADMIN,
-            'is_active' => true,
-            'google_id' => null,
-        ]);
-
-        $driver = \Mockery::mock();
-        $driver->shouldReceive('stateless')->andReturnSelf();
-        $driver->shouldReceive('user')->andReturn(new class($admin->email)
-        {
-            public function __construct(private string $email) {}
-
-            public function getId(): string
-            {
-                return 'g-123';
-            }
-
-            public function getEmail(): string
-            {
-                return $this->email;
-            }
-
-            public function getName(): string
-            {
-                return 'Admin Uji';
-            }
-
-            public function getAvatar(): string
-            {
-                return 'https://contoh.test/a.png';
-            }
-        });
-        Socialite::shouldReceive('driver')->with('google')->andReturn($driver);
-
-        $response = $this->get('/auth/google/callback');
-
-        $response->assertRedirect('/admin');
-
-        $target = $response->headers->get('Location');
-        $this->assertStringStartsWith('/', $target);
-        $this->assertStringNotContainsString('contoh-lain.test', $target);
-    }
-
-    public function test_error_oauth_juga_relatif(): void
-    {
-        config(['app.frontend_url' => 'http://contoh-lain.test:4173']);
-
-        $driver = \Mockery::mock();
-        $driver->shouldReceive('stateless')->andReturnSelf();
-        $driver->shouldReceive('user')->andThrow(new \RuntimeException('oauth down'));
-        Socialite::shouldReceive('driver')->with('google')->andReturn($driver);
-
-        $response = $this->get('/auth/google/callback');
-
-        $response->assertRedirect('/login?error=oauth_failed');
-        $this->assertStringStartsWith('/', $response->headers->get('Location'));
     }
 
     public function test_helper_menormalkan_path_tanpa_slash_di_depan(): void

@@ -1,24 +1,28 @@
-import { LoaderCircle, ShieldCheck, X } from '@/components/ui/icons'
+import { LoaderCircle, ShieldCheck } from '@/components/ui/icons'
 import { useEffect, useRef, useState } from 'react'
-import { clearAuthRole, readAuthRole, type AuthRole } from '@/lib/auth-session'
-import { GoogleMark } from '@/components/auth/GoogleMark'
-import { backendUrl } from '@/lib/api/client'
+import { Link, useNavigate } from 'react-router-dom'
+import { saveAuthRole } from '@/lib/auth-session'
+import { loginWithEmail } from '@/lib/api/login'
+import { Field, inputClass } from '@/components/ui/Field'
+import { ApiError } from '@/lib/api/client'
 
 /**
  * Halaman masuk (`/login`) — pintu satu-satunya ke aplikasi.
  *
- * PRD: masuk hanya lewat akun Google (satu klik), tanpa registrasi publik.
- * Tombol "Masuk dengan Google" mengarah ke `/auth/google/redirect` yang
- * ditangani server (redirect flow). Setelah OAuth, server mengalihkan ke
- * `/dashboard` atau `/admin` sesuai peran.
+ * Sebelumnya masuk lewat Google (OAuth). Sekarang pakai email + kata sandi:
+ * vendor mendaftar sendiri dengan kredensial tersebut, admin ditambahkan lewat
+ * tinker dengan password yang di-hash.
  *
- * Saat APP_ENV=local, baris "Dev login" muncul untuk mengetes alur SPA tanpa
- * kredensial Google — server langsung membuat sesi sebagai vendor pertama.
+ * Setelah berhasil, pengguna diarahkan ke `/dashboard` (vendor) atau `/admin`
+ * (admin) sesuai role dari respons server.
  */
-
 export function LoginPage() {
-  const [sessionRole, setSessionRole] = useState<AuthRole | null>(() => readAuthRole())
+  const navigate = useNavigate()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [remember, setRemember] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
   const connected = useRef(true)
 
   useEffect(() => {
@@ -28,41 +32,31 @@ export function LoginPage() {
     }
   }, [])
 
-  /** Pesan error dari redirect OAuth (?error=…). */
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const code = params.get('error')
-    if (!code) return
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setError(null)
+    setLoading(true)
 
-    const messages: Record<string, string> = {
-      oauth_failed: 'Gagal menghubungkan ke Google. Coba lagi.',
-      account_not_registered:
-        'Akun Google ini belum terdaftar. Minta admin platform menambahkan vendor terlebih dahulu.',
-      account_inactive: 'Akun ini dinonaktifkan. Hubungi admin platform.',
-      // Akun vendor ada, tetapi baris `vendors` belum dibuat. Biasanya berarti
-      // database belum di-seed, bukan akun yang salah.
-      vendor_profile_missing:
-        'Akun vendor ini belum punya profil usaha. Jalankan `php artisan db:seed` untuk membuat profil contoh.',
+    try {
+      const result = await loginWithEmail(email.trim().toLowerCase(), password, remember)
+      saveAuthRole(result.role)
+
+      if (!connected.current) return
+      navigate(result.role === 'admin' ? '/admin' : '/dashboard', { replace: true })
+    } catch (err) {
+      if (!connected.current) return
+      if (err instanceof ApiError && err.isUnauthorized) {
+        setError('Email atau kata sandi salah.')
+      } else if (err instanceof ApiError && err.fieldErrors?.email) {
+        setError(err.fieldErrors.email)
+      } else if (err instanceof ApiError) {
+        setError(err.message)
+      } else {
+        setError('Tidak dapat menghubungi server. Periksa koneksi lalu coba lagi.')
+      }
+    } finally {
+      if (connected.current) setLoading(false)
     }
-    setError(messages[code] ?? 'Terjadi kesalahan saat masuk.')
-    window.history.replaceState(null, '', '/login')
-  }, [])
-
-  /**
-   * Login dev: langsung ke `/auth/dev-login` (server membuat sesi).
-   *
-   * `?as=admin` memilih akun admin, tanpa parameter tetap vendor seperti
-   * sebelumnya. Tanpa ini tidak ada jalan masuk ke panel admin sama sekali:
-   * OAuth belum dikonfigurasi dan tidak ada login kata sandi.
-   */
-  function handleDevLogin(role: 'vendor' | 'admin') {
-    window.location.href = backendUrl(`/auth/dev-login?as=${role}`)
-  }
-
-  /** Hapus sesi aktif lalu segarkan tampilan halaman masuk. */
-  function handleClearSession() {
-    clearAuthRole()
-    setSessionRole(null)
   }
 
   return (
@@ -81,99 +75,73 @@ export function LoginPage() {
           </p>
         </div>
 
-        {sessionRole !== null ? (
-          <div className="mb-4 mt-6 flex items-center justify-between gap-2 rounded-lg border border-ink-200 bg-white px-3 py-2 text-meta">
-            <span className="min-w-0 truncate text-ink-600">
-              Sesi aktif:{' '}
-              <span className="font-medium text-ink-800">
-                {sessionRole === 'admin' ? 'Admin' : 'Vendor'}
-              </span>
-            </span>
-            <button
-              type="button"
-              onClick={handleClearSession}
-              className="shrink-0 font-medium text-brand-700 hover:underline"
-            >
-              Keluar
-            </button>
+        {error ? (
+          <div className="mt-6 rounded-lg border border-red-200 bg-red-50 px-3.5 py-2.5 text-meta leading-relaxed text-red-800">
+            {error}
           </div>
         ) : null}
 
-        <div className={sessionRole !== null ? 'rounded-2xl border border-ink-200/80 bg-white p-6 shadow-sm' : 'mt-6 rounded-2xl border border-ink-200/80 bg-white p-6 shadow-sm'}>
-          {error ? (
-            <div
-              role="alert"
-              className="mb-4 flex items-start gap-2 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2.5"
-            >
-              <p className="min-w-0 flex-1 text-meta leading-relaxed text-rose-800">{error}</p>
-              <button
-                type="button"
-                onClick={() => setError(null)}
-                className="rounded p-0.5 text-rose-400 hover:bg-rose-100 hover:text-rose-700"
-                aria-label="Tutup pesan"
-              >
-                <X className="size-3.5" />
-              </button>
-            </div>
-          ) : null}
+        <form onSubmit={handleSubmit} className="mt-6 space-y-4" noValidate>
+          <Field id="email" label="Email" required>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
+              autoFocus
+              required
+              placeholder="nama@email.com"
+              className={inputClass(false)}
+            />
+          </Field>
 
-          <a
-            href={backendUrl('/auth/google/redirect')}
-            className="flex h-11 w-full items-center justify-center gap-3 rounded-lg border border-ink-200 bg-white text-body font-medium text-ink-800 shadow-sm transition-colors hover:bg-ink-50"
-          >
-            <GoogleMark />
-            Masuk dengan Google
-          </a>
+          <Field id="password" label="Kata sandi" required>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
+              required
+              minLength={8}
+              placeholder="••••••••"
+              className={inputClass(false)}
+            />
+          </Field>
 
-          <p className="mt-4 text-center text-caption leading-relaxed text-ink-500">
-            Belum punya akun?{' '}
-            <a href="/daftar" className="font-medium text-brand-700 hover:underline">
-              Daftar gratis 30 hari
-            </a>
-            {' '}— tanpa kartu kredit.
-          </p>
+          <label className="flex items-center gap-2 text-meta text-ink-600">
+            <input
+              type="checkbox"
+              checked={remember}
+              onChange={(e) => setRemember(e.target.checked)}
+              className="size-4 rounded border-ink-300 text-brand-600 focus:ring-brand-500"
+            />
+            Ingat saya
+          </label>
 
-          {/* Dev bypass: hanya muncul saat APP_ENV=local. Server mengembalikan
-              404 untuk endpoint ini di environment lain, jadi tombol ini
-              aman untuk dibiarkan di kode. */}
-          <div className="mt-4 border-t border-dashed border-ink-200 pt-3">
-            <p className="text-center text-2xs font-semibold uppercase tracking-wider text-ink-500">
-              Dev login (tanpa Google)
-            </p>
-            <button
-              type="button"
-              onClick={() => handleDevLogin('vendor')}
-              className="mt-2 flex h-9 w-full items-center justify-center gap-2 rounded-lg bg-ink-100 text-meta font-medium text-ink-700 transition-colors hover:bg-ink-200"
-            >
-              <LoaderCircle className="size-3.5" />
-              Masuk sebagai vendor uji
-            </button>
-            <button
-              type="button"
-              onClick={() => handleDevLogin('admin')}
-              className="mt-2 flex h-9 w-full items-center justify-center gap-2 rounded-lg bg-ink-100 text-meta font-medium text-ink-700 transition-colors hover:bg-ink-200"
-            >
-              <ShieldCheck className="size-3.5" />
-              Masuk sebagai admin uji
-            </button>
-          </div>
-        </div>
-
-        <p className="mt-6 text-center text-meta text-ink-400">
-          Mengelola platform?{' '}
-          {/* Sebelumnya tautan ini hanya menulis role 'admin' ke localStorage
-              tanpa membuat sesi server, sehingga RoleGate langsung memantul
-              kembali ke /login. Sekarang ia memakai jalur login dev yang
-              benar-benar membuat sesi. */}
           <button
-            type="button"
-            onClick={() => handleDevLogin('admin')}
-            className="inline-flex items-center gap-1 font-medium text-ink-600 hover:text-ink-900"
+            type="submit"
+            disabled={loading}
+            className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-brand-400 px-4 text-body font-medium text-ink-900 shadow-sm transition-colors hover:bg-brand-500 active:bg-brand-600 disabled:opacity-60"
           >
-            <ShieldCheck className="size-3.5" />
-            Panel admin
+            {loading ? <LoaderCircle className="size-4 animate-spin" /> : null}
+            {loading ? 'Memproses...' : 'Masuk'}
           </button>
-        </p>
+        </form>
+
+        <div className="mt-6 space-y-3">
+          <p className="text-center text-meta text-ink-500">
+            Belum punya akun?{' '}
+            <Link to="/daftar" className="font-medium text-brand-700 hover:text-brand-800">
+              Daftar gratis 30 hari
+            </Link>
+          </p>
+          <p className="flex items-center justify-center gap-1.5 text-caption text-ink-400">
+            <ShieldCheck className="size-3.5" />
+            Email dan kata sandi kamu aman — dienkripsi di server.
+          </p>
+        </div>
       </div>
     </div>
   )

@@ -4,7 +4,7 @@ import { CalendarPlus, FileText, LogIn, type IconComponent } from '@/components/
  * Visualisasi alur kerja tiga langkah di halaman promosi.
  *
  * Menjelaskan perjalanan vendor dari masuk sampai menagih klien, sesuai alur
- * PRD: masuk dengan Google → catat booking/jadwal → terbitkan invoice dan
+ * Alur: daftar & masuk → catat booking/jadwal → terbitkan invoice dan
  * bagikan tautannya. Garis penghubung hanya tampil di layar lebar.
  */
 
@@ -21,7 +21,7 @@ const STEPS: WorkflowStep[] = [
     icon: LogIn,
     title: 'Daftar & masuk',
     description:
-      'Daftar gratis dengan email Gmail, akun langsung aktif. Masuk berikutnya cukup satu klik dengan Google.',
+      'Daftar gratis dengan email dan kata sandi, akun langsung aktif. Langsung bisa dipakai tanpa menunggu persetujuan.',
   },
   {
     step: '02',

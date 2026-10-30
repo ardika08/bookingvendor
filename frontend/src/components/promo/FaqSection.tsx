@@ -17,7 +17,7 @@ const FAQS = [
   {
     question: 'Bagaimana cara mulai memakai aplikasi?',
     answer:
-      'Daftar sendiri lewat halaman pendaftaran dengan email Gmail — akun langsung aktif dan bisa dipakai, tanpa menunggu persetujuan. Masuk berikutnya cukup dengan akun Google yang sama, tanpa kata sandi.',
+      'Daftar sendiri lewat halaman pendaftaran dengan email dan kata sandi — akun langsung aktif dan bisa dipakai, tanpa menunggu persetujuan. Masuk berikutnya cukup dengan email dan kata sandi tersebut.',
   },
   {
     question: 'Apa yang terjadi saat masa uji 30 hari habis?',

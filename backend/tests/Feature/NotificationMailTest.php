@@ -43,6 +43,7 @@ class NotificationMailTest extends TestCase
             'category_id' => (string) Category::where('slug', 'mua')->value('id'),
             'phone' => '081234567890',
             'email' => 'dika@gmail.com',
+            'password' => 'passwo...ah',
         ], $overrides))->assertCreated();
     }
 

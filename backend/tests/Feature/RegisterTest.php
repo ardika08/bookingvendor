@@ -38,6 +38,7 @@ class RegisterTest extends TestCase
             'category_id' => (string) Category::where('slug', 'mua')->value('id'),
             'phone' => '081234567890',
             'email' => 'dika@gmail.com',
+            'password' => 'passwo...ah',
         ], $overrides);
     }
 
@@ -72,11 +73,13 @@ class RegisterTest extends TestCase
 
     public function test_email_selain_gmail_ditolak(): void
     {
+        // Batasan domain Gmail sudah dihapus — semua email valid diterima.
+        // Tes ini dipertahankan sebagai konfirmasi bahwa email non-Gmail
+        // sekarang diterima (regresi: jangan kembalikan batasan domain).
         $this->postJson('/api/register', $this->payload(['email' => 'dika@yahoo.com']))
-            ->assertStatus(422)
-            ->assertJsonValidationErrors('email');
+            ->assertCreated();
 
-        $this->assertDatabaseMissing('users', ['email' => 'dika@yahoo.com']);
+        $this->assertDatabaseHas('users', ['email' => 'dika@yahoo.com']);
     }
 
     public function test_email_duplikat_ditolak(): void
@@ -153,14 +156,16 @@ class RegisterTest extends TestCase
         /*
          * Pendaftaran yang BERHASIL membersihkan penghitung (vendor sah tidak
          * boleh tertahan), jadi rate limit hanya menghitung percobaan gagal.
-         * Di sini dipakai email non-Gmail supaya setiap percobaan gagal.
+         * Di sini dipakai email duplikat supaya setiap percobaan gagal.
          */
+        $existing = User::factory()->create(['email' => 'sudah@test.com']);
+
         for ($i = 0; $i < 5; $i++) {
-            $this->postJson('/api/register', $this->payload(['email' => 'salah@yahoo.com']))
+            $this->postJson('/api/register', $this->payload(['email' => 'sudah@test.com']))
                 ->assertStatus(422);
         }
 
-        $this->postJson('/api/register', $this->payload(['email' => 'salah2@yahoo.com']))
+        $this->postJson('/api/register', $this->payload(['email' => 'salah2@test.com']))
             ->assertStatus(429)
             ->assertJsonPath('code', 'too_many_attempts');
     }

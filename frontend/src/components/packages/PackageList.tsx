@@ -426,7 +426,7 @@ export function PackageErrorState({
       </p>
       <p className="mt-1 max-w-sm text-body leading-relaxed text-ink-500">
         {unauthorized
-          ? 'Masuk kembali dengan akun Google untuk melanjutkan.'
+          ? 'Masuk kembali untuk melanjutkan.'
           : error.message || 'Periksa koneksi internet lalu coba lagi.'}
       </p>
       {!unauthorized ? (

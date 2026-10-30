@@ -29,10 +29,8 @@ use Illuminate\Support\Str;
  *   - **Rate limit per IP** — mencegah pembuatan akun massal dari satu mesin;
  *   - **Email unik** — satu email hanya boleh punya satu akun;
  *   - **Nomor WhatsApp unik** — mencegah satu orang membuat banyak akun untuk
- *     memperpanjang masa uji berkali-kali (email Gmail baru mudah dibuat,
- *     nomor WhatsApp tidak);
- *   - **Domain email** dibatasi ke Gmail karena notifikasi pendaftaran dan
- *     tagihan langganan dikirim lewat Mailketing yang terhubung ke Gmail.
+ *     memperpanjang masa uji berkali-kali;
+ *   - **Kata sandi minimal 8 karakter** — disimpan ter-hash (bcrypt).
  *
  * Email **tidak** diverifikasi lewat tautan: notifikasi hanya informasi, bukan
  * syarat masuk. Vendor langsung bisa memakai aplikasi setelah mendaftar.
@@ -43,9 +41,6 @@ class RegisterController extends Controller
     private const RATE_LIMIT_ATTEMPTS = 5;
 
     private const RATE_LIMIT_DECAY_SECONDS = 3600;
-
-    /** Domain email yang diterima. */
-    private const ALLOWED_DOMAINS = ['gmail.com', 'googlemail.com'];
 
     public function __construct(private readonly TrialStarter $trials)
     {
@@ -75,6 +70,7 @@ class RegisterController extends Controller
             'category_other' => ['nullable', 'string', 'max:60'],
             'phone' => ['required', 'string', 'max:20'],
             'email' => ['required', 'string', 'email', 'max:150'],
+            'password' => ['required', 'string', 'min:8', 'max:100'],
         ], [
             'owner_name.required' => 'Nama pemilik wajib diisi.',
             'vendor_name.required' => 'Nama vendor wajib diisi.',
@@ -83,18 +79,11 @@ class RegisterController extends Controller
             'phone.required' => 'Nomor WhatsApp wajib diisi.',
             'email.required' => 'Email wajib diisi.',
             'email.email' => 'Format email tidak valid.',
+            'password.required' => 'Kata sandi wajib diisi.',
+            'password.min' => 'Kata sandi minimal 8 karakter.',
         ]);
 
         $email = strtolower(trim($validated['email']));
-
-        if (! $this->isAllowedEmail($email)) {
-            RateLimiter::hit($key, self::RATE_LIMIT_DECAY_SECONDS);
-
-            return response()->json([
-                'message' => 'Email harus memakai Gmail (@gmail.com).',
-                'errors' => ['email' => ['Email harus memakai Gmail (@gmail.com).']],
-            ], 422);
-        }
 
         $phone = $this->normalizePhone($validated['phone']);
 
@@ -112,7 +101,7 @@ class RegisterController extends Controller
             RateLimiter::hit($key, self::RATE_LIMIT_DECAY_SECONDS);
 
             return response()->json([
-                'message' => 'Email ini sudah terdaftar. Masuk dengan Google memakai email tersebut.',
+                'message' => 'Email ini sudah terdaftar. Silakan masuk dengan email tersebut.',
                 'errors' => ['email' => ['Email ini sudah terdaftar.']],
                 'code' => 'email_taken',
             ], 422);
@@ -139,9 +128,8 @@ class RegisterController extends Controller
                 'phone' => $phone,
                 'role' => User::ROLE_VENDOR,
                 'is_active' => true,
-                // Tanpa kata sandi: masuk hanya lewat Google. Kolomnya nullable
-                // sejak migrasi `make_users_password_nullable`.
-                'password' => null,
+                // Kata sandi di-hash (bcrypt). Masuk lewat POST /api/login.
+                'password' => bcrypt($validated['password']),
             ]);
 
             $vendor = Vendor::query()->create([
@@ -228,13 +216,6 @@ class RegisterController extends Controller
             ->all();
 
         return response()->json($items);
-    }
-
-    private function isAllowedEmail(string $email): bool
-    {
-        $domain = Str::afterLast($email, '@');
-
-        return in_array($domain, self::ALLOWED_DOMAINS, true);
     }
 
     /**

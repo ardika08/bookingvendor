@@ -157,7 +157,7 @@ export function DashboardPage() {
             action={
               error instanceof ApiError && error.isUnauthorized ? (
                 <ButtonLink to="/login" size="sm">
-                  Masuk dengan Google
+                  Masuk
                 </ButtonLink>
               ) : (
                 <button

@@ -16,6 +16,7 @@ export interface RegistrationPayload {
   category_other?: string
   phone: string
   email: string
+  password: string
 }
 
 export interface RegistrationResult {
@@ -51,6 +52,8 @@ async function ensureCsrfCookie(): Promise<void> {
     headers: { Accept: 'application/json' },
   })
 }
+
+export { ensureCsrfCookie }
 
 /**
  * Daftarkan vendor baru.

@@ -262,7 +262,7 @@ function ErrorState({ error, onRetry }: { error: ApiError | Error; onRetry: () =
       action={
         unauthorized ? (
           <ButtonLink to="/login" size="sm">
-            Masuk dengan Google
+            Masuk
           </ButtonLink>
         ) : (
           <Button size="sm" variant="secondary" onClick={onRetry}>

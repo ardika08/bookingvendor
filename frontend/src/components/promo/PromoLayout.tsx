@@ -1,13 +1,13 @@
 import { Menu, X } from '@/components/ui/icons'
 import { useState } from 'react'
 import { Link, Outlet } from 'react-router-dom'
-import { GoogleSignInCta } from '@/components/promo/GoogleSignInCta'
+import { SignUpCta } from '@/components/promo/SignUpCta'
 
 /**
  * Kerangka halaman promosi publik (`/`).
  *
- * Salespage sederhana—clean, modern, minimalis (PRD). Fokus utama tetap
- * tombol "Masuk dengan Google" untuk vendor. Header memuat anchor ke bagian
+ * Salespage sederhana—clean, modern, minimalis (PRD). Fokus utama tombol
+ * "Daftar gratis 30 hari" untuk vendor. Header memuat anchor ke bagian
  * halaman (#fitur, #harga, #faq) agar navigasi ringan tanpa halaman tambahan,
  * dan footer menyediakan tautan masuk serta panel admin.
  *
@@ -55,7 +55,7 @@ export function PromoLayout() {
             >
               Masuk
             </Link>
-            <GoogleSignInCta size="sm" />
+            <SignUpCta size="md" />
           </div>
 
           <button
@@ -84,7 +84,7 @@ export function PromoLayout() {
               ))}
             </nav>
             <div className="mt-3 flex flex-col gap-2 border-t border-ink-100 pt-3">
-              <GoogleSignInCta block />
+              <SignUpCta block />
             </div>
           </div>
         ) : null}
@@ -125,7 +125,7 @@ export function PromoLayout() {
             <ul className="mt-3 space-y-2 text-meta">
               <li>
                 <Link to="/login" className="text-ink-600 hover:text-ink-900">
-                  Masuk dengan Google
+                  Masuk
                 </Link>
               </li>
               <li>

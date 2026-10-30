@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\ClientController;
 use App\Http\Controllers\Api\CheckoutController;
 use App\Http\Controllers\Api\CurrentUserController;
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Api\DuitkuCallbackController;
 use App\Http\Controllers\Api\InvoiceController;
 use App\Http\Controllers\Api\InvoicePaymentController;
@@ -79,6 +80,20 @@ Route::post('register', [RegisterController::class, 'store'])
 Route::get('register/categories', [RegisterController::class, 'categories'])
     ->middleware('throttle:120,1')
     ->name('register.categories');
+
+/*
+ * Masuk dengan email + kata sandi.
+ *
+ * Menggantikan login Google (OAuth). Sesi dibuat pada guard `web` (cookie),
+ * sama seperti alur Google sebelumnya — endpoint API yang memakai
+ * `auth:sanctum` tetap berfungsi tanpa perubahan.
+ *
+ * Throttle 5 per menit per IP: mencegah brute-force tanpa menahan pengguna
+ * yang salah ketik. Hanya percobaan gagal yang dihitung.
+ */
+Route::post('login', [LoginController::class, 'store'])
+    ->middleware('throttle:5,1')
+    ->name('login.store');
 
 /*
 | Panel admin platform. Hanya pengguna berperan `admin`.
