@@ -100,6 +100,29 @@ class DuitkuCallbackTest extends TestCase
         $this->assertNull(Subscription::query()->where('vendor_id', $vendor->id)->first()?->ends_at);
     }
 
+    /**
+     * Reference yang ditulis ke database harus berasal dari gateway, bukan
+     * dari payload callback. Tanpa ini, penyerang yang mengetahui apiKey bisa
+     * mengirim signature sah dengan reference karangan dan merusak jejak audit.
+     */
+    public function test_reference_dari_gateway_bukan_dari_callback(): void
+    {
+        [$payment] = $this->pendingPayment();
+
+        // Gateway mengembalikan REF-UJI (lihat fakeGatewayStatus).
+        $this->fakeGatewayStatus('00');
+
+        $payload = $this->callbackPayload($payment, '00');
+        $payload['reference'] = 'REF-KARANGAN';
+
+        $this->postJson('/api/webhooks/duitku', $payload)->assertOk();
+
+        $payment->refresh();
+
+        $this->assertSame('REF-UJI', $payment->gateway_reference);
+        $this->assertNotSame('REF-KARANGAN', $payment->gateway_reference);
+    }
+
     public function test_callback_ganda_tidak_menambah_masa_aktif_dua_kali(): void
     {
         [$payment, $vendor] = $this->pendingPayment();

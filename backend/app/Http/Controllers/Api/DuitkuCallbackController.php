@@ -45,7 +45,6 @@ class DuitkuCallbackController extends Controller
         $amount = (string) $request->input('amount', '');
         $orderId = (string) $request->input('merchantOrderId', '');
         $signature = (string) $request->input('signature', '');
-        $reference = $request->input('reference');
 
         if ($orderId === '' || $signature === '') {
             return response()->json(['message' => 'Payload tidak lengkap.'], 400);
@@ -89,16 +88,26 @@ class DuitkuCallbackController extends Controller
             return response()->json(['message' => 'Nominal tidak cocok.'], 422);
         }
 
-        $statusCode = $this->gatewayStatus($gateway, $orderId);
+        $status = $this->gatewayStatus($gateway, $orderId);
 
-        if ($statusCode === null) {
+        if ($status === null) {
             Log::warning('Callback Duitku gagal verifikasi ulang ke gateway', ['order_id' => $orderId]);
 
             return response()->json(['message' => 'Status tidak terverifikasi.'], 502);
         }
 
+        $statusCode = $status['code'];
+        $gatewayReference = $status['reference'];
+
+        /*
+         * Metadata ditulis dari hasil verifikasi gateway, bukan dari payload
+         * callback. `reference` pada callback bisa dikarang: penyerang yang
+         * mengetahui apiKey bisa mengirim signature sah dengan reference palsu
+         * dan menimpa jejak audit transaksi asli. Nilai dari `checkStatus()`
+         * sudah terbukti milik transaksi ini.
+         */
         $payment->forceFill([
-            'gateway_reference' => $reference ?? $payment->gateway_reference,
+            'gateway_reference' => $gatewayReference ?? $payment->gateway_reference,
             'payment_method' => $request->input('paymentCode', $payment->payment_method),
             'raw_payload' => array_merge(
                 is_array($payment->raw_payload) ? $payment->raw_payload : [],
@@ -124,13 +133,19 @@ class DuitkuCallbackController extends Controller
     }
 
     /**
-     * Ambil kode status dari gateway, atau null bila tidak dapat dipastikan.
+     * Ambil status transaksi dari gateway, atau null bila tidak dapat dipastikan.
+     *
+     * Mengembalikan status code **dan** reference milik gateway. Reference
+     * dipakai untuk menulis jejak audit, jadi harus berasal dari sini — bukan
+     * dari payload callback yang bisa dikarang.
      *
      * Bila gateway tidak dapat dihubungi, callback ditolak (502) supaya Duitku
      * mengirim ulang — lebih baik terlambat aktif daripada aktif karena
      * payload palsu.
+     *
+     * @return array{code: string, reference: ?string}|null
      */
-    private function gatewayStatus(DuitkuGateway $gateway, string $orderId): ?string
+    private function gatewayStatus(DuitkuGateway $gateway, string $orderId): ?array
     {
         try {
             $status = $gateway->checkStatus($orderId);
@@ -146,6 +161,13 @@ class DuitkuCallbackController extends Controller
         // `00` sukses, `01` proses, `02` dibatalkan/kedaluwarsa.
         $code = $status['status_code'];
 
-        return in_array($code, ['00', '01', '02'], true) ? $code : null;
+        if (! in_array($code, ['00', '01', '02'], true)) {
+            return null;
+        }
+
+        return [
+            'code' => $code,
+            'reference' => $status['reference'],
+        ];
     }
 }
