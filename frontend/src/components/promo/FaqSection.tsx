@@ -17,17 +17,17 @@ const FAQS = [
   {
     question: 'Bagaimana cara mulai memakai aplikasi?',
     answer:
-      'Masuk dengan akun Google yang sudah didaftarkan admin. Tidak ada registrasi publik dan tidak perlu membuat kata sandi.',
+      'Daftar sendiri lewat halaman pendaftaran dengan email Gmail — akun langsung aktif dan bisa dipakai, tanpa menunggu persetujuan. Masuk berikutnya cukup dengan akun Google yang sama, tanpa kata sandi.',
   },
   {
-    question: 'Apa yang terjadi saat masa trial habis?',
+    question: 'Apa yang terjadi saat masa uji 30 hari habis?',
     answer:
-      'Kamu masih bisa membuka dan mengisi form booking, tetapi submit ditolak dan muncul pilihan paket. Begitu berlangganan, booking dan invoice kembali tanpa batas.',
+      'Semua data tetap bisa dibuka dan diunduh — booking, invoice, dan riwayat klien tidak terkunci. Yang berhenti hanya pembuatan booking dan invoice baru. Begitu berlangganan, keduanya kembali tanpa batas.',
   },
   {
-    question: 'Apakah jatah trial direset setelah berlangganan?',
+    question: 'Apakah ada batas jumlah booking selama masa uji?',
     answer:
-      'Tidak. Jatah trial 2 booking + 2 invoice bersifat sekali pakai. Setelah berlangganan, yang berubah adalah batasnya menjadi tanpa batas selama masa paket aktif.',
+      'Tidak ada. Selama 30 hari masa uji, semua fitur terbuka tanpa batas jumlah booking maupun invoice — supaya kamu bisa mencoba alur lengkap dari pesanan sampai pelunasan.',
   },
   {
     question: 'Bagaimana mencegah jadwal bentrok?',

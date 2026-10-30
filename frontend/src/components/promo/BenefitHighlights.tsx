@@ -56,9 +56,9 @@ const BENEFITS: Benefit[] = [
   },
   {
     icon: Ticket,
-    title: 'Trial tanpa kartu kredit',
+    title: 'Gratis 30 hari penuh',
     description:
-      'Mulai dengan 2 booking + 2 invoice. Berlangganan hanya saat operasional sudah berjalan.',
+      'Semua fitur terbuka selama 30 hari, tanpa batas jumlah booking. Tanpa kartu kredit di awal.',
   },
 ]
 

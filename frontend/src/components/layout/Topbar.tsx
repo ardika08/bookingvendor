@@ -2,6 +2,7 @@ import { Bell, ChevronDown, LogOut, Menu } from '@/components/ui/icons'
 import { formatMonthYear, initials } from '@/lib/format'
 import { clearAuthRole } from '@/lib/auth-session'
 import type { CurrentUser } from '@/types/booking'
+import { backendUrl } from '@/lib/api/client'
 
 /**
  * Topbar dashboard: tombol buka menu di mobile, nama halaman aktif, badge masa
@@ -23,7 +24,7 @@ export function Topbar({
   function handleLogout() {
     clearAuthRole()
     // GET /auth/logout menghapus sesi server lalu redirect ke /login.
-    window.location.href = '/auth/logout'
+    window.location.href = backendUrl('/auth/logout')
   }
 
   return (

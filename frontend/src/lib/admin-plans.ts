@@ -4,7 +4,7 @@
  * Hanya ada tiga paket (PRD): Bulanan (harga pasti Rp50.000), 3 Bulan, dan
  * Tahunan. Harga 3 Bulan & Tahunan sengaja bisa `null` — tampil "Segera" dan
  * tidak bisa dibeli sampai admin menetapkannya. Kuota TIDAK tersimpan di sini:
- * batas hanya milik masa trial (2 booking + 2 invoice) dan konstan.
+ * batas waktu hanya berlaku selama masa uji 30 hari.
  */
 
 export type AdminPlanCode = 'monthly' | 'quarterly' | 'yearly'

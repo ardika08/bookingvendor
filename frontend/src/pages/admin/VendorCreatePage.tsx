@@ -13,7 +13,7 @@ import { VENDOR_CATEGORIES } from '@/lib/vendor-profile'
  *
  * Admin mendaftarkan vendor baru dengan akun Google yang sudah ditentukan
  * (PRD: tidak ada registrasi publik). Vendor baru langsung mendapat masa
- * trial 2 booking + 2 invoice tanpa perlu verifikasi.
+ * masa uji 30 hari (semua fitur terbuka) tanpa perlu verifikasi.
  *
  * Data dikirim ke `POST /admin/vendors`. Sebelumnya form ini hanya menulis ke
  * state contoh: notifikasi "berhasil" muncul dan pengguna dialihkan ke daftar,

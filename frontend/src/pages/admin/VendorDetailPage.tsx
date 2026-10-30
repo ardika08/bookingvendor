@@ -366,7 +366,7 @@ export function VendorDetailPage() {
             <CardHeader
               title="Langganan"
               description={vendor.subscription.status === 'trial'
-                ? 'Jatah trial: 2 booking + 2 invoice, sekali pakai.'
+                ? 'Masa uji 30 hari sejak vendor dibuat, semua fitur terbuka.'
                 : 'Masa aktif paket langganan vendor.'}
             />
             <CardBody className="space-y-2 text-meta">
@@ -394,7 +394,7 @@ export function VendorDetailPage() {
                 </>
               ) : (
                 <p className="text-ink-500">
-                  Trial aktif — batas mengikuti jatah 2 booking + 2 invoice, bukan tanggal.
+                  Masa uji aktif — semua fitur terbuka sampai tanggal berakhir.
                 </p>
               )}
 

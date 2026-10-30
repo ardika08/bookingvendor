@@ -273,7 +273,7 @@ export function ManageVendorsPage() {
               <EmptyState
                 icon={<Users className="size-5" />}
                 title="Belum ada vendor"
-                description="Undang vendor pertama — mereka langsung dapat masa trial 2 booking + 2 invoice."
+                description="Undang vendor pertama — mereka langsung dapat masa uji 30 hari dengan semua fitur terbuka."
                 action={
                   <ButtonLink to="/admin/vendors/new" size="sm">
                     <Plus className="size-3.5" />

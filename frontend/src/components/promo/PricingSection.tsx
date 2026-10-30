@@ -1,22 +1,29 @@
 import { Check } from '@/components/ui/icons'
-import { GoogleSignInCta } from '@/components/promo/GoogleSignInCta'
+import { SignUpCta } from '@/components/promo/SignUpCta'
 import { formatCurrency } from '@/lib/format'
-import { mockPlans } from '@/lib/mock/subscription'
+import { usePublicPlans } from '@/lib/api/public-plans'
 import { cn } from '@/lib/cn'
 import type { Plan } from '@/types/subscription'
 
 /**
  * Section harga di halaman promosi (`#harga`).
  *
- * Menampilkan katalog paket langganan beserta statusnya. Harga `null` berarti
- * belum ditetapkan admin — kartu menampilkan "Segera" dan tombol beli mati.
- * Sumber data masih mock (`lib/mock/subscription`) sampai endpoint publik
- * `/api/plans` dipakai di fase backend.
+ * Harga diambil dari `GET /api/public/plans`, bukan data mock: mock lama
+ * mengunci 3 Bulan & Tahunan pada harga `null` sehingga kartunya menampilkan
+ * "Segera" beserta tombol mati, padahal admin sudah menetapkan harga.
  *
- * Semua paket membuka booking & invoice tanpa batas; kuota hanya berlaku
- * selama masa trial.
+ * Tombol paket mengarah ke `/daftar` — calon vendor mendaftar dulu, lalu
+ * memilih paket dari dalam aplikasi. Mengarahkannya ke `/login` akan membuang
+ * calon pengguna yang belum punya akun.
+ *
+ * Bila katalog gagal dimuat, seluruh seksi disembunyikan. Menampilkan harga
+ * contoh di halaman jualan lebih buruk daripada tidak menampilkan harga.
  */
 export function PricingSection() {
+  const { plans, failed } = usePublicPlans()
+
+  if (failed || (plans !== null && plans.length === 0)) return null
+
   return (
     <section id="harga" className="scroll-mt-20 border-t border-ink-200/70 bg-ink-50/60">
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
@@ -28,19 +35,31 @@ export function PricingSection() {
             Satu paket, semua fitur terbuka
           </h2>
           <p className="mt-3 text-body leading-relaxed text-ink-500">
-            Mulai gratis dengan 2 booking + 2 invoice. Naik paket kapan saja saat operasional
-            bertambah — tanpa biaya tersembunyi.
+            Coba semua fitur gratis 30 hari — tanpa kartu kredit. Setelah itu pilih paket
+            yang paling pas; setiap paket membuka booking &amp; invoice tanpa batas.
           </p>
         </div>
 
-        <ul className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {mockPlans.map((plan) => (
-            <PricingCard key={plan.id} plan={plan} />
-          ))}
-        </ul>
+        {plans === null ? (
+          // Kerangka selama memuat: menjaga tata letak tidak melompat.
+          <ul className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3" aria-hidden>
+            {[0, 1, 2].map((i) => (
+              <li
+                key={i}
+                className="h-64 animate-pulse rounded-xl border border-ink-200/80 bg-white"
+              />
+            ))}
+          </ul>
+        ) : (
+          <ul className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {plans.map((plan) => (
+              <PricingCard key={plan.id} plan={plan} />
+            ))}
+          </ul>
+        )}
 
         <p className="mt-6 text-center text-caption text-ink-400">
-          Semua paket berbayar membuka booking &amp; invoice tanpa batas selama masa aktif.
+          Semua paket membuka booking &amp; invoice tanpa batas selama masa aktif.
         </p>
       </div>
     </section>
@@ -49,6 +68,8 @@ export function PricingSection() {
 
 function PricingCard({ plan }: { plan: Plan }) {
   const price = plan.price
+  const normalPrice = plan.normalPrice ?? null
+  // `price` null berarti admin belum menetapkan harga — paket tidak bisa dibeli.
   const available = price !== null
 
   return (
@@ -60,7 +81,7 @@ function PricingCard({ plan }: { plan: Plan }) {
     >
       {plan.highlight ? (
         <span className="absolute -top-2.5 left-5 rounded-full bg-brand-400 px-2.5 py-0.5 text-2xs font-semibold uppercase tracking-wide text-ink-900">
-          Populer
+          Paling hemat
         </span>
       ) : null}
 
@@ -76,14 +97,25 @@ function PricingCard({ plan }: { plan: Plan }) {
         )}
       </div>
 
-      <p
-        className={cn(
-          'mt-3 text-heading font-semibold tabular-nums',
-          available ? 'text-ink-900' : 'text-ink-400',
-        )}
-      >
-        {available ? formatCurrency(price) : 'Segera'}
-      </p>
+      <div className="mt-3 flex items-baseline gap-2">
+        <p
+          className={cn(
+            'text-heading font-semibold tabular-nums',
+            available ? 'text-ink-900' : 'text-ink-400',
+          )}
+        >
+          {available ? formatCurrency(price) : 'Segera'}
+        </p>
+        {/*
+          Harga normal hanya ditampilkan bila lebih tinggi dari harga yang
+          dibayar — kalau sama, mencoretnya berarti mengarang diskon.
+        */}
+        {available && normalPrice !== null ? (
+          <p className="text-meta tabular-nums text-ink-400 line-through">
+            {formatCurrency(normalPrice)}
+          </p>
+        ) : null}
+      </div>
       <p className="mt-0.5 text-caption text-ink-400">
         {available ? 'per paket, sekali bayar' : 'Harga belum ditetapkan'}
       </p>
@@ -99,8 +131,8 @@ function PricingCard({ plan }: { plan: Plan }) {
 
       <div className="mt-auto pt-5">
         {available ? (
-          <GoogleSignInCta
-            label="Mulai dengan Google"
+          <SignUpCta
+            label="Daftar & pilih paket"
             size="md"
             block
             variant={plan.highlight ? 'primary' : 'secondary'}

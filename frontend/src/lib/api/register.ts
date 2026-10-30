@@ -1,4 +1,4 @@
-import { apiRequest } from './client'
+import { apiRequest, backendUrl } from './client'
 
 /** Kategori untuk dropdown pendaftaran. */
 export interface RegistrationCategory {
@@ -46,7 +46,7 @@ export async function fetchRegistrationCategories(): Promise<RegistrationCategor
 async function ensureCsrfCookie(): Promise<void> {
   if (document.cookie.includes('XSRF-TOKEN=')) return
 
-  await fetch('/sanctum/csrf-cookie', {
+  await fetch(backendUrl('/sanctum/csrf-cookie'), {
     credentials: 'include',
     headers: { Accept: 'application/json' },
   })

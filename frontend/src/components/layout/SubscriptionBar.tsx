@@ -9,7 +9,7 @@ import type { SubscriptionSummary } from '@/types/booking'
  * Strip status langganan di atas halaman booking.
  *
  * Menjelaskan sisa jatah trial atau masa aktif paket. Sesuai PRD, batas hanya
- * berlaku selama trial (2 booking + 2 invoice, sekali pakai); vendor dengan
+ * berlaku selama masa uji; vendor dengan
  * langganan aktif melihat pesan tanpa batas.
  */
 export function SubscriptionBar({ subscription }: { subscription: SubscriptionSummary }) {

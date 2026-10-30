@@ -19,9 +19,9 @@ const STEPS: WorkflowStep[] = [
   {
     step: '01',
     icon: LogIn,
-    title: 'Masuk dengan akun Google',
+    title: 'Daftar & masuk',
     description:
-      'Satu klik, tanpa kata sandi. Akun vendor disiapkan admin — tidak ada registrasi publik.',
+      'Daftar gratis dengan email Gmail, akun langsung aktif. Masuk berikutnya cukup satu klik dengan Google.',
   },
   {
     step: '02',

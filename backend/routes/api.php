@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\PackageController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\PublicInvoiceController;
+use App\Http\Controllers\Api\PublicPlanController;
 use App\Http\Controllers\Api\RegisterController;
 use App\Http\Controllers\Api\PublicScheduleController;
 use App\Http\Controllers\Api\RevenueController;
@@ -299,4 +300,12 @@ Route::prefix('public')->group(function () {
      */
     Route::get('schedules/{slug}', [PublicScheduleController::class, 'show'])
         ->name('public.schedules.show');
+
+    /*
+     * Katalog paket untuk halaman promosi. Publik karena calon vendor belum
+     * punya akun saat membaca halaman jualan; `api/plans` tetap butuh login
+     * untuk kebutuhan di dalam aplikasi.
+     */
+    Route::get('plans', [PublicPlanController::class, 'index'])
+        ->name('public.plans.index');
 });

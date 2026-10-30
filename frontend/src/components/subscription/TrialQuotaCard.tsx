@@ -6,7 +6,7 @@ import { cn } from '@/lib/cn'
 import type { SubscriptionSummary } from '@/types/booking'
 
 /**
- * Kartu sisa kuota masa trial (PRD: 2 booking + 2 invoice, sekali pakai).
+ * Kartu status masa uji. Kuota transaksi sudah dihapus — masa uji berbasis waktu.
  *
  * Menampilkan dua bar progres — booking dan invoice — dengan penekanan naik
  * saat jatah tinggal satu dan jadi merah saat habis. Hanya untuk vendor trial:

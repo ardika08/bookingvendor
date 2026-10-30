@@ -2,6 +2,7 @@ import { LoaderCircle, ShieldCheck, X } from '@/components/ui/icons'
 import { useEffect, useRef, useState } from 'react'
 import { clearAuthRole, readAuthRole, type AuthRole } from '@/lib/auth-session'
 import { GoogleMark } from '@/components/auth/GoogleMark'
+import { backendUrl } from '@/lib/api/client'
 
 /**
  * Halaman masuk (`/login`) — pintu satu-satunya ke aplikasi.
@@ -55,7 +56,7 @@ export function LoginPage() {
    * OAuth belum dikonfigurasi dan tidak ada login kata sandi.
    */
   function handleDevLogin(role: 'vendor' | 'admin') {
-    window.location.href = `/auth/dev-login?as=${role}`
+    window.location.href = backendUrl(`/auth/dev-login?as=${role}`)
   }
 
   /** Hapus sesi aktif lalu segarkan tampilan halaman masuk. */
@@ -117,7 +118,7 @@ export function LoginPage() {
           ) : null}
 
           <a
-            href="/auth/google/redirect"
+            href={backendUrl('/auth/google/redirect')}
             className="flex h-11 w-full items-center justify-center gap-3 rounded-lg border border-ink-200 bg-white text-body font-medium text-ink-800 shadow-sm transition-colors hover:bg-ink-50"
           >
             <GoogleMark />

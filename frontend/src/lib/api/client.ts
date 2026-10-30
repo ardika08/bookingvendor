@@ -10,6 +10,44 @@
 const API_BASE_URL =
   (typeof import.meta !== 'undefined' ? import.meta.env?.VITE_API_BASE_URL : undefined) ?? '/api'
 
+/**
+ * Origin backend, dipakai untuk path yang TIDAK lewat `apiRequest` —
+ * khususnya `/auth/*` dan `/sanctum/*` yang diakses lewat navigasi browser
+ * (`window.location`, `href`) sehingga tidak bisa memakai base path API.
+ *
+ * Dua mode didukung tanpa mengubah kode:
+ *
+ * 1. **Satu domain** (`VITE_API_BASE_URL` kosong atau relatif `/api`) →
+ *    kembalikan string kosong, sehingga path tetap relatif dan cookie sesi
+ *    otomatis terkirim (same-origin). Ini mode yang dipakai sekarang.
+ *
+ * 2. **API subdomain** (`VITE_API_BASE_URL=https://api.contoh.com/api`) →
+ *    kembalikan `https://api.contoh.com`, sehingga `/auth/logout` menjadi
+ *    `https://api.contoh.com/auth/logout`. Wajib diimbangi
+ *    `SESSION_DOMAIN=.contoh.com` dan `SANCTUM_STATEFUL_DOMAINS` di backend,
+ *    supaya cookie sesi ikut lintas subdomain.
+ *
+ * Dengan begitu pindah dari mode 1 ke mode 2 cukup lewat env saat build,
+ * tanpa menyentuh kode.
+ */
+export const BACKEND_ORIGIN: string = (() => {
+  if (!API_BASE_URL || API_BASE_URL.startsWith('/')) return ''
+
+  try {
+    return new URL(API_BASE_URL).origin
+  } catch {
+    return ''
+  }
+})()
+
+/**
+ * URL lengkap menuju path backend yang diakses browser secara langsung
+ * (bukan lewat fetch `apiRequest`), mis. untuk navigasi OAuth dan logout.
+ */
+export function backendUrl(path: string): string {
+  return `${BACKEND_ORIGIN}${path}`
+}
+
 /** Error API dengan status HTTP + field error dari validasi Laravel. */
 export class ApiError extends Error {
   readonly status: number

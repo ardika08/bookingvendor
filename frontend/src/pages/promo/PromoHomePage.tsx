@@ -4,7 +4,8 @@ import {
   ShieldCheck,
   Ticket,
 } from '@/components/ui/icons'
-import { GoogleSignInCta } from '@/components/promo/GoogleSignInCta'
+import { Link } from 'react-router-dom'
+import { SignUpCta } from '@/components/promo/SignUpCta'
 import { BenefitHighlights } from '@/components/promo/BenefitHighlights'
 import { WorkflowSteps } from '@/components/promo/WorkflowSteps'
 import { PricingSection } from '@/components/promo/PricingSection'
@@ -13,10 +14,13 @@ import { FaqSection } from '@/components/promo/FaqSection'
 /**
  * Isi halaman promosi (`/`).
  *
- * Kerangka isi: hero ringkas dengan CTA utama "Masuk dengan Google" dan
- * penanda bagian yang akan diisi task berikutnya (#fitur, #harga, #faq).
- * Fokus pesan sesuai PRD: alat operasional vendor pernikahan, trial 2 booking +
- * 2 invoice, tanpa registrasi publik.
+ * Pesan utama: alat operasional vendor pernikahan, uji coba 30 hari dengan
+ * semua fitur terbuka, dan pendaftaran mandiri.
+ *
+ * CTA utama mengarah ke `/daftar`, bukan `/login`. Sebelumnya hanya ada
+ * "Masuk dengan Google", sehingga calon vendor yang belum punya akun harus
+ * menemukan sendiri tautan kecil di halaman masuk — padahal justru pendaftaran
+ * yang perlu ditonjolkan saat produk sedang mencari pengguna baru.
  */
 export function PromoHomePage() {
   return (
@@ -30,7 +34,7 @@ export function PromoHomePage() {
           <div className="mx-auto max-w-2xl text-center">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-3 py-1 text-caption font-medium text-brand-700 ring-1 ring-inset ring-brand-200">
               <Ticket className="size-3.5" />
-              Trial 2 booking + 2 invoice — tanpa kartu kredit
+              Gratis 30 hari, semua fitur terbuka — tanpa kartu kredit
             </span>
 
             <h1 className="mt-5 text-display leading-tight tracking-tight text-ink-900 sm:text-[2.625rem] sm:leading-[1.1]">
@@ -44,7 +48,7 @@ export function PromoHomePage() {
             </p>
 
             <div className="mt-7 flex flex-col items-center justify-center gap-2.5 sm:flex-row">
-              <GoogleSignInCta size="lg" className="w-full sm:w-auto" />
+              <SignUpCta size="lg" className="w-full sm:w-auto" />
               <a
                 href="#harga"
                 className="inline-flex h-11 w-full items-center justify-center rounded-lg bg-white px-5 text-body font-medium text-ink-700 shadow-sm ring-1 ring-ink-200 transition-colors hover:bg-ink-50 sm:w-auto"
@@ -54,7 +58,7 @@ export function PromoHomePage() {
             </div>
 
             <p className="mt-3 text-caption text-ink-400">
-              Tidak ada registrasi publik — akun vendor disiapkan admin.
+              Cukup daftar dengan email Gmail — akun langsung aktif, tanpa verifikasi.
             </p>
           </div>
 
@@ -72,7 +76,7 @@ export function PromoHomePage() {
             <Highlight
               icon={<ShieldCheck className="size-4" />}
               title="Masuk satu klik"
-              note="Cukup akun Google yang sudah terdaftar sebagai vendor."
+              note="Setelah mendaftar, masuk berikutnya cukup dengan akun Google."
             />
           </ul>
         </div>
@@ -92,17 +96,24 @@ export function PromoHomePage() {
             Siap menata jadwal vendor lebih rapi?
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-body leading-relaxed text-ink-300">
-            Masuk dengan akun Google yang sudah terdaftar, atau minta admin menambahkan vendor
-            kamu. Masa trial langsung aktif tanpa kartu kredit.
+            Daftar gratis dan pakai semua fitur selama 30 hari. Setelah itu pilih paket yang
+            paling pas — atau berhenti, tanpa biaya apa pun.
           </p>
           <div className="mt-7 flex flex-col items-center justify-center gap-2.5 sm:flex-row">
-            <GoogleSignInCta size="lg" className="w-full sm:w-auto" />
-            <a
-              href="#harga"
-              className="inline-flex h-11 w-full items-center justify-center rounded-lg bg-white/10 px-5 text-body font-medium text-white ring-1 ring-white/20 transition-colors hover:bg-white/15 sm:w-auto"
+            <SignUpCta size="lg" className="w-full sm:w-auto" />
+            {/*
+              Tombol polos, bukan `GoogleSignInCta variant="ghost"`: varian itu
+              membawa `text-ink-700` yang gelap dan tidak terbaca di atas latar
+              `ink-900`. Menambahkan `text-ink-300` tidak menolong karena Tailwind
+              memilih berdasarkan urutan stylesheet, bukan urutan class — warna
+              gelapnya tetap menang dan kontrasnya jatuh ke 1.86:1.
+            */}
+            <Link
+              to="/login"
+              className="inline-flex h-11 w-full items-center justify-center rounded-lg px-5 text-body font-medium text-ink-300 ring-1 ring-white/20 transition-colors hover:bg-white/10 hover:text-white sm:w-auto"
             >
-              Bandingkan paket
-            </a>
+              Sudah punya akun
+            </Link>
           </div>
         </div>
       </section>
@@ -129,5 +140,3 @@ function Highlight({
     </li>
   )
 }
-
-

@@ -6,8 +6,10 @@ import { cn } from '@/lib/cn'
  * Ajakan "Masuk dengan Google" yang dipakai ulang di halaman promosi.
  *
  * Satu komponen untuk header, hero, dan CTA penutup agar label, ikon, dan gaya
- * tombol selalu sama. Selalu mengarah ke `/login` — dari sana alur OAuth
- * dimulai. `variant` membedakan CTA utama dari tautan sekunder.
+ * tombol selalu sama. `variant` membedakan CTA utama dari tautan sekunder.
+ *
+ * `to` bisa diarahkan ke halaman lain bila tombolnya bukan untuk masuk — lihat
+ * `SignUpCta` yang memakai komponen ini untuk mendaftar.
  */
 
 type Variant = 'primary' | 'secondary' | 'ghost'
@@ -33,6 +35,8 @@ export function GoogleSignInCta({
   size = 'md',
   block = false,
   className,
+  /** Tujuan tombol. Default `/login` (alur OAuth). */
+  to = '/login',
 }: {
   label?: string
   variant?: Variant
@@ -40,10 +44,11 @@ export function GoogleSignInCta({
   /** Lebar penuh — dipakai di hero dan menu mobile. */
   block?: boolean
   className?: string
+  to?: string
 }) {
   return (
     <Link
-      to="/login"
+      to={to}
       className={cn(
         'inline-flex items-center justify-center rounded-lg font-medium transition-colors',
         VARIANT_CLASS[variant],
