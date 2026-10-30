@@ -151,7 +151,14 @@ export function UpgradePage() {
                   Paket kamu saat ini
                 </span>
               ) : plan.price !== null ? (
-                <ButtonLink to={`/upgrade/checkout/${plan.id}`} className="w-full">
+                /*
+                 * Awalan `plan-` wajib: `CheckoutRoute` memakainya untuk
+                 * membedakan titik masuk dari katalog (transaksi belum dibuat)
+                 * dengan melanjutkan transaksi pending (`pay-*`/id payment).
+                 * Tanpa awalan, id paket dibaca sebagai id payment dan halaman
+                 * gagal memuat.
+                 */
+                <ButtonLink to={`/upgrade/checkout/plan-${plan.id}`} className="w-full">
                   Pilih {plan.name}
                 </ButtonLink>
               ) : (

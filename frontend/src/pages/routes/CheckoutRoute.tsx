@@ -33,7 +33,9 @@ import type {
 export function CheckoutRoute() {
   const { ref = '' } = useParams()
 
-  if (ref.startsWith('plan-')) return <PlanCheckoutRoute planId={ref} />
+  // `plan-<id>` = masuk dari katalog paket; selain itu diperlakukan sebagai
+  // id payment (melanjutkan transaksi pending).
+  if (ref.startsWith('plan-')) return <PlanCheckoutRoute planId={ref.slice('plan-'.length)} />
   return <PaymentCheckoutRoute paymentId={ref} />
 }
 
