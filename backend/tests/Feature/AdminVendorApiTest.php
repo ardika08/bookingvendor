@@ -162,7 +162,11 @@ class AdminVendorApiTest extends TestCase
             ->assertJsonPath('category', 'Wedding Organizer')
             ->assertJsonPath('isActive', true)
             ->assertJsonPath('subscription.status', 'trial')
-            ->assertJsonPath('subscription.endsAt', null);
+            // Trial kini berbasis waktu: 30 hari sejak vendor dibuat.
+            ->assertJsonPath(
+                'subscription.endsAt',
+                now()->addDays(30)->toDateString(),
+            );
 
         $this->assertDatabaseHas('users', ['email' => 'dika@lumenwedding.id', 'name' => 'Dika Pratama']);
         $this->assertDatabaseHas('vendors', ['name' => 'Lumen Wedding Story', 'slug' => 'lumen-wedding-story']);

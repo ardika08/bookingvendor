@@ -4,48 +4,36 @@ namespace Tests\Feature;
 
 use App\Models\Booking;
 use App\Models\Client;
-use App\Models\Invoice;
 use App\Models\User;
 use App\Models\Vendor;
-use Illuminate\Database\Schema\Blueprint;
+use App\Services\SubscriptionStatus;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 /**
- * Uji middleware pembatas invoice masa trial.
+ * Uji penegakan masa uji (trial) berbasis **waktu**, bukan kuota transaksi.
  *
- * Tabel `subscriptions` belum masuk skema resmi (fitur langganan menyusul),
- * jadi dibuat di sini hanya untuk menguji penegakan kuota. Begitu tabel asli
- * tersedia, middleware otomatis aktif tanpa perubahan kode.
+ * Sebelumnya trial dibatasi 2 booking + 2 invoice. Batas itu dihapus karena
+ * vendor wedding baru hanya memegang sedikit acara per bulan sehingga kuota
+ * habis sebelum mereka sempat mencoba alur lengkap. Sekarang trial berjalan
+ * 30 hari dengan akses penuh, lalu berhenti.
+ *
+ * Yang diuji di sini: selama masa uji semua transaksi boleh tanpa batas
+ * jumlah, dan setelah tanggal berakhir semuanya ditolak.
  */
 class InvoiceTrialQuotaTest extends TestCase
 {
     use RefreshDatabase;
 
     private Booking $booking;
+
     private Vendor $vendor;
 
     protected function setUp(): void
     {
         parent::setUp();
-
-        if (! Schema::hasTable('subscriptions')) {
-            Schema::create('subscriptions', function (Blueprint $table) {
-                $table->id();
-                $table->foreignId('vendor_id')->constrained()->cascadeOnDelete();
-                $table->foreignId('plan_id')->nullable();
-                $table->enum('status', ['trial', 'active', 'expired', 'cancelled'])->default('trial');
-                $table->date('starts_at')->nullable();
-                $table->date('ends_at')->nullable();
-                $table->unsignedInteger('trial_bookings_used')->default(0);
-                $table->unsignedInteger('trial_invoices_used')->default(0);
-                $table->decimal('amount_paid', 15, 2)->default(0);
-                $table->foreignId('activated_by')->nullable();
-                $table->timestamps();
-            });
-        }
 
         $user = User::create([
             'name' => 'Vendor Uji',
@@ -73,98 +61,123 @@ class InvoiceTrialQuotaTest extends TestCase
             'client_id' => $client->id,
             'event_date' => '2026-11-14',
             'status' => 'confirmed',
-            'total_price' => 15000000,
+            'total_price' => 150000000,
         ]);
-    
+
         $this->loginAsVendorOf($this->vendor);
     }
 
-    private function subscribe(string $status, int $invoicesUsed): void
+    /**
+     * Buat baris langganan trial dengan tanggal berakhir tertentu.
+     */
+    private function trialEnding(?Carbon $endsAt): void
     {
         DB::table('subscriptions')->insert([
             'vendor_id' => $this->vendor->id,
-            'status' => $status,
+            'status' => 'trial',
+            'starts_at' => now()->subDays(30)->toDateString(),
+            'ends_at' => $endsAt?->toDateString(),
             'trial_bookings_used' => 0,
-            'trial_invoices_used' => $invoicesUsed,
+            'trial_invoices_used' => 0,
             'amount_paid' => 0,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
     }
 
-    private function invoicePayload(): array
+    private function invoicePayload(float $amount = 1000000): array
     {
         return [
             'type' => 'dp',
-            'amount' => 1000000,
+            'amount' => $amount,
             'issued_at' => '2026-10-23',
             'due_at' => '2026-10-30',
         ];
     }
 
-    public function test_trial_dengan_jatah_tersisa_boleh_membuat_invoice(): void
+    /** Selama masa uji, jumlah invoice tidak dibatasi. */
+    public function test_trial_aktif_boleh_membuat_banyak_invoice(): void
     {
-        $this->subscribe('trial', 1);
+        $this->trialEnding(Carbon::today()->addDays(10));
 
-        $this->postJson("/api/bookings/{$this->booking->id}/invoices", $this->invoicePayload())
-            ->assertCreated();
+        // Lima invoice berturut-turut — dulu diblokir pada invoice ketiga.
+        for ($i = 0; $i < 5; $i++) {
+            $this->postJson("/api/bookings/{$this->booking->id}/invoices", $this->invoicePayload(1000000))
+                ->assertCreated();
+        }
 
         $this->assertSame(
-            2,
-            (int) DB::table('subscriptions')->where('vendor_id', $this->vendor->id)->value('trial_invoices_used'),
+            5,
+            $this->booking->invoices()->count(),
         );
     }
 
-    public function test_trial_yang_jatahnya_habis_ditolak_dengan_kode(): void
+    /** Setelah tanggal berakhir, invoice baru ditolak. */
+    public function test_trial_berakhir_menolak_invoice_baru(): void
     {
-        $this->subscribe('trial', 2);
+        $this->trialEnding(Carbon::today()->subDay());
 
         $this->postJson("/api/bookings/{$this->booking->id}/invoices", $this->invoicePayload())
             ->assertStatus(422)
-            ->assertJsonPath('code', 'trial_limit_reached')
-            ->assertJsonPath('message', 'Jatah trial invoice sudah habis. Berlangganan untuk membuat invoice tanpa batas.');
-
-        $this->assertDatabaseCount('invoices', 0);
+            ->assertJsonPath('code', SubscriptionStatus::CODE_EXPIRED);
     }
 
-    public function test_middleware_hanya_memblokir_pembuatan_invoice(): void
+    /** Setelah tanggal berakhir, booking baru juga ditolak. */
+    public function test_trial_berakhir_menolak_booking_baru(): void
     {
-        $this->subscribe('trial', 2);
+        $this->trialEnding(Carbon::today()->subDay());
 
-        // Daftar invoice tetap bisa dibaca meski jatah habis.
-        $this->getJson("/api/bookings/{$this->booking->id}/invoices")
-            ->assertOk()
-            ->assertJsonCount(0);
+        $this->postJson('/api/bookings', [
+            'client' => ['name' => 'Klien Baru', 'phone' => '6281200001111'],
+            'event_date' => '2027-01-10',
+            'event_time' => '10:00',
+            'status' => 'tentative',
+            'total_price' => 5000000,
+        ])->assertStatus(422)->assertJsonPath('code', SubscriptionStatus::CODE_EXPIRED);
     }
 
-    public function test_langganan_aktif_tanpa_batas(): void
+    /**
+     * Trial yang habis tidak mendapat masa tenggang — beda dengan langganan
+     * berbayar. Kalau diberi, total masa gratis jadi 37 hari.
+     */
+    public function test_trial_berakhir_tidak_mendapat_masa_tenggang(): void
     {
-        $this->subscribe('active', 99);
+        $statuses = app(SubscriptionStatus::class);
 
-        $this->postJson("/api/bookings/{$this->booking->id}/invoices", $this->invoicePayload())
-            ->assertCreated();
+        $this->trialEnding(Carbon::today()->subDay());
 
-        // Penghitung trial tidak disentuh setelah berlangganan.
-        $this->assertSame(
-            99,
-            (int) DB::table('subscriptions')->where('vendor_id', $this->vendor->id)->value('trial_invoices_used'),
-        );
+        $resolved = $statuses->resolve($this->vendor);
+
+        $this->assertSame(SubscriptionStatus::EXPIRED, $resolved['status']);
+        $this->assertNull($resolved['graceEndsAt']);
+        $this->assertFalse($resolved['canCreateBooking']);
     }
 
-    public function test_invoice_trial_yang_dibatalkan_tetap_menghabiskan_jatah(): void
+    /** Trial yang masih berjalan dilaporkan sebagai `trial` beserta tanggalnya. */
+    public function test_trial_aktif_melaporkan_tanggal_berakhir(): void
     {
-        $this->subscribe('trial', 1);
+        $endsAt = Carbon::today()->addDays(12);
 
-        $response = $this->postJson("/api/bookings/{$this->booking->id}/invoices", $this->invoicePayload())
-            ->assertCreated();
+        $this->trialEnding($endsAt);
 
-        $invoiceId = $response->json('id');
-        $this->deleteJson("/api/invoices/{$invoiceId}")->assertOk();
+        $resolved = app(SubscriptionStatus::class)->resolve($this->vendor);
 
-        $this->assertSame(
-            2,
-            (int) DB::table('subscriptions')->where('vendor_id', $this->vendor->id)->value('trial_invoices_used'),
-        );
-        $this->assertSame(Invoice::STATUS_CANCELLED, Invoice::find($invoiceId)->status);
+        $this->assertSame(SubscriptionStatus::TRIAL, $resolved['status']);
+        $this->assertSame($endsAt->toDateString(), $resolved['endsAt']);
+        $this->assertTrue($resolved['canCreateBooking']);
+    }
+
+    /**
+     * Baris trial lama tanpa `ends_at` (dibuat sebelum aturan waktu berlaku)
+     * tetap dianggap trial tanpa batas supaya data lama tidak langsung terkunci.
+     */
+    public function test_trial_lama_tanpa_tanggal_berakhir_tetap_diizinkan(): void
+    {
+        $this->trialEnding(null);
+
+        $resolved = app(SubscriptionStatus::class)->resolve($this->vendor);
+
+        $this->assertSame(SubscriptionStatus::TRIAL, $resolved['status']);
+        $this->assertTrue($resolved['canCreateBooking']);
     }
 }

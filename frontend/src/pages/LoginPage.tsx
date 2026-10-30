@@ -124,9 +124,12 @@ export function LoginPage() {
             Masuk dengan Google
           </a>
 
-          <p className="mt-4 text-center text-caption leading-relaxed text-ink-400">
-            Tidak ada registrasi publik. Akun vendor &amp; admin disiapkan admin —
-            cukup masuk lewat akun Google yang terdaftar.
+          <p className="mt-4 text-center text-caption leading-relaxed text-ink-500">
+            Belum punya akun?{' '}
+            <a href="/daftar" className="font-medium text-brand-700 hover:underline">
+              Daftar gratis 30 hari
+            </a>
+            {' '}— tanpa kartu kredit.
           </p>
 
           {/* Dev bypass: hanya muncul saat APP_ENV=local. Server mengembalikan

@@ -51,7 +51,7 @@ class DemoSeederTest extends TestCase
         // Admin tidak butuh profil vendor.
         $this->assertNull($admin->vendor);
 
-        $this->assertSame(8, Category::count());
+        $this->assertSame(13, Category::count());
     }
 
     public function test_seeder_membuat_paket_termasuk_satu_nonaktif(): void
@@ -73,7 +73,7 @@ class DemoSeederTest extends TestCase
         // dan memicu unique constraint pada slug/email.
         $this->assertSame(1, Vendor::count());
         $this->assertSame(3, Package::count());
-        $this->assertSame(8, Category::count());
+        $this->assertSame(13, Category::count());
         $this->assertSame(2, User::count());
     }
 

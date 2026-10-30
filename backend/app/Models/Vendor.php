@@ -15,6 +15,7 @@ class Vendor extends Model
     protected $fillable = [
         'user_id',
         'category_id',
+        'category_other',
         'name',
         'slug',
         'description',

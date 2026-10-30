@@ -1,7 +1,7 @@
 # ---------------------------------------------------------------------------
 # public_html/.htaccess — Booking Vendor di cPanel
 #
-# Tiga tugas: teruskan /api & /auth ke Laravel, layani aset statis,
+# Tiga tugas: teruskan /api, /auth & /sanctum ke Laravel, layani aset statis,
 # arahkan sisanya ke SPA (React Router).
 # ---------------------------------------------------------------------------
 
@@ -12,7 +12,11 @@
     # --- 1. Endpoint Laravel -------------------------------------------------
     # WAJIB paling atas. Tanpa ini, aturan SPA di bawah menangkap /api/me dan
     # mengembalikan index.html sehingga frontend menerima HTML, bukan JSON.
-    RewriteRule ^(api|auth)(/.*)?$ index.php [L,QSA]
+    #
+    # `/sanctum/csrf-cookie` ikut diteruskan: halaman pendaftaran publik
+    # mengirim POST sebelum punya sesi, jadi cookie XSRF-TOKEN harus dibuat
+    # lebih dulu. Tanpa aturan ini request itu jatuh ke SPA dan dijawab 419.
+    RewriteRule ^(api|auth|sanctum)(/.*)?$ index.php [L,QSA]
 
     # --- 2. Aset statis ------------------------------------------------------
     RewriteCond %{REQUEST_FILENAME} -f [OR]

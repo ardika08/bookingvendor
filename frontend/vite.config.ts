@@ -28,6 +28,16 @@ export default defineConfig({
         target: BACKEND_ORIGIN,
         changeOrigin: true,
       },
+      /*
+       * Endpoint CSRF Sanctum. Tanpa proxy ini, `/sanctum/csrf-cookie` jatuh
+       * ke Vite dan tidak pernah sampai ke Laravel, sehingga cookie
+       * `XSRF-TOKEN` tidak pernah dibuat. Akibatnya POST pertama dari halaman
+       * publik (pendaftaran) dijawab 419 CSRF token mismatch.
+       */
+      '/sanctum': {
+        target: BACKEND_ORIGIN,
+        changeOrigin: true,
+      },
     },
   },
 })

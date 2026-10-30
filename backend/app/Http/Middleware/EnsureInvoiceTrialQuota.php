@@ -4,20 +4,21 @@ namespace App\Http\Middleware;
 
 use App\Models\Booking;
 use App\Services\SubscriptionStatus;
-use App\Services\TrialQuota;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Middleware pembatas pembuatan invoice.
+ * Middleware penjaga pembuatan invoice.
  *
- * Dua lapis pemeriksaan, berurutan:
- * 1. **Status langganan** — vendor yang langganannya sudah lewat masa tenggang
- *    ditolak dengan kode `subscription_expired` (perlu perpanjang paket).
- * 2. **Kuota trial** — selama trial, jumlah invoice dibatasi
- *    `config('trial.invoices_limit')`; bila habis, ditolak dengan kode
- *    `trial_limit_reached` (frontend membuka `UpgradeModal`).
+ * Menegakkan **batas waktu** langganan/masa uji: vendor yang masa aktifnya
+ * sudah lewat ditolak dengan kode `subscription_expired` (frontend menampilkan
+ * ajakan memperpanjang).
+ *
+ * Kuota jumlah invoice sudah dihapus — trial kini berbasis waktu, sehingga
+ * selama masa uji vendor boleh menerbitkan invoice sebanyak yang dibutuhkan.
+ * Nama kelas dipertahankan agar alias middleware `invoice.trial` dan tes lama
+ * tidak perlu diubah.
  *
  * Vendor diturunkan dari booking pada route (`bookings/{booking}`). Validasi
  * payload tetap menjadi tanggung jawab FormRequest.
@@ -25,7 +26,6 @@ use Symfony\Component\HttpFoundation\Response;
 class EnsureInvoiceTrialQuota
 {
     public function __construct(
-        private readonly TrialQuota $quota,
         private readonly SubscriptionStatus $subscription,
     ) {
     }
@@ -41,20 +41,10 @@ class EnsureInvoiceTrialQuota
         $vendor = $booking->vendor;
         $status = $this->subscription->resolve($vendor);
 
-        // Langganan sudah lewat masa tenggang: tidak boleh membuat invoice.
         if (! $status['canCreateInvoice']) {
             return response()->json([
-                'message' => 'Langganan sudah berakhir. Perpanjang paket untuk membuat invoice baru.',
+                'message' => 'Masa aktif sudah berakhir. Perpanjang paket untuk membuat invoice baru.',
                 'code' => $status['code'] ?? SubscriptionStatus::CODE_EXPIRED,
-            ], 422);
-        }
-
-        // Selama trial, jatah invoice tetap dibatasi.
-        if ($status['status'] === SubscriptionStatus::TRIAL
-            && ! $this->quota->canCreateInvoice($vendor)) {
-            return response()->json([
-                'message' => $this->quota->rejectionMessage(),
-                'code' => TrialQuota::CODE,
             ], 422);
         }
 

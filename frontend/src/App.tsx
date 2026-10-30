@@ -33,6 +33,7 @@ import { RequireWriteAccess } from '@/components/auth/RequireWriteAccess'
 import { PackagesPage } from '@/pages/PackagesPage'
 import { ClientsPage } from '@/pages/ClientsPage'
 import { LoginPage } from '@/pages/LoginPage'
+import { RegisterPage } from '@/pages/RegisterPage'
 import { AccountProfilePage } from '@/pages/AccountProfilePage'
 import { PromoLayout } from '@/components/promo/PromoLayout'
 import { PromoHomePage } from '@/pages/promo/PromoHomePage'
@@ -65,6 +66,11 @@ export function App() {
         <Route index element={<PromoHomePage />} />
       </Route>
       <Route path="/login" element={<LoginPage />} />
+      {/*
+        Pendaftaran publik: di luar RoleGate karena dipakai calon vendor yang
+        belum punya akun sama sekali.
+      */}
+      <Route path="/daftar" element={<RegisterPage />} />
       <Route path="/invoice/:token" element={<PublicInvoiceRoute />} />
       <Route path="/jadwal/:slug" element={<PublicScheduleRoute />} />
       {/*

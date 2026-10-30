@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\PackageController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\PublicInvoiceController;
+use App\Http\Controllers\Api\RegisterController;
 use App\Http\Controllers\Api\PublicScheduleController;
 use App\Http\Controllers\Api\RevenueController;
 use App\Http\Controllers\Api\SubscriptionController;
@@ -58,6 +59,25 @@ Route::middleware('auth:sanctum')->get('me', [CurrentUserController::class, 'sho
 */
 Route::post('webhooks/duitku', DuitkuCallbackController::class)
     ->name('webhooks.duitku');
+
+/*
+| Pendaftaran vendor mandiri.
+|
+| Publik — dipakai calon vendor sebelum punya akun. Tanpa persetujuan admin.
+|
+| Rate limit sengaja HANYA di controller, bukan middleware `throttle` di sini:
+| `throttle` membalas pesan Inggris "Too Many Attempts." yang tidak bisa
+| diterjemahkan, sedangkan controller membalas pesan Indonesia yang menyebut
+| berapa menit harus menunggu. Controller juga hanya menghitung percobaan
+| GAGAL — pendaftaran yang berhasil membersihkan penghitung, sehingga vendor
+| sah tidak pernah tertahan karena salah ketik berulang.
+*/
+Route::post('register', [RegisterController::class, 'store'])
+    ->name('register.store');
+
+Route::get('register/categories', [RegisterController::class, 'categories'])
+    ->middleware('throttle:120,1')
+    ->name('register.categories');
 
 /*
 | Panel admin platform. Hanya pengguna berperan `admin`.
@@ -132,6 +152,11 @@ Route::middleware(['auth:sanctum', 'vendor.active'])->group(function () {
 
     Route::prefix('bookings/{booking}')->group(function () {
         Route::get('invoices', [InvoiceController::class, 'byBooking'])->name('bookings.invoices.index');
+        /*
+         * `invoice.trial` kini hanya menegakkan batas waktu masa aktif —
+         * kuota jumlah invoice sudah dihapus. Nama alias dipertahankan agar
+         * tidak perlu mengubah konfigurasi bootstrap.
+         */
         Route::post('invoices', [InvoiceController::class, 'store'])
             ->middleware(['invoice.trial', 'onboarding.complete'])
             ->name('bookings.invoices.store');

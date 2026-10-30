@@ -12,7 +12,6 @@ use App\Models\Client;
 use App\Models\Vendor;
 use App\Services\BookingScheduleSync;
 use App\Services\SubscriptionStatus;
-use App\Services\TrialQuota;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -34,7 +33,6 @@ class BookingController extends Controller
 
     public function __construct(
         private readonly BookingScheduleSync $schedule,
-        private readonly TrialQuota $quota,
         private readonly SubscriptionStatus $subscription,
     ) {
     }
@@ -248,13 +246,8 @@ class BookingController extends Controller
             ], 422);
         }
 
-        if ($status['status'] === SubscriptionStatus::TRIAL
-            && ! $this->quota->canCreateBooking($vendor)) {
-            return response()->json([
-                'message' => 'Jatah trial booking sudah habis. Berlangganan untuk membuat booking tanpa batas.',
-                'code' => TrialQuota::CODE,
-            ], 422);
-        }
+        // Batas waktu trial ditegakkan lewat `canCreateBooking` di atas —
+        // tidak ada lagi kuota jumlah booking selama masa uji.
 
         $validated = $request->validated();
 
@@ -276,8 +269,6 @@ class BookingController extends Controller
 
             return $booking;
         });
-
-        $this->quota->recordBookingUsage($vendor);
 
         $booking->load('client', 'package')->loadCount('invoices');
 

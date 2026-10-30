@@ -38,7 +38,7 @@ class SubscriptionActivator
 
         $paidAt ??= now();
 
-        return DB::transaction(function () use ($payment, $paidAt): bool {
+        $activated = DB::transaction(function () use ($payment, $paidAt): bool {
             $plan = $payment->plan;
 
             if ($plan === null) {
@@ -72,6 +72,21 @@ class SubscriptionActivator
 
             return true;
         });
+
+        /*
+         * Email dikirim SETELAH transaksi commit. Kalau dikirim di dalam
+         * transaksi dan pengiriman gagal, email bisa terkirim padahal
+         * perubahannya di-rollback — vendor menerima tanda terima untuk
+         * langganan yang tidak aktif.
+         *
+         * `NotificationMailer` menelan kegagalan SMTP, jadi aktivasi yang
+         * sudah berhasil tidak pernah dibatalkan hanya karena email.
+         */
+        if ($activated) {
+            app(NotificationMailer::class)->sendSubscriptionPaid($payment->refresh());
+        }
+
+        return $activated;
     }
 
     /**

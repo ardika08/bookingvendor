@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Vendor;
 use App\Models\VendorSchedule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 /**
@@ -613,26 +614,55 @@ class BookingCrudTest extends TestCase
     // Trial limit
     // ------------------------------------------------------------------
 
-    public function test_buat_booking_menolak_saat_trial_habis(): void
+    /**
+     * Trial kini berbasis waktu: jumlah booking tidak lagi dibatasi selama
+     * masa uji masih berjalan. Dulu booking ketiga ditolak `trial_limit_reached`.
+     */
+    public function test_buat_booking_tidak_dibatasi_selama_masa_uji(): void
     {
-        // Buat dua booking agar jatah trial (2) habis.
-        Booking::create([
+        // Empat booking berturut-turut — dulu diblokir pada booking ketiga.
+        for ($i = 0; $i < 4; $i++) {
+            $this->postJson('/api/bookings', [
+                'client' => ['name' => 'Klien '.$i, 'phone' => '08129988776'.$i, 'email' => null],
+                'event_date' => '2027-0'.($i + 1).'-10',
+                'event_time' => null,
+                'event_location' => null,
+                'package_id' => null,
+                'total_price' => 5000000,
+                'status' => 'tentative',
+                'notes' => null,
+            ])->assertCreated();
+        }
+
+        $this->assertSame(4, $this->vendor->bookings()->count());
+    }
+
+    /**
+     * Setelah masa uji berakhir, booking baru ditolak dengan kode langganan
+     * (bukan kode kuota yang sudah tidak dipakai).
+     */
+    public function test_buat_booking_menolak_setelah_masa_uji_berakhir(): void
+    {
+        /*
+         * Vendor di tes ini belum punya baris langganan; tanpa baris,
+         * `SubscriptionStatus` memperlakukannya sebagai trial tanpa batas
+         * (perilaku cadangan untuk data lama). Jadi baris trial kedaluwarsa
+         * harus dibuat dulu supaya batas waktunya benar-benar diuji.
+         */
+        DB::table('subscriptions')->insert([
             'vendor_id' => $this->vendor->id,
-            'client_id' => $this->client->id,
-            'event_date' => '2026-11-14',
-            'status' => 'tentative',
-            'total_price' => 5000000,
-        ]);
-        Booking::create([
-            'vendor_id' => $this->vendor->id,
-            'client_id' => $this->client->id,
-            'event_date' => '2026-12-01',
-            'status' => 'tentative',
-            'total_price' => 5000000,
+            'status' => 'trial',
+            'starts_at' => now()->subDays(30)->toDateString(),
+            'ends_at' => now()->subDay()->toDateString(),
+            'trial_bookings_used' => 0,
+            'trial_invoices_used' => 0,
+            'amount_paid' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         $this->postJson('/api/bookings', [
-            'client' => ['name' => 'Klien Ketiga', 'phone' => '081299887766', 'email' => null],
+            'client' => ['name' => 'Klien Baru', 'phone' => '081299887766', 'email' => null],
             'event_date' => '2027-01-10',
             'event_time' => null,
             'event_location' => null,
@@ -642,6 +672,6 @@ class BookingCrudTest extends TestCase
             'notes' => null,
         ])
             ->assertStatus(422)
-            ->assertJsonPath('code', 'trial_limit_reached');
+            ->assertJsonPath('code', \App\Services\SubscriptionStatus::CODE_EXPIRED);
     }
 }

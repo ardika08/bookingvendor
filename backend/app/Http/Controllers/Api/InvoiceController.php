@@ -10,7 +10,6 @@ use App\Models\Booking;
 use App\Models\Invoice;
 use App\Services\InvoiceCalculator;
 use App\Services\InvoiceNumberGenerator;
-use App\Services\TrialQuota;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -33,7 +32,6 @@ class InvoiceController extends Controller
 {
     public function __construct(
         private readonly InvoiceNumberGenerator $numbers,
-        private readonly TrialQuota $quota,
     ) {
     }
 
@@ -123,9 +121,7 @@ class InvoiceController extends Controller
      */
     public function store(StoreInvoiceRequest $request, Booking $booking): JsonResponse
     {
-        // Kuota trial sudah diperiksa middleware `invoice.trial`.
-        $vendor = $booking->vendor;
-
+        // Batas waktu trial ditegakkan middleware `vendor.active`.
         $validated = $request->validated();
         $issuedAt = Carbon::createFromFormat('Y-m-d', $validated['issued_at'])->startOfDay();
 
@@ -160,8 +156,6 @@ class InvoiceController extends Controller
                 return $invoice;
             },
         );
-
-        $this->quota->recordInvoiceUsage($vendor);
 
         $invoice->load('booking.client', 'booking.package');
 

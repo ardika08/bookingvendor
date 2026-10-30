@@ -23,6 +23,7 @@ const APP_NAME = 'Booking Vendor'
 const STATIC_TITLES: Record<string, string> = {
   '/': 'Beranda',
   '/login': 'Masuk',
+  '/daftar': 'Daftar Vendor',
   '/onboarding': 'Lengkapi Profil',
   '/dashboard': 'Dashboard',
   '/bookings': 'Booking',

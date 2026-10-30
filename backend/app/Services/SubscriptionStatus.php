@@ -53,7 +53,17 @@ class SubscriptionStatus
         $endsAt = $this->parseDate($subscription->ends_at ?? null);
 
         return match ($subscription->status) {
-            'trial' => $this->result(self::TRIAL, $endsAt, null, true, null),
+            /*
+             * Trial kini berbasis waktu, bukan kuota: masa uji berakhir pada
+             * `ends_at` (30 hari sejak mendaftar) dan setelah itu vendor
+             * mengikuti aturan yang sama dengan langganan berbayar — termasuk
+             * masa tenggang. `ends_at` null hanya terjadi pada baris lama yang
+             * dibuat sebelum aturan ini berlaku; baris seperti itu diperlakukan
+             * sebagai trial tanpa batas agar data lama tidak langsung terkunci.
+             */
+            'trial' => $endsAt === null
+                ? $this->result(self::TRIAL, null, null, true, null)
+                : $this->resolveTrial($endsAt, $today),
 
             'active' => $this->resolveActive($endsAt, $today),
 
@@ -95,6 +105,26 @@ class SubscriptionStatus
             self::EXPIRED => 'Langganan berakhir',
             default => 'Masa trial',
         };
+    }
+
+    /**
+     * Trial berbasis waktu.
+     *
+     * Berbeda dari langganan berbayar, trial yang habis **tidak** mendapat masa
+     * tenggang. Masa tenggang adalah kelonggaran untuk pelanggan yang sudah
+     * membayar dan lupa memperpanjang; memberikannya ke trial berarti total
+     * masa gratis menjadi 37 hari dan vendor yang belum pernah membayar tidak
+     * punya alasan untuk segera memutuskan.
+     *
+     * @return array{status: string, endsAt: ?string, graceEndsAt: ?string, canCreateInvoice: bool, code: ?string}
+     */
+    private function resolveTrial(Carbon $endsAt, Carbon $today): array
+    {
+        if ($today->lessThanOrEqualTo($endsAt)) {
+            return $this->result(self::TRIAL, $endsAt, null, true, null);
+        }
+
+        return $this->result(self::EXPIRED, $endsAt, null, false, self::CODE_EXPIRED);
     }
 
     /**

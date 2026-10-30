@@ -13,7 +13,6 @@ use App\Services\SubscriptionStatus;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 /**
@@ -157,7 +156,7 @@ class AdminVendorController extends Controller
                 'is_active' => true,
             ]);
 
-            $this->startTrialSubscription($vendor);
+            app(\App\Services\TrialStarter::class)->start($vendor);
 
             return $vendor;
         });
@@ -184,28 +183,4 @@ class AdminVendorController extends Controller
         return $slug;
     }
 
-    /**
-     * Mulai masa trial untuk vendor baru (bila tabel langganan tersedia).
-     *
-     * Trial = 2 booking + 2 invoice; penghitung disimpan di baris langganan.
-     */
-    private function startTrialSubscription(Vendor $vendor): void
-    {
-        if (! Schema::hasTable('subscriptions')) {
-            return;
-        }
-
-        DB::table('subscriptions')->insert([
-            'vendor_id' => $vendor->id,
-            'plan_id' => null,
-            'status' => 'trial',
-            'starts_at' => now()->toDateString(),
-            'ends_at' => null,
-            'trial_bookings_used' => 0,
-            'trial_invoices_used' => 0,
-            'amount_paid' => 0,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-    }
 }
