@@ -1,6 +1,7 @@
 import {
   CalendarClock,
   CalendarDays,
+  Crown,
   FileText,
   LayoutDashboard,
   LifeBuoy,
@@ -53,6 +54,12 @@ const SECONDARY_NAV: NavItem[] = [
    * halaman jadwal publik), jadi tidak lagi ditandai "soon".
    */
   { label: 'Paket Layanan', to: '/packages', icon: Package },
+  /*
+   * Langganan dipisah dari `/upgrade`: halaman itu menumpuk status dan riwayat
+   * di bawah katalog paket, sehingga vendor harus menggulir jauh hanya untuk
+   * melihat kapan masa aktifnya berakhir.
+   */
+  { label: 'Langganan', to: '/langganan', icon: Crown },
   { label: 'Akun Saya', to: '/settings/akun', icon: UserRound },
   { label: 'Pengaturan', to: '/settings', icon: Settings2 },
 ]

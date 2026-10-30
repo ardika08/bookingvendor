@@ -10,6 +10,7 @@ import { BookingsPage } from '@/pages/BookingsPage'
 import { CalendarPage } from '@/pages/CalendarPage'
 import { InvoicesPage } from '@/pages/InvoicesPage'
 import { UpgradePage } from '@/pages/UpgradePage'
+import { SubscriptionPage } from '@/pages/SubscriptionPage'
 import { ManageVendorsPage } from '@/pages/admin/ManageVendorsPage'
 import { VendorCreatePage } from '@/pages/admin/VendorCreatePage'
 import { VendorDetailPage } from '@/pages/admin/VendorDetailPage'
@@ -119,6 +120,7 @@ export function App() {
         <Route path="clients" element={<ClientsPage />} />
         <Route path="settings" element={<VendorProfileRoute />} />
         <Route path="settings/akun" element={<AccountProfilePage />} />
+        <Route path="langganan" element={<SubscriptionPage />} />
         <Route path="upgrade" element={<UpgradeRoute />} />
         <Route path="upgrade/checkout/:ref" element={<CheckoutRoute />} />
       </Route>
