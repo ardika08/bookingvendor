@@ -92,6 +92,19 @@ cd ~/bookingvendor
 composer install --no-dev --optimize-autoloader
 ```
 
+> **PENTING — jalankan ini SETELAH langkah 6 (`.env`).** `composer install`
+> menjalankan `artisan package:discover`, yang mem-boot aplikasi dan membaca
+> koneksi database. Bila `.env` belum ada, aplikasi memakai default SQLite dan
+> berhenti dengan pesan:
+>
+> ```
+> Database file at path [.../database/database.sqlite] does not exist.
+> ```
+>
+> Aplikasi sudah diperbaiki agar tidak lagi gagal pada kondisi itu (nilai
+> `.env` dipakai apa adanya), tetapi urutan yang benar tetap: `.env` dulu,
+> baru `composer install`.
+
 ---
 
 ## 4. `public_html/index.php`

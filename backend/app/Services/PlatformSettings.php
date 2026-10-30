@@ -20,6 +20,14 @@ use Illuminate\Support\Facades\Schema;
  * Migrasi belum dijalankan di environment tersebut, atau tes memakai database
  * tanpa tabel ini. Dalam kondisi itu config dari `.env` tetap dipakai, jadi
  * aplikasi tidak pernah gagal hanya karena tabel pengaturan tidak tersedia.
+ *
+ * BILA DATABASE BELUM BISA DIHUBUNGI SAMA SEKALI
+ * Kasus ini nyata saat pemasangan pertama: `composer install` menjalankan
+ * `artisan package:discover`, yang memicu boot aplikasi — padahal `.env`
+ * masih menunjuk database yang belum dibuat. Tanpa penanganan, pemasangan
+ * gagal di langkah pertama dengan pesan yang membingungkan soal file SQLite.
+ * Karena itu `available()` menelan kegagalan koneksi dan menganggap tabelnya
+ * tidak ada; nilai dari `.env` tetap dipakai.
  */
 class PlatformSettings
 {
@@ -54,10 +62,22 @@ class PlatformSettings
         ],
     ];
 
-    /** True bila tabel pengaturan tersedia di database saat ini. */
+    /**
+     * True bila tabel pengaturan tersedia di database saat ini.
+     *
+     * Kegagalan koneksi diperlakukan sebagai "tabel belum ada", bukan error:
+     * aplikasi harus tetap bisa boot saat database belum dibuat atau belum
+     * bisa dihubungi (mis. saat `composer install` pada pemasangan pertama,
+     * atau saat `php artisan config:cache` dijalankan sebelum migrasi).
+     * Pemanggil sudah menangani nilai `false` dengan memakai default `.env`.
+     */
     public function available(): bool
     {
-        return Schema::hasTable('platform_settings');
+        try {
+            return Schema::hasTable('platform_settings');
+        } catch (\Throwable) {
+            return false;
+        }
     }
 
     /**
