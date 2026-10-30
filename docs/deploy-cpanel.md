@@ -3,7 +3,7 @@
 Panduan memasang Booking Vendor di shared hosting cPanel. Ditulis untuk paket
 Webnesia: PHP 8.3 (bisa sampai 8.5), MySQL, akses Terminal.
 
-Target: **https://vendotkit.my.id**
+Target: **https://vendorkit.my.id**
 
 ---
 
@@ -146,8 +146,11 @@ menyajikan aset statis, dan mengarahkan semua route lain ke SPA (React Router).
     RewriteBase /
 
     # --- 1. Endpoint Laravel ---------------------------------------------
-    # /api/* dan /auth/* ditangani PHP, bukan SPA.
-    RewriteRule ^(api|auth)(/.*)?$ index.php [L,QSA]
+    # /api/*, /auth/*, dan /sanctum/* ditangani PHP, bukan SPA.
+    # `/sanctum/csrf-cookie` wajib ikut: halaman pendaftaran publik mengirim
+    # POST sebelum punya sesi, jadi cookie XSRF-TOKEN harus dibuat lebih dulu.
+    # Tanpa aturan ini request itu jatuh ke SPA dan dijawab 419.
+    RewriteRule ^(api|auth|sanctum)(/.*)?$ index.php [L,QSA]
 
     # --- 2. Aset statis ---------------------------------------------------
     # Berkas yang benar-benar ada di disk dilayani langsung.
@@ -176,7 +179,7 @@ Options -Indexes
 </IfModule>
 ```
 
-**Kenapa `RewriteRule ^(api|auth)` ditaruh paling atas:** tanpa itu, aturan SPA
+**Kenapa `RewriteRule ^(api|auth|sanctum)` ditaruh paling atas:** tanpa itu, aturan SPA
 di bawahnya akan menangkap `/api/me` dan mengembalikan `index.html`, sehingga
 frontend menerima HTML alih-alih JSON — gejalanya "JSON parse error" yang
 membingungkan.
@@ -198,9 +201,9 @@ APP_NAME="Booking Vendor"
 APP_ENV=production
 APP_KEY=                      # diisi oleh `php artisan key:generate`
 APP_DEBUG=false               # WAJIB false — jika true, stack trace & .env bocor
-APP_URL=https://vendotkit.my.id
+APP_URL=https://vendorkit.my.id
 
-FRONTEND_URL=https://vendotkit.my.id
+FRONTEND_URL=https://vendorkit.my.id
 LOG_CHANNEL=daily
 
 DB_CONNECTION=mysql
@@ -211,17 +214,17 @@ DB_USERNAME=USERNAME_bvuser
 DB_PASSWORD=...
 
 SESSION_DRIVER=database
-SESSION_DOMAIN=vendotkit.my.id
+SESSION_DOMAIN=vendorkit.my.id
 SESSION_SECURE_COOKIE=true    # cookie hanya dikirim lewat HTTPS
 SESSION_LIFETIME=120
 
-SANCTUM_STATEFUL_DOMAINS=vendotkit.my.id
+SANCTUM_STATEFUL_DOMAINS=vendorkit.my.id
 
 DUITKU_MERCHANT_CODE=...
 DUITKU_API_KEY=...
 DUITKU_SANDBOX=false          # WAJIB false di produksi
-DUITKU_CALLBACK_URL=https://vendotkit.my.id/api/webhooks/duitku
-DUITKU_RETURN_URL=https://vendotkit.my.id/subscription/success
+DUITKU_CALLBACK_URL=https://vendorkit.my.id/api/webhooks/duitku
+DUITKU_RETURN_URL=https://vendorkit.my.id/subscription/success
 DUITKU_METHODS=SP,NQ
 DUITKU_EXPIRY_MINUTES=1440
 ```
@@ -291,7 +294,7 @@ Login satu-satunya di produksi adalah Google. Tanpa langkah ini, tombol
 3. Isi **Authorized redirect URIs** dengan path callback Laravel:
 
    ```
-   https://vendotkit.my.id/auth/google/callback
+   https://vendorkit.my.id/auth/google/callback
    ```
 
    Harus **persis** sama dengan `GOOGLE_REDIRECT_URI` — beda satu karakter
@@ -306,7 +309,7 @@ Login satu-satunya di produksi adalah Google. Tanpa langkah ini, tombol
 ```dotenv
 GOOGLE_CLIENT_ID=xxxxxxxx.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=GOCSPX-xxxxxxxx
-GOOGLE_REDIRECT_URI="https://vendotkit.my.id/auth/google/callback"
+GOOGLE_REDIRECT_URI="https://vendorkit.my.id/auth/google/callback"
 ```
 
 > Perhatikan: `GOOGLE_REDIRECT_URI` **tidak boleh** dibiarkan memakai
@@ -357,9 +360,9 @@ Akun admin akan diarahkan ke `/admin`, vendor ke `/dashboard`.
 ## 10. Duitku
 
 1. Masuk dashboard Duitku → *Pengaturan → Callback URL*:
-   `https://vendotkit.my.id/api/webhooks/duitku`
-2. *Return URL*: `https://vendotkit.my.id/subscription/success`
-3. Pastikan DNS `vendotkit.my.id` **A record** → `103.138.189.51`
+   `https://vendorkit.my.id/api/webhooks/duitku`
+2. *Return URL*: `https://vendorkit.my.id/subscription/success`
+3. Pastikan DNS `vendorkit.my.id` **A record** → `103.138.189.51`
    (IP hosting, bukan IP VPS). TTL 300.
 4. Bila memakai Cloudflare, matikan proxy (mode *DNS only*) sampai callback
    terverifikasi — proxy dapat memblokir POST dari server Duitku.
@@ -374,19 +377,19 @@ set `DUITKU_CALLBACK_URL` ke URL tunnel.
 
 ```bash
 # 1. Halaman utama & SPA
-curl -sI https://vendotkit.my.id/ | head -3
+curl -sI https://vendorkit.my.id/ | head -3
 
 # 2. API merespons JSON, bukan HTML
-curl -s https://vendotkit.my.id/api/me | head -c 120
+curl -s https://vendorkit.my.id/api/me | head -c 120
 #    Harus: {"message":"Silakan masuk terlebih dahulu.","code":"unauthenticated"}
 
 # 3. Route publik SPA bisa di-refresh tanpa 404
-curl -sI https://vendotkit.my.id/dashboard | head -1
+curl -sI https://vendorkit.my.id/dashboard | head -1
 
 # 4. Webhook hidup (signature salah → 401, bukan 404/500)
 curl -s -o /dev/null -w "%{http_code}\n" -X POST \
   -H 'Content-Type: application/json' -d '{}' \
-  https://vendotkit.my.id/api/webhooks/duitku
+  https://vendorkit.my.id/api/webhooks/duitku
 #    Harus: 400 (payload tidak lengkap), bukan 404
 ```
 
@@ -404,7 +407,7 @@ tidak berubah.
 | 500 dan log kosong | Izin `storage/` salah | `chmod -R 775 storage bootstrap/cache` |
 | `/api/me` mengembalikan HTML | `.htaccess` tidak meneruskan `/api` | Cek urutan aturan rewrite |
 | Refresh di `/dashboard` → 404 | Aturan SPA hilang | Tambahkan `RewriteRule ^ index.html [L]` |
-| Login berhasil lalu langsung logout | `SESSION_DOMAIN` salah | Harus `vendotkit.my.id` tanpa `https://` |
+| Login berhasil lalu langsung logout | `SESSION_DOMAIN` salah | Harus `vendorkit.my.id` tanpa `https://` |
 | Login gagal, cookie tidak tersimpan | `SESSION_SECURE_COOKIE=true` tapi situs diakses via HTTP | Aktifkan SSL |
 | Ubah `.env` tidak berpengaruh | Config ter-cache | `php artisan config:cache` |
 | Webhook 404 | `DUITKU_CALLBACK_URL` salah path | Harus berakhir `/api/webhooks/duitku` |
