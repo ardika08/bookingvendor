@@ -208,6 +208,13 @@ class RegisterController extends Controller
     public function categories(): JsonResponse
     {
         $items = Category::query()
+            /*
+             * Urut `sort_order`, bukan `id`: pada instalasi baru, kategori
+             * tambahan dibuat migrasi lebih dulu sehingga id-nya lebih kecil
+             * dan "Wedding Organizer" jatuh ke bawah. Urutan id dijadikan
+             * penentu kedua agar stabil bila ada nilai yang sama.
+             */
+            ->orderBy('sort_order')
             ->orderBy('id')
             ->get(['id', 'name', 'slug'])
             ->map(fn (Category $category): array => [

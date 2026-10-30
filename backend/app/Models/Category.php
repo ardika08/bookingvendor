@@ -19,6 +19,7 @@ class Category extends Model
     protected $fillable = [
         'name',
         'slug',
+        'sort_order',
     ];
 
     public function vendors(): HasMany
