@@ -8,7 +8,6 @@ use App\Models\User;
 use App\Models\Vendor;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 /**
  * Data awal untuk pengembangan lokal: kategori referensi, satu admin, dan satu
@@ -24,37 +23,16 @@ use Illuminate\Support\Str;
  */
 class DemoVendorSeeder extends Seeder
 {
-    /**
-     * Kategori usaha sesuai PRD.
-     *
-     * @var array<int, string>
-     */
-    private const CATEGORIES = [
-        'Wedding Organizer',
-        'Fotografer / Videografer',
-        'Venue',
-        'Dekorasi',
-        'MUA',
-        'Catering',
-        'Seserahan',
-        'Lainnya',
-    ];
-
     public function run(): void
     {
-        $this->seedCategories();
+        /*
+         * Kategori inti dipindah ke `CategorySeeder` supaya instalasi produksi
+         * bisa membuatnya tanpa ikut data demo. Seeder ini memanggilnya agar
+         * perilaku lama (sekali `db:seed` langsung lengkap) tidak berubah.
+         */
+        $this->call(CategorySeeder::class);
         $this->seedAdmin();
         $this->seedVendor();
-    }
-
-    private function seedCategories(): void
-    {
-        foreach (self::CATEGORIES as $name) {
-            Category::updateOrCreate(
-                ['slug' => Str::slug($name)],
-                ['name' => $name],
-            );
-        }
     }
 
     /**
