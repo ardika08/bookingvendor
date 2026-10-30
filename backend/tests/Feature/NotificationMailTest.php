@@ -13,6 +13,7 @@ use App\Models\Vendor;
 use App\Services\NotificationMailer;
 use App\Services\SubscriptionActivator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
@@ -31,6 +32,14 @@ class NotificationMailTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        /*
+         * NotificationMailer melewati pengiriman bila mailer tidak aktif
+         * (`log`/`array`/`null`) — supaya tabel `jobs` tidak dipenuhi job yang
+         * tidak akan pernah berguna. Tes ini menguji alur pengiriman, jadi
+         * mailer harus dianggap aktif.
+         */
+        config(['mail.default' => 'smtp']);
 
         Category::create(['name' => 'MUA', 'slug' => 'mua']);
     }
@@ -178,5 +187,25 @@ class NotificationMailTest extends TestCase
         ]);
 
         return [$payment, $vendor];
+    }
+
+    /**
+     * Saat email dimatikan (`MAIL_MAILER=log`), tidak boleh ada job yang masuk
+     * antrean.
+     *
+     * Mailable memakai `ShouldQueue`, jadi tanpa penjagaan ini setiap
+     * pendaftaran menambah satu baris di tabel `jobs` yang tidak akan pernah
+     * diproses (tidak ada worker, dan mailer `log` memang tidak mengirim apa
+     * pun). Baris itu menumpuk selamanya.
+     */
+    public function test_mailer_mati_tidak_menumpuk_job_di_antrean(): void
+    {
+        config(['mail.default' => 'log']);
+        Mail::fake();
+
+        $this->register();
+
+        Mail::assertNothingSent();
+        $this->assertSame(0, DB::table('jobs')->count());
     }
 }

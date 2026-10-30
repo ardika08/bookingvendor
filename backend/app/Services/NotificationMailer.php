@@ -23,6 +23,13 @@ use Throwable;
  * memasukkan job ke antrean — pendaftaran dan aktivasi langganan tetap cepat.
  * Bila `QUEUE_CONNECTION=sync` (mis. saat tes), pengiriman berjalan langsung
  * tetapi tetap tidak melempar keluar.
+ *
+ * EMAIL DIMATIKAN (`MAIL_MAILER=log`)
+ * Mailable yang memakai `ShouldQueue` tetap MEMASUKKAN job ke tabel `jobs`
+ * meskipun mailer-nya `log` — job-nya hanya baru "mengirim" saat worker
+ * mengambilnya. Tanpa worker, baris itu menumpuk selamanya dan tidak ada satu
+ * pun email yang benar-benar terkirim. Karena itu pengiriman dilewati sepenuhnya
+ * bila mailer belum dikonfigurasi untuk mengirim sungguhan.
  */
 class NotificationMailer
 {
@@ -31,6 +38,10 @@ class NotificationMailer
      */
     public function sendVendorWelcome(Vendor $vendor, int $trialDays, ?string $trialEndsAt): void
     {
+        if (! $this->enabled()) {
+            return;
+        }
+
         $email = $vendor->contact_email;
 
         if (blank($email)) {
@@ -53,6 +64,10 @@ class NotificationMailer
      */
     public function sendSubscriptionPaid(SubscriptionPayment $payment): void
     {
+        if (! $this->enabled()) {
+            return;
+        }
+
         $vendor = $payment->vendor;
 
         if ($vendor === null) {
@@ -78,6 +93,23 @@ class NotificationMailer
         } catch (Throwable $exception) {
             $this->logFailure('subscription_paid', $email, $exception);
         }
+    }
+
+    /**
+     * True bila email benar-benar bisa dikirim.
+     *
+     * Mailer `log`, `array`, dan `null` tidak mengirim apa pun — hanya menulis
+     * ke log atau membuang. Pada kondisi itu pengiriman dilewati supaya tabel
+     * `jobs` tidak dipenuhi job yang tidak akan pernah berguna.
+     *
+     * Mailer `smtp`, `mail`, `ses`, `postmark`, `resend`, dan sejenisnya
+     * dianggap aktif.
+     */
+    private function enabled(): bool
+    {
+        $mailer = config('mail.default');
+
+        return ! in_array($mailer, ['log', 'array', 'null'], true);
     }
 
     private function logFailure(string $kind, string $email, Throwable $exception): void
