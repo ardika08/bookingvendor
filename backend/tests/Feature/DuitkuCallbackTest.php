@@ -253,4 +253,62 @@ class DuitkuCallbackTest extends TestCase
             ], 200),
         ]);
     }
+
+    /**
+     * Polling status (`GET /api/payments/{id}/status`) harus bisa mengaktifkan
+     * langganan tanpa menunggu webhook. Ini penting kalau webhook Duitku tertunda
+     * atau tidak sampai — vendor yang sudah membayar tidak boleh terjebak
+     * di "menunggu pembayaran" selamanya.
+     */
+    public function test_polling_status_mengaktifkan_langganan_tanpa_webhook(): void
+    {
+        [$payment, $vendor] = $this->pendingPayment();
+
+        // Gateway bilang lunas, tapi tidak ada callback yang masuk.
+        $this->fakeGatewayStatus('00');
+
+        $this->getJson("/api/payments/{$payment->id}/status")
+            ->assertOk()
+            ->assertJsonPath('status', 'confirmed');
+
+        $this->assertSame('paid', $payment->refresh()->status);
+        $this->assertNotNull(
+            Subscription::query()->where('vendor_id', $vendor->id)->first()?->ends_at,
+        );
+    }
+
+    /**
+     * Polling saat gateway masih `01` tidak boleh mengubah apa pun.
+     */
+    public function test_polling_status_saat_masih_proses_tidak_mengaktifkan(): void
+    {
+        [$payment] = $this->pendingPayment();
+
+        $this->fakeGatewayStatus('01');
+
+        $this->getJson("/api/payments/{$payment->id}/status")
+            ->assertOk()
+            ->assertJsonPath('status', 'pending');
+
+        $this->assertSame('pending', $payment->refresh()->status);
+    }
+
+    /**
+     * Kalau gateway tidak bisa dihubungi saat polling, tidak boleh ada error
+     * 500 — transaksi dibiarkan pending dan dicoba lagi nanti.
+     */
+    public function test_polling_status_gagal_gateway_tidak_melempar_error(): void
+    {
+        [$payment] = $this->pendingPayment();
+
+        Http::fake([
+            '*/transactionStatus' => Http::response(null, 500),
+        ]);
+
+        $this->getJson("/api/payments/{$payment->id}/status")
+            ->assertOk()
+            ->assertJsonPath('status', 'pending');
+
+        $this->assertSame('pending', $payment->refresh()->status);
+    }
 }

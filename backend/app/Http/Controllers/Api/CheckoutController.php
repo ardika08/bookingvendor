@@ -9,6 +9,7 @@ use App\Models\Subscription;
 use App\Models\SubscriptionPayment;
 use App\Services\Payment\DuitkuException;
 use App\Services\Payment\DuitkuGateway;
+use App\Services\SubscriptionActivator;
 use App\Services\SubscriptionStatus;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -38,6 +39,7 @@ class CheckoutController extends Controller
 
     public function __construct(
         private readonly SubscriptionStatus $statuses,
+        private readonly SubscriptionActivator $activator,
     ) {
     }
 
@@ -257,14 +259,71 @@ class CheckoutController extends Controller
      * GET /api/payments/{payment}/status
      *
      * Dipanggil frontend berulang (polling) selama vendor menunggu pembayaran.
+     *
+     * Selama status masih `pending`, status dicek juga ke gateway. Tanpa ini
+     * langganan hanya bisa aktif lewat webhook: kalau webhook Duitku tertunda
+     * atau tidak sampai (firewall, URL callback salah), vendor yang sudah
+     * membayar akan terjebak di "menunggu pembayaran" selamanya meski tombol
+     * "Cek status" ditekan berkali-kali.
+     *
+     * Verifikasi ke gateway tetap aman: yang menentukan lunas adalah Duitku,
+     * bukan klaim dari klien. Aktivasi memakai `SubscriptionActivator` yang
+     * idempoten, jadi webhook dan polling yang tiba bersamaan tidak
+     * memperpanjang langganan dua kali.
      */
     public function status(SubscriptionPayment $payment): JsonResponse
     {
         $this->authorizePayment($payment);
 
+        if ($payment->status === 'pending') {
+            $this->syncFromGateway($payment);
+        }
+
         return response()->json([
-            'status' => $this->mapPaymentStatus($payment),
+            'status' => $this->mapPaymentStatus($payment->refresh()),
         ]);
+    }
+
+    /**
+     * Sinkronkan status satu pembayaran pending dengan Duitku.
+     *
+     * Kegagalan gateway tidak pernah melempar ke pemanggil: polling status
+     * tidak boleh berubah menjadi error 500 hanya karena Duitku sedang tidak
+     * bisa dihubungi. Transaksi dibiarkan `pending` dan dicoba lagi pada
+     * polling berikutnya atau lewat webhook.
+     */
+    private function syncFromGateway(SubscriptionPayment $payment): void
+    {
+        try {
+            $gateway = DuitkuGateway::fromConfig();
+            $status = $gateway->checkStatus($payment->order_id);
+        } catch (\Throwable $exception) {
+            Log::warning('Polling status Duitku gagal', [
+                'order_id' => $payment->order_id,
+                'message' => $exception->getMessage(),
+            ]);
+
+            return;
+        }
+
+        // Nominal dari gateway harus cocok; kalau tidak, jangan aktifkan.
+        if ($status['amount'] !== null
+            && (int) round((float) $status['amount']) !== (int) round((float) $payment->amount)) {
+            Log::error('Polling Duitku nominal tidak cocok', [
+                'order_id' => $payment->order_id,
+                'gateway_amount' => $status['amount'],
+                'expected' => $payment->amount,
+            ]);
+
+            return;
+        }
+
+        match ($status['status_code']) {
+            '00' => $this->activator->activate($payment),
+            '02' => $this->activator->markFailed($payment),
+            // '01' = masih diproses; biarkan pending.
+            default => null,
+        };
     }
 
     /**
