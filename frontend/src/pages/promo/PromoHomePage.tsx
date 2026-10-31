@@ -11,6 +11,7 @@ import { WorkflowSteps } from '@/components/promo/WorkflowSteps'
 import { PricingSection } from '@/components/promo/PricingSection'
 import { FaqSection } from '@/components/promo/FaqSection'
 import { HeroCalendarMockup } from '@/components/promo/HeroCalendarMockup'
+import { AudienceSection } from '@/components/promo/AudienceSection'
 
 /**
  * Isi halaman promosi (`/`).
@@ -99,6 +100,7 @@ export function PromoHomePage() {
       </section>
 
       <BenefitHighlights />
+      <AudienceSection />
       <WorkflowSteps />
 
       <PricingSection />
