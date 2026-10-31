@@ -121,7 +121,16 @@ class RevenueSeries
      */
     private function emptyBuckets(string $endMonthKey, int $months): array
     {
-        $cursor = Carbon::createFromFormat('Y-m', $endMonthKey)->startOfMonth();
+        /*
+         * WAJIB `Y-m-d` dengan tanggal 01, bukan `Y-m`.
+         *
+         * `Carbon::createFromFormat('Y-m', '2025-02')` mengisi field yang tidak
+         * diberikan dari waktu sekarang. Pada tanggal 30–31 hasilnya melompat
+         * ke bulan berikutnya (diamati: `2026-09` → `2026-10-01`, `2025-02` →
+         * `2025-03-03`), sehingga grafik pendapatan menampilkan bulan yang
+         * salah dan booking di bulan itu tidak ikut terhitung.
+         */
+        $cursor = Carbon::createFromFormat('Y-m-d', $endMonthKey.'-01')->startOfMonth();
         $keys = [];
 
         for ($i = 0; $i < $months; $i++) {

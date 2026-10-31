@@ -102,8 +102,8 @@ class NotificationMailer
      * ke log atau membuang. Pada kondisi itu pengiriman dilewati supaya tabel
      * `jobs` tidak dipenuhi job yang tidak akan pernah berguna.
      *
-     * Mailer `smtp`, `mail`, `ses`, `postmark`, `resend`, dan sejenisnya
-     * dianggap aktif.
+     * Mailer `smtp`, `mail`, `ses`, `postmark`, `resend`, `mailketing`, dan
+     * sejenisnya dianggap aktif.
      */
     private function enabled(): bool
     {

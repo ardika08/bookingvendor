@@ -33,7 +33,7 @@
                         <td style="padding:16px 28px 0 28px;">
                             <p style="margin:0;font-size:14px;line-height:1.6;color:#4a5058;">
                                 Akun vendor kamu sudah aktif. Semua fitur terbuka selama
-                                <strong style="color:#1a1e24;">{{ $trialDays }} hari</strong> ke depan@if ($endsAt !== null), sampai <strong style="color:#1a1e24;">{{ $endsAt }}</strong>@endif. Tanpa kartu kredit, tanpa biaya di awal.
+                                <strong style="color:#1a1e24;">{{ $trialDays }} hari</strong> ke depan{{ $endsAt !== null ? ', sampai '.$endsAt : '' }}. Tanpa kartu kredit, tanpa biaya di awal.
                             </p>
                         </td>
                     </tr>

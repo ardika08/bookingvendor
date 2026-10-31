@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Vendor;
 use App\Services\RevenueSeries;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Tests\TestCase;
 
 /**
@@ -73,6 +74,28 @@ class RevenueSeriesTest extends TestCase
             ['2026-07', '2026-08', '2026-09', '2026-10'],
             array_column($series, 'month'),
         );
+    }
+
+    /**
+     * Jendela bulan harus tepat, apa pun tanggal hari ini.
+     *
+     * Regresi: `Carbon::createFromFormat('Y-m', ...)` mengisi tanggal dari
+     * waktu sekarang. Pada tanggal 30–31 bulan melompat (diamati `2025-02` →
+     * `2025-03-03`), sehingga grafik menampilkan bulan yang salah dan booking
+     * di bulan itu hilang dari total. Tes ini dijalankan pada tanggal berapa
+     * pun, jadi tidak boleh bergantung pada hari ini.
+     */
+    public function test_jendela_bulan_tepat_tanpa_terpengaruh_tanggal_hari_ini(): void
+    {
+        Carbon::setTestNow('2026-10-31 23:00:00');
+
+        try {
+            $series = $this->series->build([], [], '2026-09', 2);
+
+            $this->assertSame(['2026-08', '2026-09'], array_column($series, 'month'));
+        } finally {
+            Carbon::setTestNow();
+        }
     }
 
     public function test_label_bulan_pakai_bahasa_indonesia(): void

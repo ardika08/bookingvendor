@@ -53,6 +53,23 @@ return [
             'transport' => 'ses',
         ],
 
+        /*
+         * Mailketing lewat REST API, bukan SMTP.
+         *
+         * SMTP Mailketing memakai port 587/465 dengan sertifikat yang hanya
+         * berlaku untuk `smtp.mailketing.id`; pada hosting yang membatasi
+         * koneksi keluar, SMTP gagal dengan pesan yang membingungkan. API
+         * memakai HTTPS 443 dan mengembalikan kode error yang jelas.
+         *
+         * Transport-nya didaftarkan di AppServiceProvider (`Mail::extend`).
+         */
+        'mailketing' => [
+            'transport' => 'mailketing',
+            'token' => env('MAILKETING_API_TOKEN', ''),
+            'endpoint' => env('MAILKETING_ENDPOINT', 'https://api.mailketing.co.id/api/v2/send'),
+            'timeout' => (int) env('MAILKETING_TIMEOUT', 20),
+        ],
+
         'postmark' => [
             'transport' => 'postmark',
             // 'message_stream_id' => env('POSTMARK_MESSAGE_STREAM_ID'),
