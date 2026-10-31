@@ -96,13 +96,16 @@ export function PromoLayout() {
 
       <footer className="border-t border-ink-200/70 bg-ink-50/60">
         {/*
-          Empat kolom, bukan tiga. Sebelumnya kolom kiri memuat logo,
-          deskripsi, kontak, DAN alamat sekaligus sehingga jauh lebih tinggi
-          dari dua kolom kanan yang hanya berisi 2–3 tautan — separuh kanan
-          footer terlihat kosong. Kontak & alamat dipisah ke kolomnya sendiri
-          agar tinggi tiap kolom seimbang dan seluruh lebar terpakai.
+          Empat kolom: brand, kontak, alamat, produk.
+          Kolom "Akun" (Masuk / Panel admin) sudah dihapus atas permintaan —
+          tautan masuk cukup tersedia lewat tombol di header, dan "Panel admin"
+          tidak perlu ditonjolkan di halaman publik.
+
+          Jumlah kolom di grid HARUS sama dengan jumlah anak. Bila kurang, anak
+          terakhir turun ke baris kedua dan menyisakan ruang kosong lebar di
+          kanan — persis masalah yang ingin dihindari.
         */}
-        <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.5fr_1fr_1.3fr_0.9fr]">
+        <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.4fr_1fr_1.2fr_0.8fr]">
           <div>
             <div className="flex items-center gap-2.5">
               <span className="flex size-8 items-center justify-center rounded-lg bg-brand-400 text-body font-bold text-ink-900">
@@ -160,22 +163,6 @@ export function PromoLayout() {
                 <a href="#faq" className="text-ink-600 hover:text-ink-900">
                   FAQ
                 </a>
-              </li>
-            </ul>
-
-            <p className="mt-5 text-caption font-semibold uppercase tracking-wider text-ink-400">
-              Akun
-            </p>
-            <ul className="mt-3 space-y-2 text-meta">
-              <li>
-                <Link to="/login" className="text-ink-600 hover:text-ink-900">
-                  Masuk
-                </Link>
-              </li>
-              <li>
-                <Link to="/admin" className="text-ink-600 hover:text-ink-900">
-                  Panel admin
-                </Link>
               </li>
             </ul>
           </div>
