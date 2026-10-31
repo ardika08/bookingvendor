@@ -2,6 +2,7 @@ import { Menu, X } from '@/components/ui/icons'
 import { useState } from 'react'
 import { Link, Outlet } from 'react-router-dom'
 import { SignUpCta } from '@/components/promo/SignUpCta'
+import { COMPANY, copyrightLine } from '@/lib/company'
 
 /**
  * Kerangka halaman promosi publik (`/`).
@@ -23,7 +24,6 @@ const NAV_LINKS = [
 
 export function PromoLayout() {
   const [menuOpen, setMenuOpen] = useState(false)
-  const [year] = useState(() => new Date().getFullYear())
 
   return (
     <div className="min-h-dvh scroll-smooth bg-white text-ink-800">
@@ -107,6 +107,32 @@ export function PromoLayout() {
               Alat operasional internal untuk vendor pernikahan — catat booking, atur jadwal,
               dan terbitkan invoice dari satu dashboard.
             </p>
+
+            {/* Kontak untuk verifikasi merchant & keperluan pelanggan */}
+            <ul className="mt-4 space-y-1.5 text-meta text-ink-500">
+              <li>
+                <a href={`mailto:${COMPANY.email}`} className="hover:text-ink-800">
+                  {COMPANY.email}
+                </a>
+              </li>
+              <li>
+                <a
+                  href={`https://wa.me/${COMPANY.phoneWa}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-ink-800"
+                >
+                  {COMPANY.phoneDisplay} (WhatsApp)
+                </a>
+              </li>
+              <li className="leading-relaxed">
+                {COMPANY.address.street}
+                <br />
+                {COMPANY.address.village}
+                <br />
+                {COMPANY.address.city}
+              </li>
+            </ul>
           </div>
 
           <FooterColumn
@@ -139,7 +165,7 @@ export function PromoLayout() {
 
         <div className="border-t border-ink-200/70">
           <div className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-4 text-caption text-ink-400 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-            <p>© {year} VendorKit. Semua hak dilindungi.</p>
+            <p>{copyrightLine()}</p>
             <p>Dibuat untuk vendor pernikahan di Indonesia.</p>
           </div>
         </div>

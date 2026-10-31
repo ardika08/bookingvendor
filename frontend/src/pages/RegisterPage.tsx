@@ -4,6 +4,7 @@ import { AlertTriangle, ArrowLeft, Check, Crown, LoaderCircle } from '@/componen
 import { Button } from '@/components/ui/Button'
 import { Field, inputClass } from '@/components/ui/Field'
 import { ApiError } from '@/lib/api/client'
+import { PublicFooter } from '@/components/layout/PublicFooter'
 import {
   fetchRegistrationCategories,
   registerVendor,
@@ -335,6 +336,8 @@ export function RegisterPage() {
           </Link>
         </div>
       </div>
+
+      <PublicFooter />
     </main>
   )
 }

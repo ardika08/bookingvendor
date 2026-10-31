@@ -5,6 +5,7 @@ import { saveAuthRole } from '@/lib/auth-session'
 import { loginWithEmail } from '@/lib/api/login'
 import { Field, inputClass } from '@/components/ui/Field'
 import { ApiError } from '@/lib/api/client'
+import { PublicFooter } from '@/components/layout/PublicFooter'
 
 /**
  * Halaman masuk (`/login`) — pintu satu-satunya ke aplikasi.
@@ -143,6 +144,8 @@ export function LoginPage() {
           </p>
         </div>
       </div>
+
+      <PublicFooter className="mt-auto w-full" />
     </div>
   )
 }
