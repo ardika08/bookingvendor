@@ -95,7 +95,14 @@ export function PromoLayout() {
       </main>
 
       <footer className="border-t border-ink-200/70 bg-ink-50/60">
-        <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr]">
+        {/*
+          Empat kolom, bukan tiga. Sebelumnya kolom kiri memuat logo,
+          deskripsi, kontak, DAN alamat sekaligus sehingga jauh lebih tinggi
+          dari dua kolom kanan yang hanya berisi 2–3 tautan — separuh kanan
+          footer terlihat kosong. Kontak & alamat dipisah ke kolomnya sendiri
+          agar tinggi tiap kolom seimbang dan seluruh lebar terpakai.
+        */}
+        <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.5fr_1fr_1.3fr_0.9fr]">
           <div>
             <div className="flex items-center gap-2.5">
               <span className="flex size-8 items-center justify-center rounded-lg bg-brand-400 text-body font-bold text-ink-900">
@@ -103,49 +110,60 @@ export function PromoLayout() {
               </span>
               <span className="text-lead font-semibold text-ink-900">VendorKit</span>
             </div>
-            <p className="mt-3 max-w-sm text-meta leading-relaxed text-ink-500">
+            <p className="mt-3 max-w-xs text-meta leading-relaxed text-ink-500">
               Alat operasional internal untuk vendor pernikahan — catat booking, atur jadwal,
               dan terbitkan invoice dari satu dashboard.
             </p>
-
-            {/* Kontak untuk verifikasi merchant & keperluan pelanggan */}
-            <ul className="mt-4 space-y-1.5 text-meta text-ink-500">
-              <li>
-                <a href={`mailto:${COMPANY.email}`} className="hover:text-ink-800">
-                  {COMPANY.email}
-                </a>
-              </li>
-              <li>
-                <a
-                  href={`https://wa.me/${COMPANY.phoneWa}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-ink-800"
-                >
-                  {COMPANY.phoneDisplay} (WhatsApp)
-                </a>
-              </li>
-              <li className="leading-relaxed">
-                {COMPANY.address.street}
-                <br />
-                {COMPANY.address.village}
-                <br />
-                {COMPANY.address.city}
-              </li>
-            </ul>
           </div>
 
           <FooterColumn
-            title="Produk"
+            title="Kontak"
             links={[
-              { label: 'Fitur', href: '#fitur' },
-              { label: 'Harga', href: '#harga' },
-              { label: 'FAQ', href: '#faq' },
+              { label: COMPANY.email, href: `mailto:${COMPANY.email}` },
+              {
+                label: `${COMPANY.phoneDisplay} (WhatsApp)`,
+                href: `https://wa.me/${COMPANY.phoneWa}`,
+                external: true,
+              },
             ]}
           />
 
           <div>
             <p className="text-caption font-semibold uppercase tracking-wider text-ink-400">
+              Alamat
+            </p>
+            <address className="mt-3 text-meta not-italic leading-relaxed text-ink-600">
+              {COMPANY.address.street}
+              <br />
+              {COMPANY.address.village}
+              <br />
+              {COMPANY.address.city}
+            </address>
+          </div>
+
+          <div>
+            <p className="text-caption font-semibold uppercase tracking-wider text-ink-400">
+              Produk
+            </p>
+            <ul className="mt-3 space-y-2 text-meta">
+              <li>
+                <a href="#fitur" className="text-ink-600 hover:text-ink-900">
+                  Fitur
+                </a>
+              </li>
+              <li>
+                <a href="#harga" className="text-ink-600 hover:text-ink-900">
+                  Harga
+                </a>
+              </li>
+              <li>
+                <a href="#faq" className="text-ink-600 hover:text-ink-900">
+                  FAQ
+                </a>
+              </li>
+            </ul>
+
+            <p className="mt-5 text-caption font-semibold uppercase tracking-wider text-ink-400">
               Akun
             </p>
             <ul className="mt-3 space-y-2 text-meta">
@@ -179,7 +197,7 @@ function FooterColumn({
   links,
 }: {
   title: string
-  links: ReadonlyArray<{ label: string; href: string }>
+  links: ReadonlyArray<{ label: string; href: string; external?: boolean }>
 }) {
   return (
     <div>
@@ -187,7 +205,11 @@ function FooterColumn({
       <ul className="mt-3 space-y-2 text-meta">
         {links.map((link) => (
           <li key={link.href}>
-            <a href={link.href} className="text-ink-600 hover:text-ink-900">
+            <a
+              href={link.href}
+              className="break-words text-ink-600 hover:text-ink-900"
+              {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+            >
               {link.label}
             </a>
           </li>
