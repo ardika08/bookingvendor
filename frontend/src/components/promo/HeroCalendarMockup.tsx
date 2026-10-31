@@ -286,19 +286,22 @@ function ClientCard() {
            label "Tutup" 25–26 tetap terbaca. `-bottom-6` membuatnya hanya
            menimpa tepi bawah, bukan baris tanggal terakhir. */
         /*
-         * Alur normal, rata kanan, ditarik naik setinggi baris legenda.
+         * Alur normal + tarik naik + geser kanan.
          *
-         * `lg:-mt-9` (36px) = tinggi baris legenda, jadi tepi atas kartu
-         * sejajar dengan baris legenda. Kartu menempati zona kanan yang sudah
-         * disisihkan `lg:pr-[15rem]` pada legenda — tidak ada teks yang
-         * tertutup, dan kartu tetap terlihat menumpuk di sudut kanan bawah
-         * seperti wireframe.
+         * `lg:-mt-14` (56px): menaikkan kartu sampai menimpa baris terakhir
+         * grid. Baris terakhir hanya berisi tanggal 30 di kolom Senin, jadi
+         * area kanannya kosong — kartu tidak menutupi tanggal mana pun.
          *
-         * Tidak memakai `position: absolute` maupun offset negatif: keduanya
-         * membuat posisi kartu bergantung pada padding box wadah, sehingga
-         * mudah lepas dan bisa terpotong pada text zoom 200% (WCAG 1.4.4).
+         * `lg:-mr-4` (16px) / `xl:-mr-6` (24px): menggeser kartu sedikit
+         * keluar tepi kanan kalender agar terlihat menumpuk, bukan tertahan di
+         * dalam. Nilainya dibatasi 16-24px karena di 1024px sisa ruang kanan
+         * hanya ~34px; lebih dari itu kartu keluar viewport.
+         *
+         * Tidak memakai `position: absolute`: offset negatif pada absolute
+         * diukur dari padding box wadah, sehingga posisi kartu berubah setiap
+         * padding diubah dan bisa terpotong pada text zoom 200% (WCAG 1.4.4).
          */
-        'mt-4 w-full lg:-mt-9 lg:w-[14rem] lg:self-end',
+        'mt-4 w-full lg:-mt-14 lg:-mr-4 lg:w-[14rem] lg:self-end xl:-mr-6',
       )}
     >
       <div className="flex items-center gap-2.5">
