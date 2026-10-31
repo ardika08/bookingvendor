@@ -10,6 +10,7 @@ import { BenefitHighlights } from '@/components/promo/BenefitHighlights'
 import { WorkflowSteps } from '@/components/promo/WorkflowSteps'
 import { PricingSection } from '@/components/promo/PricingSection'
 import { FaqSection } from '@/components/promo/FaqSection'
+import { HeroCalendarMockup } from '@/components/promo/HeroCalendarMockup'
 
 /**
  * Isi halaman promosi (`/`).
@@ -30,24 +31,35 @@ export function PromoHomePage() {
           aria-hidden
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_60%_at_50%_0%,rgba(216,90,69,0.10),transparent_70%)]"
         />
-        <div className="relative mx-auto max-w-6xl px-4 pb-16 pt-16 sm:px-6 sm:pb-20 sm:pt-24">
-          <div className="mx-auto max-w-2xl text-center">
+        {/*
+          Dua kolom: teks di kiri, mockup kalender di kanan.
+          Sebelumnya hero center-aligned tanpa visual — calon vendor harus
+          membayangkan sendiri bentuk produknya. Mockup kalender memperlihatkan
+          inti nilai jual (tanggal terisi, detail klien, anti bentrok) dalam
+          sekali lihat, tanpa perlu scroll.
+
+          Di bawah `lg` kedua kolom ditumpuk: teks dulu, kalender menyusul.
+          Urutan itu disengaja — pesan jualan tetap yang pertama terbaca di
+          layar sempit.
+        */}
+        <div className="relative mx-auto grid max-w-6xl gap-10 px-4 pb-16 pt-12 sm:px-6 sm:pt-16 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.18fr)] lg:items-center lg:gap-14 lg:pb-20 lg:pt-24">
+          <div>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-3 py-1 text-caption font-medium text-brand-700 ring-1 ring-inset ring-brand-200">
               <Ticket className="size-3.5" />
-              Gratis 30 hari, semua fitur terbuka — tanpa kartu kredit
+              Gratis 30 hari, semua fitur terbuka
             </span>
 
-            <h1 className="mt-5 text-display leading-tight tracking-tight text-ink-900 sm:text-[2.625rem] sm:leading-[1.1]">
+            <h1 className="mt-5 text-[1.9375rem] leading-[1.15] tracking-tight text-ink-900 sm:text-[2.375rem] sm:leading-[1.12] lg:text-[2.625rem] lg:leading-[1.1]">
               Kelola booking vendor pernikahan
               <span className="text-brand-700"> tanpa bentrok jadwal.</span>
             </h1>
 
-            <p className="mx-auto mt-4 max-w-xl text-lead leading-relaxed text-ink-600">
-              Catat pesanan, pantau kalender acara, dan terbitkan invoice dari satu dashboard.
-              Dibuat khusus vendor pernikahan — bukan marketplace.
+            <p className="mt-4 max-w-xl text-lead leading-relaxed text-ink-600">
+              Satu kalender untuk semua acara — tanggal terisi langsung terlihat, detail klien
+              menempel di tanggalnya, dan invoice terbit dari data yang sama.
             </p>
 
-            <div className="mt-7 flex flex-col items-center justify-center gap-2.5 sm:flex-row">
+            <div className="mt-7 flex flex-col gap-2.5 sm:flex-row sm:items-center">
               <SignUpCta size="lg" className="w-full sm:w-auto" />
               <a
                 href="#harga"
@@ -58,11 +70,15 @@ export function PromoHomePage() {
             </div>
 
             <p className="mt-3 text-caption text-ink-400">
-              Cukup daftar dengan email Gmail — akun langsung aktif, tanpa verifikasi.
+              Tanpa kartu kredit · Akun aktif langsung setelah daftar
             </p>
           </div>
 
-          <ul className="mx-auto mt-12 grid max-w-3xl gap-3 sm:grid-cols-3">
+          <HeroCalendarMockup />
+        </div>
+
+        <div className="relative mx-auto max-w-6xl px-4 pb-16 sm:px-6 sm:pb-20">
+          <ul className="grid gap-3 sm:grid-cols-3">
             <Highlight
               icon={<CalendarCheck className="size-4" />}
               title="Kalender & anti bentrok"
@@ -76,7 +92,7 @@ export function PromoHomePage() {
             <Highlight
               icon={<ShieldCheck className="size-4" />}
               title="Masuk satu klik"
-              note="Setelah mendaftar, masuk berikutnya cukup dengan email dan kata sandi."
+              note="Masuk dengan email dan kata sandi — tanpa perlu akun Google."
             />
           </ul>
         </div>

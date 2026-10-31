@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wireframe — Hero VendorKit + Mockup Kalender</title>
+<style>
+  /* Palet diambil dari src/index.css aplikasi (bukan karangan). */
+  :root{
+    --brand-50:#fbf8f1; --brand-100:#f8f1e0; --brand-200:#f2e5c2;
+    --brand-300:#edd9a1; --brand-400:#e7c874; --brand-500:#dcb856;
+    --brand-600:#b28d2a; --brand-700:#816822; --brand-800:#65521d; --brand-900:#473a18;
+    --ink-50:#f6f7f8; --ink-100:#eceef0; --ink-200:#d9dde2; --ink-300:#b6bdc6;
+    --ink-400:#5f6a77; --ink-500:#5b636f; --ink-600:#545d69; --ink-700:#414a54;
+    --ink-800:#2f363e; --ink-900:#1b2027;
+    --emerald-50:#ecfdf5; --emerald-200:#a7f3d0; --emerald-700:#047857;
+    --rose-50:#fff1f2; --rose-200:#fecdd3; --rose-700:#be123c;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Poppins',system-ui,-apple-system,'Segoe UI',sans-serif;
+    background:#fff;color:var(--ink-900);-webkit-font-smoothing:antialiased;
+  }
+
+  /* ============ HERO ============ */
+  .hero{position:relative;overflow:hidden}
+  .hero::before{
+    content:'';position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(58% 55% at 28% 0%, rgba(231,200,116,.22), transparent 68%);
+  }
+  .hero-inner{
+    position:relative;max-width:1180px;margin:0 auto;
+    padding:64px 32px 72px;
+    display:grid;grid-template-columns:minmax(0,0.92fr) minmax(0,1.18fr);
+    gap:56px;align-items:center;
+  }
+
+  /* --- kiri: teks --- */
+  .badge{
+    display:inline-flex;align-items:center;gap:6px;
+    background:var(--brand-50);color:var(--brand-700);
+    border:1px solid var(--brand-200);border-radius:999px;
+    padding:5px 12px;font-size:12px;font-weight:500;
+  }
+  .badge svg{width:13px;height:13px}
+  h1{
+    margin-top:20px;font-size:40px;line-height:1.12;
+    letter-spacing:-.022em;font-weight:600;
+  }
+  h1 .gold{color:var(--brand-700)}
+  .sub{margin-top:16px;font-size:15.5px;line-height:1.65;color:var(--ink-600);max-width:29rem}
+  .cta-row{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:7px;
+    height:44px;padding:0 20px;border-radius:9px;font-size:14.5px;
+    font-weight:600;text-decoration:none;border:1px solid transparent;
+  }
+  .btn-primary{background:var(--brand-400);color:var(--ink-900);box-shadow:0 1px 2px rgba(0,0,0,.06)}
+  .btn-primary:hover{background:var(--brand-500)}
+  .btn-ghost{background:#fff;color:var(--ink-700);border-color:var(--ink-200);box-shadow:0 1px 2px rgba(0,0,0,.04)}
+  .note{margin-top:12px;font-size:11.5px;color:var(--ink-400)}
+
+  .stats{margin-top:30px;display:flex;gap:26px;flex-wrap:wrap}
+  .stat b{display:block;font-size:19px;font-weight:600;letter-spacing:-.01em}
+  .stat span{font-size:11.5px;color:var(--ink-400)}
+
+  /* ============ KANAN: MOCKUP ============ */
+  .mock-wrap{position:relative;padding-bottom:34px}
+
+  .app{
+    background:#fff;border:1px solid var(--ink-200);border-radius:16px;
+    box-shadow:0 22px 48px -18px rgba(27,32,39,.26), 0 4px 12px -4px rgba(27,32,39,.08);
+    overflow:hidden;
+  }
+
+  /* bar jendela aplikasi */
+  .app-bar{
+    display:flex;align-items:center;gap:8px;
+    padding:11px 14px;border-bottom:1px solid var(--ink-100);background:var(--ink-50);
+  }
+  .dots{display:flex;gap:5px}
+  .dots i{width:8px;height:8px;border-radius:999px;background:var(--ink-300);display:block}
+  .app-title{font-size:11.5px;font-weight:600;color:var(--ink-600);margin-left:4px}
+  .app-tag{
+    margin-left:auto;font-size:10px;font-weight:600;color:var(--brand-800);
+    background:var(--brand-100);border:1px solid var(--brand-200);
+    padding:2px 7px;border-radius:5px;
+  }
+
+  /* header kalender */
+  .cal-head{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 16px 10px;
+  }
+  .cal-month{display:flex;align-items:baseline;gap:6px}
+  .cal-month b{font-size:14.5px;font-weight:600;letter-spacing:-.01em}
+  .cal-month span{font-size:11.5px;color:var(--ink-400)}
+  .cal-nav{display:flex;gap:5px}
+  .cal-nav i{
+    width:24px;height:24px;border:1px solid var(--ink-200);border-radius:6px;
+    display:grid;place-items:center;color:var(--ink-500);font-style:normal;font-size:11px;
+  }
+
+  /* grid tanggal */
+  .cal-grid{padding:0 12px 10px}
+  .dow{
+    display:grid;grid-template-columns:repeat(7,1fr);gap:4px;
+    padding:0 0 6px;margin-bottom:2px;
+  }
+  .dow span{
+    text-align:center;font-size:9.5px;font-weight:600;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--ink-400);
+  }
+  .days{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+
+  .day{
+    min-height:56px;border-radius:7px;padding:5px 5px 4px;
+    display:flex;flex-direction:column;gap:3px;
+    border:1px solid transparent;background:#fff;
+  }
+  .day .num{font-size:12px;font-weight:500;color:var(--ink-700);line-height:1}
+  .day .num.weekend{color:var(--ink-400)}
+
+  /* tanggal tersedia */
+  .day.free{background:#fff;border-color:var(--ink-100)}
+  .day.free:hover{background:var(--ink-50)}
+
+  /* tanggal terisi — chip nama klien */
+  .day.booked{background:var(--brand-50);border-color:var(--brand-200)}
+  .day.booked .num{color:var(--brand-800);font-weight:600}
+  .chip{
+    font-size:8.5px;line-height:1.3;font-weight:600;
+    background:var(--brand-400);color:var(--ink-900);
+    border-radius:4px;padding:3px 4px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .chip.soft{background:var(--brand-200);color:var(--brand-900)}
+
+  /* tanggal terpilih */
+  .day.sel{background:var(--ink-900);border-color:var(--ink-900);box-shadow:0 6px 14px -6px rgba(27,32,39,.55)}
+  .day.sel .num{color:#fff;font-weight:600}
+  .day.sel .chip{background:var(--brand-400);color:var(--ink-900)}
+
+  /* tanggal diblokir */
+  .day.blocked{
+    background:var(--ink-100);border-color:var(--ink-200);
+    background-image:repeating-linear-gradient(135deg,transparent,transparent 4px,rgba(182,189,198,.35) 4px,rgba(182,189,198,.35) 5px);
+  }
+  .day.blocked .num{color:var(--ink-400)}
+  .day.blocked .tag{font-size:8px;font-weight:600;color:var(--ink-500);letter-spacing:.02em}
+
+  /* legenda */
+  .legend{
+    display:flex;gap:14px;flex-wrap:wrap;align-items:center;
+    padding:9px 16px 12px;border-top:1px solid var(--ink-100);
+  }
+  .legend div{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--ink-500)}
+  .legend i{width:9px;height:9px;border-radius:3px;display:block;border:1px solid transparent}
+  .lg-free{background:#fff;border-color:var(--ink-200)}
+  .lg-booked{background:var(--brand-400)}
+  .lg-sel{background:var(--ink-900)}
+  .lg-blocked{background:var(--ink-200)}
+
+  /* ===== kartu detail klien (melayang) ===== */
+  .client{
+    /* Di bawah kanan, hanya menimpa tepi bawah kalender — grid tanggal tetap
+       terbaca utuh. Versi pertama menaruhnya di kiri-bawah dan menutupi
+       tanggal 23–27, termasuk label "Tutup". */
+    position:absolute;right:-18px;bottom:-34px;width:258px;
+    background:#fff;border:1px solid var(--ink-200);border-radius:13px;
+    box-shadow:0 18px 36px -14px rgba(27,32,39,.28), 0 2px 8px -2px rgba(27,32,39,.08);
+    padding:12px 13px;
+  }
+  .client-top{display:flex;align-items:center;gap:9px}
+  .ava{
+    width:31px;height:31px;border-radius:999px;flex:0 0 auto;
+    background:var(--brand-100);color:var(--brand-800);
+    display:grid;place-items:center;font-size:11px;font-weight:700;
+    border:1px solid var(--brand-200);
+  }
+  .client-name{font-size:12.5px;font-weight:600;line-height:1.2}
+  .client-date{font-size:10px;color:var(--ink-400);margin-top:1px}
+  .pill-ok{
+    margin-left:auto;font-size:8.5px;font-weight:700;letter-spacing:.03em;
+    background:var(--emerald-50);color:var(--emerald-700);
+    border:1px solid var(--emerald-200);border-radius:999px;padding:2px 6px;
+    white-space:nowrap;
+  }
+  .client-rows{margin-top:10px;display:grid;gap:6px}
+  .crow{display:flex;justify-content:space-between;gap:8px;font-size:10.5px}
+  .crow dt{color:var(--ink-400);flex:0 0 auto}
+  .crow dd{color:var(--ink-800);font-weight:500;text-align:right;line-height:1.35}
+  .client-foot{
+    margin-top:10px;padding-top:9px;border-top:1px solid var(--ink-100);
+    display:flex;align-items:center;justify-content:space-between;gap:8px;
+  }
+  .money{font-size:12.5px;font-weight:700;letter-spacing:-.01em}
+  .money small{display:block;font-size:8.5px;font-weight:500;color:var(--ink-400);letter-spacing:0}
+  .mini-btn{
+    font-size:9.5px;font-weight:600;color:var(--ink-900);
+    background:var(--brand-400);border-radius:6px;padding:5px 9px;white-space:nowrap;
+  }
+
+  /* keterangan wireframe */
+  .wf-note{
+    max-width:1180px;margin:0 auto;padding:0 32px 40px;
+    font-size:11.5px;color:var(--ink-400);line-height:1.7;
+  }
+  .wf-note b{color:var(--ink-600)}
+
+  @media (max-width:1023px){
+    .hero-inner{grid-template-columns:1fr;gap:44px;padding:44px 24px 56px}
+    h1{font-size:31px}
+    .client{position:static;width:100%;margin-top:16px;right:auto;bottom:auto}
+    .wf-note{padding:0 24px 32px}
+  }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-inner">
+
+    <!-- ============ KIRI: TEKS ============ -->
+    <div>
+      <span class="badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/>
+        </svg>
+        Gratis 30 hari, semua fitur terbuka
+      </span>
+
+      <h1>
+        Kelola booking vendor pernikahan
+        <span class="gold">tanpa bentrok jadwal.</span>
+      </h1>
+
+      <p class="sub">
+        Satu kalender untuk semua acara — tanggal terisi langsung terlihat,
+        detail klien menempel di tanggalnya, dan invoice terbit dari data yang sama.
+      </p>
+
+      <div class="cta-row">
+        <a href="#" class="btn btn-primary">
+          Daftar gratis 30 hari
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M5 12h14M13 6l6 6-6 6"/>
+          </svg>
+        </a>
+        <a href="#" class="btn btn-ghost">Lihat paket</a>
+      </div>
+
+      <p class="note">Tanpa kartu kredit · Akun aktif langsung setelah daftar</p>
+
+      <div class="stats">
+        <div class="stat"><b>4</b><span>acara bulan ini</span></div>
+        <div class="stat"><b>2</b><span>tanggal masih kosong</span></div>
+        <div class="stat"><b>0</b><span>bentrok jadwal</span></div>
+      </div>
+    </div>
+
+    <!-- ============ KANAN: MOCKUP KALENDER ============ -->
+    <div class="mock-wrap">
+      <div class="app">
+
+        <div class="app-bar">
+          <div class="dots"><i></i><i></i><i></i></div>
+          <span class="app-title">Kalender Acara</span>
+          <span class="app-tag">Vendor</span>
+        </div>
+
+        <div class="cal-head">
+          <div class="cal-month">
+            <b>November 2026</b>
+            <span>4 terisi · 2 diblokir</span>
+          </div>
+          <div class="cal-nav"><i>‹</i><i>›</i></div>
+        </div>
+
+        <div class="cal-grid">
+          <div class="dow">
+            <span>Sen</span><span>Sel</span><span>Rab</span><span>Kam</span>
+            <span>Jum</span><span>Sab</span><span>Min</span>
+          </div>
+
+          <!--
+            November 2026: 1 Nov = Minggu.
+            Grid mulai Senin, jadi hari pertama kosong 6 sel (Sen–Sab),
+            tanggal 1 jatuh di kolom Min.
+          -->
+          <div class="days">
+            <div class="day"></div><div class="day"></div><div class="day"></div>
+            <div class="day"></div><div class="day"></div><div class="day"></div>
+            <div class="day free"><span class="num weekend">1</span></div>
+
+            <div class="day free"><span class="num">2</span></div>
+            <div class="day free"><span class="num">3</span></div>
+            <div class="day free"><span class="num">4</span></div>
+            <div class="day free"><span class="num">5</span></div>
+            <div class="day free"><span class="num">6</span></div>
+            <div class="day sel">
+              <span class="num">7</span>
+              <span class="chip">Rina &amp; Bagus</span>
+            </div>
+            <div class="day booked">
+              <span class="num weekend">8</span>
+              <span class="chip soft">Nadia &amp; Reza</span>
+            </div>
+
+            <div class="day free"><span class="num">9</span></div>
+            <div class="day free"><span class="num">10</span></div>
+            <div class="day free"><span class="num">11</span></div>
+            <div class="day free"><span class="num">12</span></div>
+            <div class="day free"><span class="num">13</span></div>
+            <div class="day booked">
+              <span class="num">14</span>
+              <span class="chip">Dewi &amp; Aldi</span>
+            </div>
+            <div class="day free"><span class="num weekend">15</span></div>
+
+            <div class="day free"><span class="num">16</span></div>
+            <div class="day free"><span class="num">17</span></div>
+            <div class="day free"><span class="num">18</span></div>
+            <div class="day free"><span class="num">19</span></div>
+            <div class="day free"><span class="num">20</span></div>
+            <div class="day booked">
+              <span class="num">21</span>
+              <span class="chip">Sari &amp; Yoga</span>
+            </div>
+            <div class="day free"><span class="num weekend">22</span></div>
+
+            <div class="day free"><span class="num">23</span></div>
+            <div class="day free"><span class="num">24</span></div>
+            <div class="day blocked"><span class="num">25</span><span class="tag">Tutup</span></div>
+            <div class="day blocked"><span class="num">26</span><span class="tag">Tutup</span></div>
+            <div class="day free"><span class="num">27</span></div>
+            <div class="day booked">
+              <span class="num">28</span>
+              <span class="chip">Maya &amp; Fikri</span>
+            </div>
+            <div class="day free"><span class="num weekend">29</span></div>
+
+            <div class="day free"><span class="num">30</span></div>
+          </div>
+        </div>
+
+        <div class="legend">
+          <div><i class="lg-free"></i> Tersedia</div>
+          <div><i class="lg-booked"></i> Terisi</div>
+          <div><i class="lg-sel"></i> Dipilih</div>
+          <div><i class="lg-blocked"></i> Diblokir</div>
+        </div>
+      </div>
+
+      <!-- kartu detail klien, menempel di tanggal terpilih -->
+      <div class="client">
+        <div class="client-top">
+          <span class="ava">RB</span>
+          <div>
+            <p class="client-name">Rina &amp; Bagus</p>
+            <p class="client-date">Sab, 7 Nov 2026</p>
+          </div>
+          <span class="pill-ok">DP LUNAS</span>
+        </div>
+
+        <dl class="client-rows">
+          <div class="crow"><dt>Layanan</dt><dd>Akad + Resepsi</dd></div>
+          <div class="crow"><dt>Paket</dt><dd>Gold · 300 tamu</dd></div>
+          <div class="crow"><dt>Lokasi</dt><dd>Gedung Alam Sutera</dd></div>
+        </dl>
+
+        <div class="client-foot">
+          <span class="money">Rp 42.500.000<small>Sisa Rp 21.250.000</small></span>
+          <span class="mini-btn">Lihat invoice</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<p class="wf-note">
+  <b>Wireframe, bukan kode produksi.</b> Yang perlu Anda putuskan:
+  (1) apakah kartu detail klien melayang menempel tanggal seperti ini, atau diletakkan
+  <b>di dalam</b> kartu kalender di bawah grid;
+  (2) nama klien tampil langsung di tanggal (seperti ini) atau cukup titik warna;
+  (3) tiga angka di bawah tombol (4 acara / 2 kosong / 0 bentrok) dipertahankan atau dihapus.
+</p>
+
+</body>
+</html>
