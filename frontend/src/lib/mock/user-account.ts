@@ -28,8 +28,8 @@ const accounts: Record<AuthRole, UserAccount> = {
     role: 'vendor',
   },
   admin: {
-    name: 'Admin Booking Vendor',
-    email: 'admin@bookingvendor.id',
+    name: 'Admin VendorKit',
+    email: 'admin@vendorkit.id',
     phone: null,
     avatarUrl: null,
     role: 'admin',

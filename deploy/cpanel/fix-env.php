@@ -3,8 +3,8 @@
  * Pemeriksa & perbaiki format .env untuk phpdotenv.
  *
  * phpdotenv menolak nilai tanpa tanda kutip yang mengandung spasi:
- *   APP_NAME=Booking Vendor      → GAGAL "unexpected whitespace"
- *   APP_NAME="Booking Vendor"    → benar
+ *   APP_NAME=VendorKit      → GAGAL "unexpected whitespace"
+ *   APP_NAME="VendorKit"    → benar
  *
  * Skrip ini mencari baris KEY=nilai-ada-spasi yang belum dikutip (termasuk
  * yang memakai tanda kutip melengkung dari editor/Word), membungkusnya dengan

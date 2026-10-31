@@ -2,7 +2,7 @@
  * Judul dokumen (`document.title`) per route.
  *
  * Sebelumnya `<title>` hanya diatur sekali di `index.html`
- * ("Booking Vendor — Dashboard Vendor Wedding") dan tidak pernah berubah.
+ * ("VendorKit — Dashboard Vendor Wedding") dan tidak pernah berubah.
  * Akibatnya tab browser, riwayat, dan pembaca layar menampilkan judul yang
  * sama untuk semua halaman — pengguna tidak tahu sedang di mana
  * (WCAG 2.4.2 "Page Titled").
@@ -13,11 +13,11 @@
  * tidak punya layout (login, publik, redirect) supaya tidak ada halaman
  * yang tertinggal memakai judul default.
  *
- * Format: "<halaman> — Booking Vendor". Nama aplikasi ditaruh di belakang
+ * Format: "<halaman> — VendorKit". Nama aplikasi ditaruh di belakang
  * karena saat banyak tab terbuka, bagian depan yang terlihat lebih dulu.
  */
 
-const APP_NAME = 'Booking Vendor'
+const APP_NAME = 'VendorKit'
 
 /** Judul untuk route yang punya halaman tetap. */
 const STATIC_TITLES: Record<string, string> = {

@@ -510,9 +510,9 @@ function OnboardingShell({ children }: { children: React.ReactNode }) {
       <main className="mx-auto w-full max-w-lg">
         <div className="mb-6 flex items-center gap-2">
           <span className="flex size-8 items-center justify-center rounded-lg bg-brand-400 text-body font-semibold text-ink-900">
-            BV
+            VK
           </span>
-          <span className="text-body font-semibold text-ink-900">Booking Vendor</span>
+          <span className="text-body font-semibold text-ink-900">VendorKit</span>
         </div>
 
         <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-ink-200 sm:p-7">{children}</div>

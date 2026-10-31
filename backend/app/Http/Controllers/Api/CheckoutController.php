@@ -122,7 +122,7 @@ class CheckoutController extends Controller
                 'order_id' => $orderId,
                 'amount' => $amount,
                 'method' => $this->defaultMethod(),
-                'product' => 'Langganan '.$plan->name.' — Booking Vendor',
+                'product' => 'Langganan '.$plan->name.' — VendorKit',
                 'customer_name' => $vendor->name ?: ($user?->name ?? 'Vendor'),
                 'email' => $user?->email ?? 'vendor@example.com',
                 'phone' => $this->normalizePhone($vendor->phone ?? null),

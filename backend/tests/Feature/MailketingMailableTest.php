@@ -40,7 +40,7 @@ class MailketingMailableTest extends TestCase
             'mail.mailers.mailketing.token' => 'token-uji',
             'mail.mailers.mailketing.endpoint' => 'https://api.mailketing.test/api/v2/send',
             'mail.from.address' => 'info@vendorkit.my.id',
-            'mail.from.name' => 'Booking Vendor',
+            'mail.from.name' => 'VendorKit',
         ]);
 
         Http::fake([
@@ -193,7 +193,7 @@ class MailketingMailableTest extends TestCase
             $data = $request->data();
 
             return $data['from_email'] === 'info@vendorkit.my.id'
-                && $data['from_name'] === 'Booking Vendor';
+                && $data['from_name'] === 'VendorKit';
         });
     }
 }

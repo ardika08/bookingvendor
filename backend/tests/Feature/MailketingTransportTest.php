@@ -25,14 +25,14 @@ class MailketingTransportTest extends TestCase
             token: $token,
             endpoint: 'https://api.mailketing.test/api/v2/send',
             fromEmail: 'info@vendorkit.my.id',
-            fromName: 'Booking Vendor',
+            fromName: 'VendorKit',
         );
     }
 
     private function email(): Email
     {
         return (new Email())
-            ->from(new Address('info@vendorkit.my.id', 'Booking Vendor'))
+            ->from(new Address('info@vendorkit.my.id', 'VendorKit'))
             ->to('vendor@test.com')
             ->subject('Selamat datang')
             ->html('<html><body><h1>Halo</h1></body></html>');
@@ -54,7 +54,7 @@ class MailketingTransportTest extends TestCase
             return $request->url() === 'https://api.mailketing.test/api/v2/send'
                 && $request->hasHeader('X-Api-Token', 'token-uji')
                 && $request['from_email'] === 'info@vendorkit.my.id'
-                && $request['from_name'] === 'Booking Vendor'
+                && $request['from_name'] === 'VendorKit'
                 && $request['recipient'] === 'vendor@test.com'
                 && $request['subject'] === 'Selamat datang'
                 && str_contains((string) $request['content'], 'Halo');
@@ -177,7 +177,7 @@ class MailketingTransportTest extends TestCase
         Http::fake(['*' => Http::response(['success' => true, 'data' => ['message_id' => '<x@y>']], 200)]);
 
         $email = (new Email())
-            ->from(new Address('info@vendorkit.my.id', 'Booking Vendor'))
+            ->from(new Address('info@vendorkit.my.id', 'VendorKit'))
             ->to('vendor@test.com')
             ->subject('Tes')
             ->text("Baris satu\nBaris dua <script>");

@@ -121,7 +121,7 @@ export function AdminReportPage() {
 
     const { revenue, vendors, expiring } = report
     const rows: Array<Array<string | number | null>> = [
-      ['Laporan Booking Vendor', `Tahun ${report.year}`],
+      ['Laporan VendorKit', `Tahun ${report.year}`],
       [],
       ['RINGKASAN'],
       ['Total pendapatan langganan', revenue.total],
@@ -161,7 +161,7 @@ export function AdminReportPage() {
       ...expiring.map((item) => [item.vendorName, item.planName, item.endsAt, item.daysLeft]),
     ]
 
-    downloadCsv(`laporan-booking-vendor-${report.year}.csv`, buildCsv(rows))
+    downloadCsv(`laporan-vendorkit-${report.year}.csv`, buildCsv(rows))
   }
 
   return (

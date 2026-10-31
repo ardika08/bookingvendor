@@ -17,7 +17,7 @@ import { apiRequest, ApiError } from '@/lib/api/client'
 
 export type AuthRole = 'vendor' | 'admin'
 
-const STORAGE_KEY = 'booking-vendor:auth-role'
+const STORAGE_KEY = 'vendorkit:auth-role'
 
 /** Simpan role dari hasil /me (dipakai RoleGate untuk redirect awal). */
 export function saveAuthRole(role: AuthRole): void {

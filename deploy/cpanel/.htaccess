@@ -1,5 +1,5 @@
 # ---------------------------------------------------------------------------
-# public_html/.htaccess — Booking Vendor di cPanel
+# public_html/.htaccess — VendorKit di cPanel
 #
 # Tiga tugas: teruskan /api, /auth & /sanctum ke Laravel, layani aset statis,
 # arahkan sisanya ke SPA (React Router).

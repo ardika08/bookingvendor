@@ -31,9 +31,9 @@ export function PromoLayout() {
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
           <Link to="/" className="flex shrink-0 items-center gap-2.5">
             <span className="flex size-8 items-center justify-center rounded-lg bg-brand-400 text-body font-bold text-ink-900">
-              BV
+              VK
             </span>
-            <span className="text-lead font-semibold text-ink-900">Booking Vendor</span>
+            <span className="text-lead font-semibold text-ink-900">VendorKit</span>
           </Link>
 
           <nav className="hidden items-center gap-7 md:flex" aria-label="Navigasi halaman">
@@ -99,9 +99,9 @@ export function PromoLayout() {
           <div>
             <div className="flex items-center gap-2.5">
               <span className="flex size-8 items-center justify-center rounded-lg bg-brand-400 text-body font-bold text-ink-900">
-                BV
+                VK
               </span>
-              <span className="text-lead font-semibold text-ink-900">Booking Vendor</span>
+              <span className="text-lead font-semibold text-ink-900">VendorKit</span>
             </div>
             <p className="mt-3 max-w-sm text-meta leading-relaxed text-ink-500">
               Alat operasional internal untuk vendor pernikahan — catat booking, atur jadwal,
@@ -139,7 +139,7 @@ export function PromoLayout() {
 
         <div className="border-t border-ink-200/70">
           <div className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-4 text-caption text-ink-400 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-            <p>© {year} Booking Vendor. Semua hak dilindungi.</p>
+            <p>© {year} VendorKit. Semua hak dilindungi.</p>
             <p>Dibuat untuk vendor pernikahan di Indonesia.</p>
           </div>
         </div>

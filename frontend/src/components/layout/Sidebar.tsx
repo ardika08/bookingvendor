@@ -69,10 +69,10 @@ export function Sidebar({ onNavigate, className }: { onNavigate?: () => void; cl
     <div className={cn('flex h-full flex-col bg-white', className)}>
       <div className="flex h-16 items-center gap-2.5 px-5">
         <span className="flex size-8 items-center justify-center rounded-lg bg-brand-400 text-body font-bold text-ink-900">
-          BV
+          VK
         </span>
         <div className="leading-tight">
-          <p className="text-body font-semibold text-ink-900">Booking Vendor</p>
+          <p className="text-body font-semibold text-ink-900">VendorKit</p>
           <p className="text-caption text-ink-400">Dashboard Vendor</p>
         </div>
       </div>

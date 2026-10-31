@@ -1,6 +1,6 @@
 # Menjalankan di VPS (mode dev, IP publik)
 
-Catatan operasional untuk menjalankan Booking Vendor di VPS selama
+Catatan operasional untuk menjalankan VendorKit di VPS selama
 pengembangan, sebelum domain final tersedia.
 
 Target saat ini: `http://43.134.66.81:4173`

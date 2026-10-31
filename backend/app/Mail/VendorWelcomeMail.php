@@ -37,7 +37,7 @@ class VendorWelcomeMail extends Mailable implements ShouldQueue
         /*
          * Subjek dibuat ringkas dan personal: nama vendor lebih dulu, karena
          * itulah yang paling dikenali di daftar kotak masuk. Versi sebelumnya
-         * ("Selamat datang di Booking Vendor — masa uji 30 hari dimulai")
+         * ("Selamat datang di VendorKit — masa uji 30 hari dimulai")
          * memakai em dash dan berakhir dengan kata kerja, sehingga terpotong
          * di layar ponsel tepat sebelum bagian yang penting.
          *

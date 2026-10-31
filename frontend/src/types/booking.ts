@@ -1,5 +1,5 @@
 /**
- * Tipe domain inti aplikasi Booking Vendor.
+ * Tipe domain inti aplikasi VendorKit.
  *
  * Bentuk ini mengikuti skema database di PRD (users, vendors, clients, bookings,
  * packages, invoices, payments). Selama backend Laravel belum ada, data dipasok

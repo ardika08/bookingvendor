@@ -64,10 +64,10 @@ export function LoginPage() {
       <div className="w-full max-w-sm">
         <div className="text-center">
           <span className="inline-flex size-12 items-center justify-center rounded-xl bg-brand-400 text-lead text-ink-900">
-            BV
+            VK
           </span>
           <h1 className="mt-4 text-heading tracking-tight text-ink-900">
-            Booking Vendor
+            VendorKit
           </h1>
           <p className="mt-1.5 text-body leading-relaxed text-ink-500">
             Satu tempat mencatat booking, mengelola jadwal, dan menagih klien —

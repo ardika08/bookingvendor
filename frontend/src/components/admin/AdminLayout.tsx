@@ -26,7 +26,7 @@ import type { CurrentUser } from '@/types/booking'
  * Nav mengikuti cakupan PRD: admin hanya mengelola vendor & langganan, bukan
  * membaca booking vendor.
  *
- * Gaya visual disamakan dengan dashboard vendor: logo BV memakai `brand-400`
+ * Gaya visual disamakan dengan dashboard vendor: logo VK memakai `brand-400`
  * (gold), item nav aktif memakai `brand-50`/`brand-700`, tinggi baris `h-9`,
  * dan lebar konten `max-w-[86rem]`. Sebelumnya admin memakai `bg-ink-900`
  * (hitam) yang membuat panel terasa dingin dan tidak konsisten dengan identitas
@@ -34,7 +34,7 @@ import type { CurrentUser } from '@/types/booking'
  *
  * Data user dimuat dari `GET /api/me` — sama seperti `DashboardLayout`.
  * Sebelumnya memakai `mockAdminUser` statis, sehingga Topbar selalu menampilkan
- * "Admin Booking Vendor" walaupun yang login adalah admin lain.
+ * "Admin VendorKit" walaupun yang login adalah admin lain.
  */
 
 interface AdminNavItem {
@@ -150,12 +150,12 @@ export function AdminSidebar({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <div className="flex h-full flex-col bg-white">
       <div className="flex h-16 items-center gap-2.5 px-5">
-        {/* Logo BV: brand-400 (gold) + teks gelap, sama seperti sidebar vendor. */}
+        {/* Logo VK: brand-400 (gold) + teks gelap, sama seperti sidebar vendor. */}
         <span className="flex size-8 items-center justify-center rounded-lg bg-brand-400 text-body font-bold text-ink-900">
-          BV
+          VK
         </span>
         <div className="leading-tight">
-          <p className="text-body font-semibold text-ink-900">Booking Vendor</p>
+          <p className="text-body font-semibold text-ink-900">VendorKit</p>
           <p className="inline-flex items-center gap-1 text-caption text-ink-400">
             {/* 14px: di bawah ini ikon perisai terlihat kabur (garis < 1px). */}
             <ShieldCheck className="size-3.5" />

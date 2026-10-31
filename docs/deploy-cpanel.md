@@ -1,6 +1,6 @@
 # Deploy ke cPanel (Webnesia)
 
-Panduan memasang Booking Vendor di shared hosting cPanel. Ditulis untuk paket
+Panduan memasang VendorKit di shared hosting cPanel. Ditulis untuk paket
 Webnesia: PHP 8.3 (bisa sampai 8.5), MySQL, akses Terminal.
 
 Target: **https://vendorkit.my.id**
@@ -210,7 +210,7 @@ nano .env
 Nilai yang **wajib** berbeda dari pengembangan:
 
 ```dotenv
-APP_NAME="Booking Vendor"
+APP_NAME="VendorKit"
 APP_ENV=production
 APP_KEY=                      # diisi oleh `php artisan key:generate`
 APP_DEBUG=false               # WAJIB false — jika true, stack trace & .env bocor

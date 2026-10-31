@@ -83,7 +83,7 @@
                     <tr>
                         <td style="padding:16px 28px 28px 28px;">
                             <p style="margin:0;font-size:12px;line-height:1.6;color:#8a9099;">
-                                Email ini dikirim ke {{ $ownerEmail }} karena kamu mendaftar di Booking Vendor.
+                                Email ini dikirim ke {{ $ownerEmail }} karena kamu mendaftar di VendorKit.
                                 Ada pertanyaan? Balas email ini atau hubungi kami lewat grup support di dashboard.
                             </p>
                         </td>

@@ -137,7 +137,7 @@ export function RegisterPage() {
       <div className="w-full max-w-lg">
         <div className="mb-6 text-center">
           <span className="mx-auto flex size-11 items-center justify-center rounded-xl bg-brand-400 text-lead font-bold text-ink-900">
-            BV
+            VK
           </span>
           <h1 className="mt-3 text-title tracking-tight text-ink-900">Daftar sebagai vendor</h1>
           <p className="mt-1 text-body text-ink-500">

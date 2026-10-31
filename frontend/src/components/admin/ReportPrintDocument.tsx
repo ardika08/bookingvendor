@@ -20,7 +20,7 @@ export function ReportPrintDocument({ report }: { report: AdminReport }) {
       <header className="report-print-header">
         <div>
           <h1 className="report-print-title">Laporan Tahunan Platform</h1>
-          <p className="report-print-subtitle">Booking Vendor — tahun {year}</p>
+          <p className="report-print-subtitle">VendorKit — tahun {year}</p>
         </div>
         <div className="report-print-meta">
           <p>Dicetak {printedAt}</p>

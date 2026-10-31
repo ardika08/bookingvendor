@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Pasang Booking Vendor di cPanel lewat Terminal, source dari GitHub.
+# Pasang VendorKit di cPanel lewat Terminal, source dari GitHub.
 #
 # Pemakaian (di Terminal cPanel):
 #   bash <(curl -fsSL https://raw.githubusercontent.com/ardika08/bookingvendor/main/deploy/cpanel-deploy.sh)
