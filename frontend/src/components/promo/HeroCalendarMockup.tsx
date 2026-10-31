@@ -99,7 +99,23 @@ const DOW = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min']
 
 export function HeroCalendarMockup() {
   return (
-    <div className="relative lg:pb-12">
+    /*
+     * `max-w` di bawah `lg`: tanpa batas ini, kartu kalender memakai seluruh
+     * lebar kontainer saat layout masih satu kolom (tablet). Sel tanggal ikut
+     * membesar karena `aspect-square` — di 768px selnya jadi 96x96 sehingga
+     * kalender setinggi 755px, terlalu panjang untuk hero.
+     *
+     * Dengan batas 27rem (432px), sel tetap ~55px di tablet dan kalender
+     * turun dari 755px ke ~500px. Di mobile batas ini tidak berpengaruh
+     * (kartu sudah lebih sempit).
+     *
+     * Desktop juga dibatasi (31rem / 496px): tanpa itu kolom grid selebar
+     * 589px membuat sel 78x78 dan kalender setinggi 637px. Dengan batas ini
+     * sel ~60px — ukuran yang wajar untuk kalender — dan tinggi turun ke
+     * ~530px. Sisa ruang di kanan dipakai kartu detail klien yang menimpa
+     * tepi kartu.
+     */
+    <div className="relative mx-auto w-full max-w-[27rem] lg:max-w-[31rem] lg:pb-12">
       <div className="overflow-hidden rounded-2xl border border-ink-200 bg-white shadow-[0_22px_48px_-18px_rgba(27,32,39,0.26),0_4px_12px_-4px_rgba(27,32,39,0.08)]">
         {/* Bar jendela aplikasi */}
         <div className="flex items-center gap-2 border-b border-ink-100 bg-ink-50 px-3.5 py-2.5">
@@ -115,7 +131,7 @@ export function HeroCalendarMockup() {
         </div>
 
         {/* Judul bulan */}
-        <div className="flex items-center justify-between gap-2 px-4 pb-2.5 pt-3.5">
+        <div className="flex items-center justify-between gap-2 px-3.5 pb-2 pt-3">
           <div className="flex flex-wrap items-baseline gap-x-1.5">
             <b className="text-lead font-semibold tracking-tight text-ink-900">November 2026</b>
             <span className="text-caption text-ink-400">4 terisi · 2 diblokir</span>
@@ -131,7 +147,7 @@ export function HeroCalendarMockup() {
         </div>
 
         {/* Grid tanggal */}
-        <div className="px-3 pb-2.5">
+        <div className="px-2.5 pb-2">
           <div className="grid grid-cols-7 gap-1 pb-1.5">
             {DOW.map((d) => (
               <span
@@ -151,7 +167,7 @@ export function HeroCalendarMockup() {
         </div>
 
         {/* Legenda */}
-        <div className="flex flex-wrap items-center gap-x-3.5 gap-y-1.5 border-t border-ink-100 px-4 py-2.5">
+        <div className="flex flex-wrap items-center gap-x-3.5 gap-y-1 border-t border-ink-100 px-3.5 py-2">
           <Legend swatch="border border-ink-200 bg-white" label="Tersedia" />
           <Legend swatch="bg-brand-400" label="Terisi" />
           <Legend swatch="bg-ink-900" label="Dipilih" />
@@ -257,7 +273,7 @@ function ClientCard() {
         /* Digeser keluar kartu kalender (bukan ke dalam) supaya tanggal 28 dan
            label "Tutup" 25–26 tetap terbaca. `-bottom-6` membuatnya hanya
            menimpa tepi bawah, bukan baris tanggal terakhir. */
-        'lg:absolute lg:-bottom-6 lg:-right-6 lg:mt-0 lg:w-[17rem]',
+        'lg:absolute lg:-bottom-8 lg:-right-16 lg:mt-0 lg:w-[17rem]',
       )}
     >
       <div className="flex items-center gap-2.5">
