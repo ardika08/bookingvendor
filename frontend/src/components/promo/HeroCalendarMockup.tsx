@@ -150,19 +150,6 @@ export function HeroCalendarMockup() {
           </div>
         </div>
 
-        {/*
-          Legenda ada di ATAS grid, bukan di bawahnya.
-          Di bawah grid ia bertabrakan dengan kartu detail klien yang menempel
-          tepi bawah kalender — label "Diblokir" selalu jadi korban karena
-          berada paling kanan. Di atas, legenda tidak mungkin tertutup apa pun.
-        */}
-        <div className="flex flex-wrap items-center gap-x-3.5 gap-y-1 px-3.5 pb-3">
-          <Legend swatch="border border-ink-200 bg-white" label="Tersedia" />
-          <Legend swatch="bg-brand-400" label="Terisi" />
-          <Legend swatch="bg-ink-900" label="Dipilih" />
-          <Legend swatch="bg-ink-200" label="Diblokir" />
-        </div>
-
         {/* Grid tanggal */}
         <div className="px-2.5 pb-2.5">
           <div className="grid grid-cols-7 gap-1 pb-1.5">
@@ -181,6 +168,21 @@ export function HeroCalendarMockup() {
               <DayCell key={day.date ?? `empty-${i}`} day={day} />
             ))}
           </div>
+        </div>
+
+        {/*
+          Legenda di BAWAH grid, sesuai wireframe yang disetujui.
+          Sisi kanannya diberi ruang kosong selebar kartu detail
+          (`lg:pr-[15rem]`) sehingga item legenda membungkus ke kiri dan tidak
+          pernah berada di bawah kartu. Karena `pr` memakai rem, ruang itu ikut
+          membesar saat teks diperbesar — legenda tetap tidak tertimpa pada
+          text zoom 200%.
+        */}
+        <div className="flex flex-nowrap items-center gap-x-2.5 border-t border-ink-100 px-3.5 py-2 lg:gap-x-2 lg:pr-[15.5rem]">
+          <Legend swatch="border border-ink-200 bg-white" label="Tersedia" />
+          <Legend swatch="bg-brand-400" label="Terisi" />
+          <Legend swatch="bg-ink-900" label="Dipilih" />
+          <Legend swatch="bg-ink-200" label="Diblokir" />
         </div>
 
       </div>
@@ -265,8 +267,8 @@ function DayCell({ day }: { day: Day }) {
 
 function Legend({ swatch, label }: { swatch: string; label: string }) {
   return (
-    <span className="flex items-center gap-1.5 text-caption text-ink-500">
-      <i aria-hidden className={cn('block size-2.5 rounded-[3px]', swatch)} />
+    <span className="flex shrink-0 items-center gap-1 whitespace-nowrap text-[10px] text-ink-500 sm:gap-1.5 sm:text-caption lg:gap-1 lg:text-[10px]">
+      <i aria-hidden className={cn('block size-2 shrink-0 rounded-[3px] sm:size-2.5 lg:size-2', swatch)} />
       {label}
     </span>
   )
@@ -284,21 +286,19 @@ function ClientCard() {
            label "Tutup" 25–26 tetap terbaca. `-bottom-6` membuatnya hanya
            menimpa tepi bawah, bukan baris tanggal terakhir. */
         /*
-         * ALUR NORMAL, bukan `position: absolute`.
+         * Alur normal, rata kanan, ditarik naik setinggi baris legenda.
          *
-         * Versi sebelumnya memakai absolute dengan offset negatif
-         * (`-bottom-24`, `-right-10`/`-right-20`). Hasilnya rapuh: offset
-         * negatif diukur dari padding box wadah, jadi setiap perubahan padding
-         * wadah menggeser kartu — dan pada text zoom 200% kartu melebar sampai
-         * terpotong `overflow-hidden` section (WCAG 1.4.4).
+         * `lg:-mt-9` (36px) = tinggi baris legenda, jadi tepi atas kartu
+         * sejajar dengan baris legenda. Kartu menempati zona kanan yang sudah
+         * disisihkan `lg:pr-[15rem]` pada legenda — tidak ada teks yang
+         * tertutup, dan kartu tetap terlihat menumpuk di sudut kanan bawah
+         * seperti wireframe.
          *
-         * Sekarang kartu mengalir setelah kalender, lalu ditarik naik dengan
-         * margin negatif (`lg:-mt-7`) dan diratakan kanan (`lg:self-end`).
-         * Tidak ada offset horizontal, jadi kartu tidak bisa keluar wadah atau
-         * terpotong pada zoom berapa pun. Kesan melayang tetap ada dari tarikan
-         * naik + bayangan.
+         * Tidak memakai `position: absolute` maupun offset negatif: keduanya
+         * membuat posisi kartu bergantung pada padding box wadah, sehingga
+         * mudah lepas dan bisa terpotong pada text zoom 200% (WCAG 1.4.4).
          */
-        'mt-4 w-full lg:-mt-7 lg:w-[16rem] lg:self-end',
+        'mt-4 w-full lg:-mt-9 lg:w-[14rem] lg:self-end',
       )}
     >
       <div className="flex items-center gap-2.5">
