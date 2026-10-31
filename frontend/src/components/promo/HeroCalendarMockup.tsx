@@ -115,7 +115,13 @@ export function HeroCalendarMockup() {
      * ~530px. Sisa ruang di kanan dipakai kartu detail klien yang menimpa
      * tepi kartu.
      */
-    <div className="relative mx-auto w-full max-w-[27rem] lg:max-w-[31rem] lg:pb-12">
+    /*
+     * `lg:mr-16`: menyisakan 64px ruang di kanan kolom untuk kartu detail.
+     * Tanpa ini kartu keluar viewport di 1024px (-46px) saat digeser keluar
+     * grid agar tidak menimpa legenda. Kalender sendiri tetap 31rem; ruang
+     * itu hanya dipakai kartu yang menumpuk di atasnya.
+     */
+    <div className="relative mx-auto w-full max-w-[27rem] lg:mr-16 lg:max-w-[31rem] lg:pb-12">
       <div className="overflow-hidden rounded-2xl border border-ink-200 bg-white shadow-[0_22px_48px_-18px_rgba(27,32,39,0.26),0_4px_12px_-4px_rgba(27,32,39,0.08)]">
         {/* Bar jendela aplikasi */}
         <div className="flex items-center gap-2 border-b border-ink-100 bg-ink-50 px-3.5 py-2.5">
@@ -273,7 +279,35 @@ function ClientCard() {
         /* Digeser keluar kartu kalender (bukan ke dalam) supaya tanggal 28 dan
            label "Tutup" 25–26 tetap terbaca. `-bottom-6` membuatnya hanya
            menimpa tepi bawah, bukan baris tanggal terakhir. */
-        'lg:absolute lg:-bottom-8 lg:-right-16 lg:mt-0 lg:w-[17rem]',
+        /*
+         * Kartu HARUS berada di luar grid kalender agar tidak menimpa legenda
+         * "Diblokir" (terukur tertimpa ~10px pada -right-16). Tapi menggesernya
+         * terlalu jauh membuatnya keluar viewport di 1024px (-62px).
+         *
+         * Jalan tengah: kartu diperkecil ke 15rem dan digeser -right-20 (80px).
+         * Kiri kartu = tepi kanan kalender - 80 - 240, yang masih di kanan
+         * legenda; sisi kanannya tetap di dalam viewport karena kolom hero
+         * menyisakan ruang. `lg:pb-12` memberi ruang bawah.
+         */
+        /*
+         * Kartu diturunkan (-bottom-14) sehingga berada DI BAWAH baris legenda.
+         * Sebelumnya hanya -bottom-8: kartu masih sejajar vertikal dengan
+         * legenda, jadi meski digeser horizontal ia tetap menimpa label
+         * "Diblokir". Diturunkan, tumpang-tindih horizontal tidak lagi masalah
+         * karena keduanya di ketinggian berbeda.
+         *
+         * `-right-20` + lebar 15rem menjaga sisi kanan tetap di dalam viewport
+         * (di 1024px hanya tersisa ~45px ruang kanan).
+         */
+        /*
+         * Geseran bertingkat karena ruang kanan berbeda per lebar:
+         * - 1024–1279px: hanya ~45px ruang kanan → geser kecil (-right-10)
+         * - >=1280px: ~88px ruang → geser lebih jauh (-right-20)
+         *
+         * Kartu sudah diturunkan (-bottom-14) sehingga tidak sejajar dengan
+         * baris legenda; tumpang-tindih horizontal tidak lagi menutupi label.
+         */
+        'lg:absolute lg:-bottom-14 lg:-right-10 lg:mt-0 lg:w-[15rem] xl:-right-20',
       )}
     >
       <div className="flex items-center gap-2.5">
