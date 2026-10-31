@@ -58,7 +58,9 @@ export function Topbar({
 
       {user.role === 'admin' ? null : isTrial ? (
         <span className="hidden items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-caption font-medium text-amber-700 ring-1 ring-inset ring-amber-200 md:inline-flex">
-          Trial · {subscription.trialBookingsUsed}/{subscription.trialBookingsLimit} booking
+          {subscription.daysLeft != null
+            ? `Masa uji · sisa ${subscription.daysLeft} hari`
+            : 'Masa uji · semua fitur terbuka'}
         </span>
       ) : subscription.status === 'active' && subscription.endsAt ? (
         <span className="hidden items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-caption font-medium text-emerald-700 ring-1 ring-inset ring-emerald-200 md:inline-flex">

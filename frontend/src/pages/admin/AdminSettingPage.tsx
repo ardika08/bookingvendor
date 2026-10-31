@@ -48,16 +48,10 @@ const FIELDS: Array<{
     hint: 'Setelah tanggal berakhir, vendor masih bisa membuat booking & invoice selama masa ini. Setelah lewat, akses ditolak sampai langganan diperpanjang.',
   },
   {
-    field: 'trialBookingsLimit',
-    label: 'Kuota booking saat trial',
-    unit: 'booking',
-    hint: 'Jumlah booking yang boleh dibuat vendor baru selama masa trial.',
-  },
-  {
-    field: 'trialInvoicesLimit',
-    label: 'Kuota invoice saat trial',
-    unit: 'invoice',
-    hint: 'Jumlah invoice yang boleh dibuat vendor baru selama masa trial.',
+    field: 'trialDays',
+    label: 'Durasi masa uji',
+    unit: 'hari',
+    hint: 'Lama akses penuh untuk vendor baru sejak mendaftar. Selama masa ini semua fitur terbuka tanpa batas jumlah booking maupun invoice.',
   },
 ]
 
@@ -72,8 +66,7 @@ export function AdminSettingPage() {
   /** Nilai yang sedang diisi di form (string agar input bisa kosong sementara). */
   const [draft, setDraft] = useState<Record<PlatformSettingField, string>>({
     graceDays: '',
-    trialBookingsLimit: '',
-    trialInvoicesLimit: '',
+    trialDays: '',
   })
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<PlatformSettingField, string>>>({})
   const [confirming, setConfirming] = useState(false)
@@ -96,8 +89,7 @@ export function AdminSettingPage() {
         setData(response)
         setDraft({
           graceDays: String(response.settings.graceDays),
-          trialBookingsLimit: String(response.settings.trialBookingsLimit),
-          trialInvoicesLimit: String(response.settings.trialInvoicesLimit),
+          trialDays: String(response.settings.trialDays),
         })
       })
       .catch((cause: unknown) => {
@@ -203,8 +195,7 @@ export function AdminSettingPage() {
       setData(response)
       setDraft({
         graceDays: String(response.settings.graceDays),
-        trialBookingsLimit: String(response.settings.trialBookingsLimit),
-        trialInvoicesLimit: String(response.settings.trialInvoicesLimit),
+        trialDays: String(response.settings.trialDays),
       })
       setConfirming(false)
       setSaved(true)
@@ -341,8 +332,7 @@ export function AdminSettingPage() {
                 onClick={() => {
                   setDraft({
                     graceDays: String(data.settings.graceDays),
-                    trialBookingsLimit: String(data.settings.trialBookingsLimit),
-                    trialInvoicesLimit: String(data.settings.trialInvoicesLimit),
+                    trialDays: String(data.settings.trialDays),
                   })
                   setFieldErrors({})
                   setSaved(false)

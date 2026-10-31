@@ -5,7 +5,6 @@ import { createInvoice, fetchBookingInvoices } from '@/lib/api/invoices'
 import { InvoiceCreateFormPage } from '@/pages/InvoiceCreateFormPage'
 import { DetailSkeleton } from '@/pages/routes/BookingDetailRoutes'
 import { InvoiceDetailError } from '@/pages/InvoiceDetailPage'
-import { useDashboardUser } from '@/pages/DashboardHomePage'
 import type { InvoicePayload } from '@/lib/invoice-form'
 import type { Booking } from '@/types/booking'
 import type { Invoice } from '@/types/invoice'
@@ -20,9 +19,7 @@ import { ApiError } from '@/lib/api/client'
  */
 export function InvoiceCreateRoute() {
   const { bookingId = '' } = useParams()
-  const user = useDashboardUser()
   const { booking, invoices, loading, notFound, reload } = useInvoiceCreateData(bookingId)
-  const subscription = user.subscription
 
   const handleSubmit = useCallback(
     async (payload: InvoicePayload) => {
@@ -38,8 +35,6 @@ export function InvoiceCreateRoute() {
     <InvoiceCreateFormPage
       booking={booking}
       existingInvoices={invoices}
-      invoicesUsed={subscription.status === 'active' ? 0 : subscription.trialInvoicesUsed}
-      invoicesLimit={subscription.status === 'active' ? null : subscription.trialInvoicesLimit}
       onSubmit={handleSubmit}
     />
   )

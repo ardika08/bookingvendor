@@ -57,10 +57,7 @@ export const mockSubscription: SubscriptionState = {
   status: 'trial',
   endsAt: null,
   graceEndsAt: null,
-  trialBookingsUsed: 2,
-  trialBookingsLimit: 2,
-  trialInvoicesUsed: 1,
-  trialInvoicesLimit: 2,
+  daysLeft: 30,
 }
 
 export const mockBank = {

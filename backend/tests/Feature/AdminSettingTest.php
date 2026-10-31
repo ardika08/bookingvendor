@@ -80,8 +80,7 @@ class AdminSettingTest extends TestCase
         $response = $this->getJson('/api/admin/settings')->assertOk();
 
         $this->assertSame(7, $response->json('settings.graceDays'));
-        $this->assertSame(2, $response->json('settings.trialBookingsLimit'));
-        $this->assertSame(2, $response->json('settings.trialInvoicesLimit'));
+        $this->assertSame(30, $response->json('settings.trialDays'));
 
         // Batas nilai ikut dikirim agar UI tidak menebak sendiri.
         $this->assertSame(1, $response->json('rules.graceDays.min'));
@@ -108,13 +107,11 @@ class AdminSettingTest extends TestCase
     {
         $this->putJson('/api/admin/settings', [
             'graceDays' => 14,
-            'trialBookingsLimit' => 5,
+            'trialDays' => 45,
         ])
             ->assertOk()
             ->assertJsonPath('settings.graceDays', 14)
-            ->assertJsonPath('settings.trialBookingsLimit', 5)
-            // Yang tidak dikirim tidak berubah.
-            ->assertJsonPath('settings.trialInvoicesLimit', 2);
+            ->assertJsonPath('settings.trialDays', 45);
 
         $this->assertDatabaseHas('platform_settings', [
             'key' => 'subscription.grace_days',
@@ -146,17 +143,19 @@ class AdminSettingTest extends TestCase
         );
     }
 
-    /** Kuota trial juga harus mengikuti nilai dari database. */
-    public function test_kuota_trial_dari_database_dipakai_trial_quota(): void
+    /**
+     * Durasi masa uji dari database harus berlaku di config aplikasi.
+     *
+     * Menggantikan tes kuota trial: masa uji kini berbasis waktu, jadi yang
+     * diatur admin adalah berapa hari akses penuh diberikan.
+     */
+    public function test_durasi_masa_uji_dari_database_dipakai_config(): void
     {
         $this->putJson('/api/admin/settings', [
-            'trialBookingsLimit' => 9,
-            'trialInvoicesLimit' => 4,
+            'trialDays' => 45,
         ])->assertOk();
 
-        $quota = app(TrialQuota::class);
-        $this->assertSame(9, $quota->bookingsLimit());
-        $this->assertSame(4, $quota->invoicesLimit());
+        $this->assertSame(45, config('trial.days'));
     }
 
     public function test_perubahan_dicatat_di_riwayat_beserta_pelakunya(): void
@@ -191,7 +190,7 @@ class AdminSettingTest extends TestCase
         $this->putJson('/api/admin/settings', ['graceDays' => 999])
             ->assertStatus(422);
 
-        $this->putJson('/api/admin/settings', ['trialBookingsLimit' => -3])
+        $this->putJson('/api/admin/settings', ['trialDays' => -3])
             ->assertStatus(422);
 
         // Nilai tetap seperti semula setelah penolakan.

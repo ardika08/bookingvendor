@@ -214,18 +214,6 @@ export async function createBooking(payload: BookingPayload) {
   if (USE_MOCK_DATA) {
     await delay(450)
 
-    // Simulasi penolakan server saat jatah trial booking habis (PRD).
-    const { subscription } = mockUser
-    if (
-      subscription.status === 'trial' &&
-      subscription.trialBookingsUsed >= subscription.trialBookingsLimit
-    ) {
-      throw new ApiError(
-        'Jatah trial booking sudah habis. Berlangganan untuk membuat booking tanpa batas.',
-        { status: 422, code: 'trial_limit_reached' },
-      )
-    }
-
     return { id: `bk-mock-${Date.now()}`, ...payload }
   }
   return apiRequest('/bookings', { method: 'POST', body: payload })

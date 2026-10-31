@@ -37,31 +37,18 @@ class SubscriptionController extends Controller
         $vendor = $this->resolveVendor();
 
         $status = $this->statuses->resolve($vendor);
-        $booking = $this->quota->bookingUsage($vendor);
-        $invoice = $this->quota->invoiceUsage($vendor);
 
-        $subscriptionValid = $status['canCreateInvoice'];
-
+        /*
+         * Masa uji berbasis waktu: tidak ada kuota transaksi lagi. `daysLeft`
+         * dipakai frontend untuk "sisa N hari".
+         */
         return response()->json([
             'status' => $status['status'],
             'endsAt' => $status['endsAt'],
             'graceEndsAt' => $status['graceEndsAt'],
-
-            'trialBookingsUsed' => $booking['used'],
-            'trialBookingsLimit' => $booking['limit'],
-            'trialInvoicesUsed' => $invoice['used'],
-            'trialInvoicesLimit' => $invoice['limit'],
-
-            // null = tanpa batas (langganan aktif).
-            'remainingBookings' => $booking['limited']
-                ? max($booking['limit'] - $booking['used'], 0)
-                : null,
-            'remainingInvoices' => $invoice['limited']
-                ? max($invoice['limit'] - $invoice['used'], 0)
-                : null,
-
-            'canCreateBooking' => $subscriptionValid && $this->quota->canCreateBooking($vendor),
-            'canCreateInvoice' => $subscriptionValid && $this->quota->canCreateInvoice($vendor),
+            'daysLeft' => $this->quota->daysLeft($vendor),
+            'canCreateBooking' => $status['canCreateInvoice'],
+            'canCreateInvoice' => $status['canCreateInvoice'],
         ]);
     }
 }

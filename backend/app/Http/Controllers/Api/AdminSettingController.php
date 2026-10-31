@@ -32,8 +32,7 @@ class AdminSettingController extends Controller
      */
     private const FIELD_TO_KEY = [
         'graceDays' => 'subscription.grace_days',
-        'trialBookingsLimit' => 'trial.bookings_limit',
-        'trialInvoicesLimit' => 'trial.invoices_limit',
+        'trialDays' => 'trial.days',
     ];
 
     public function __construct(private readonly PlatformSettings $settings) {}

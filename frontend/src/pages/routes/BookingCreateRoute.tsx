@@ -71,10 +71,6 @@ export function BookingCreateRoute() {
     [],
   )
 
-  const trialExhausted =
-    user.subscription.status !== 'active' &&
-    user.subscription.trialBookingsUsed >= user.subscription.trialBookingsLimit
-
   return (
     <div className="space-y-4">
       {loadError ? (
@@ -88,8 +84,8 @@ export function BookingCreateRoute() {
 
       {user.subscription.status === 'trial' ? (
         <div className="rounded-xl border border-amber-200 bg-amber-50/70 px-4 py-2.5 text-meta text-amber-900">
-          <span className="font-semibold">Masa trial.</span> Form tetap bisa diisi penuh — submit
-          diblokir server bila jatah trial habis.
+          <span className="font-semibold">Masa uji.</span> Semua fitur terbuka — booking tanpa batas
+          jumlah selama masa uji berjalan.
         </div>
       ) : null}
 
@@ -97,13 +93,6 @@ export function BookingCreateRoute() {
         packages={packages}
         takenDates={takenDates}
         clients={clients}
-        trialExhausted={trialExhausted}
-        trialUsage={{
-          bookingsUsed: user.subscription.trialBookingsUsed,
-          bookingsLimit: user.subscription.trialBookingsLimit,
-          invoicesUsed: user.subscription.trialInvoicesUsed,
-          invoicesLimit: user.subscription.trialInvoicesLimit,
-        }}
         onSubmit={handleSubmit}
       />
     </div>

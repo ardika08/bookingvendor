@@ -41,10 +41,11 @@ export interface SubscriptionState {
   endsAt: string | null
   /** Akhir masa tenggang untuk status `grace`/`expired`. */
   graceEndsAt: string | null
-  trialBookingsUsed: number
-  trialBookingsLimit: number
-  trialInvoicesUsed: number
-  trialInvoicesLimit: number
+  /**
+   * Sisa hari masa aktif. Masa uji berbasis waktu, bukan kuota transaksi —
+   * field `trialBookingsUsed/Limit` dan `trialInvoicesUsed/Limit` sudah dihapus.
+   */
+  daysLeft?: number | null
 }
 
 export type PaymentStatus = 'pending' | 'confirmed' | 'rejected' | 'expired'

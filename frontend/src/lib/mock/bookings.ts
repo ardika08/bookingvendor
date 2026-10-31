@@ -39,11 +39,8 @@ export const mockUser: CurrentUser = {
   },
   subscription: {
     status: 'trial',
-    trialBookingsUsed: 2,
-    trialBookingsLimit: 2,
-    trialInvoicesUsed: 1,
-    trialInvoicesLimit: 2,
     endsAt: null,
+    daysLeft: 30,
   },
 }
 

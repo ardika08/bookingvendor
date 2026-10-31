@@ -72,34 +72,40 @@ class SubscriptionStatusApiTest extends TestCase
         ]);
     }
 
-    public function test_trial_menampilkan_sisa_kuota(): void
+    /**
+     * Masa uji berbasis WAKTU: tidak ada kuota booking/invoice.
+     *
+     * Regresi: respons dulu mengirim `trialBookingsUsed/Limit`,
+     * `trialInvoicesUsed/Limit`, dan `remainingBookings/Invoices` — sisa aturan
+     * kuota yang sudah dihapus. Frontend memakainya untuk menampilkan
+     * "tersisa 2 booking & 2 invoice", yang menyesatkan vendor.
+     */
+    public function test_trial_tanpa_kuota_transaksi(): void
     {
         $this->subscribe(Subscription::STATUS_TRIAL, null, 1, 0);
 
-        $this->getJson('/api/subscription')
-            ->assertOk()
-            ->assertJsonPath('status', 'trial')
-            ->assertJsonPath('endsAt', null)
-            ->assertJsonPath('trialBookingsUsed', 1)
-            ->assertJsonPath('trialBookingsLimit', 2)
-            ->assertJsonPath('trialInvoicesUsed', 0)
-            ->assertJsonPath('trialInvoicesLimit', 2)
-            ->assertJsonPath('remainingBookings', 1)
-            ->assertJsonPath('remainingInvoices', 2)
+        $response = $this->getJson('/api/subscription')->assertOk();
+
+        $response->assertJsonPath('status', 'trial')
             ->assertJsonPath('canCreateBooking', true)
             ->assertJsonPath('canCreateInvoice', true);
+
+        // Field kuota tidak boleh ada lagi.
+        $this->assertArrayNotHasKey('trialBookingsLimit', $response->json());
+        $this->assertArrayNotHasKey('trialInvoicesLimit', $response->json());
+        $this->assertArrayNotHasKey('remainingBookings', $response->json());
+        $this->assertArrayNotHasKey('remainingInvoices', $response->json());
     }
 
-    public function test_trial_habis_memblokir_aksi(): void
+    /** Sudah memakai 2 booking & 2 invoice pun tetap boleh membuat lagi. */
+    public function test_pemakaian_tinggi_tidak_memblokir(): void
     {
         $this->subscribe(Subscription::STATUS_TRIAL, null, 2, 2);
 
         $this->getJson('/api/subscription')
             ->assertOk()
-            ->assertJsonPath('remainingBookings', 0)
-            ->assertJsonPath('remainingInvoices', 0)
-            ->assertJsonPath('canCreateBooking', false)
-            ->assertJsonPath('canCreateInvoice', false);
+            ->assertJsonPath('canCreateBooking', true)
+            ->assertJsonPath('canCreateInvoice', true);
     }
 
     public function test_langganan_aktif_tanpa_batas(): void
@@ -110,8 +116,6 @@ class SubscriptionStatusApiTest extends TestCase
             ->assertOk()
             ->assertJsonPath('status', 'active')
             ->assertJsonPath('endsAt', now()->addDays(20)->toDateString())
-            ->assertJsonPath('remainingBookings', null)
-            ->assertJsonPath('remainingInvoices', null)
             ->assertJsonPath('canCreateBooking', true)
             ->assertJsonPath('canCreateInvoice', true);
     }
@@ -163,10 +167,8 @@ class SubscriptionStatusApiTest extends TestCase
         $this->getJson('/api/subscription')
             ->assertOk()
             ->assertJsonPath('status', 'trial')
-            ->assertJsonPath('trialBookingsUsed', 1)
-            ->assertJsonPath('trialInvoicesUsed', 1)
-            ->assertJsonPath('remainingBookings', 1)
-            ->assertJsonPath('remainingInvoices', 1);
+            ->assertJsonPath('canCreateBooking', true)
+            ->assertJsonPath('canCreateInvoice', true);
     }
 
     public function test_akun_nonaktif_tidak_bisa_melihat_status(): void

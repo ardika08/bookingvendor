@@ -48,17 +48,16 @@ class PlatformSettings
             'min' => 1,
             'max' => 30,
         ],
-        'trial.bookings_limit' => [
-            'config' => 'trial.bookings_limit',
-            'default' => 2,
+        /*
+         * Durasi masa uji. Menggantikan kuota booking/invoice yang sudah
+         * dihapus: masa uji kini berbasis waktu, jadi yang perlu diatur admin
+         * adalah berapa lama akses penuh diberikan.
+         */
+        'trial.days' => [
+            'config' => 'trial.days',
+            'default' => 30,
             'min' => 1,
-            'max' => 50,
-        ],
-        'trial.invoices_limit' => [
-            'config' => 'trial.invoices_limit',
-            'default' => 2,
-            'min' => 1,
-            'max' => 50,
+            'max' => 90,
         ],
     ];
 
@@ -154,9 +153,16 @@ class PlatformSettings
                     continue;
                 }
 
-                DB::table('platform_settings')
-                    ->where('key', $key)
-                    ->update(['value' => (string) $new, 'updated_at' => now()]);
+                /*
+                 * `updateOrInsert`, bukan `update`: kunci baru (mis.
+                 * `trial.days` yang menggantikan kuota) belum punya baris di
+                 * tabel, sehingga `update()` tidak melakukan apa pun dan nilai
+                 * admin diam-diam hilang.
+                 */
+                DB::table('platform_settings')->updateOrInsert(
+                    ['key' => $key],
+                    ['value' => (string) $new, 'updated_at' => now()],
+                );
 
                 DB::table('platform_setting_changes')->insert([
                     'key' => $key,

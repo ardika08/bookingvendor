@@ -7,174 +7,131 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Penjaga kuota masa trial.
+ * Status masa uji — TANPA kuota transaksi.
  *
- * PRD: vendor baru mendapat jatah 2 booking + 2 invoice. Kuota hanya berlaku
- * selama masa trial dan tidak direset saat vendor berlangganan. Penolakan
- * dikirim sebagai HTTP 422 dengan kode `trial_limit_reached` agar frontend
- * membuka `UpgradeModal` tanpa menghapus isian form.
+ * Masa uji kini berbasis **waktu** (lihat `config/trial.php`): vendor mendapat
+ * akses penuh selama N hari, dan boleh membuat booking maupun invoice sebanyak
+ * yang dibutuhkan. Kuota "2 booking + 2 invoice" sudah dihapus karena vendor
+ * wedding biasanya hanya memegang 1–3 acara per bulan — kuota itu habis dalam
+ * hitungan hari, sebelum vendor sempat mencoba alur lengkap (booking → invoice
+ * → DP → pelunasan → acara selesai), padahal itulah nilai produknya.
  *
- * Tabel `subscriptions` dibuat pada fitur langganan. Sebelum tabel itu ada
- * (mis. instalasi backend baru), pengecekan dilewati supaya pengembangan
- * endpoint tidak terhambat; begitu tabel tersedia, penegakan langsung aktif.
+ * KONSEKUENSI PENTING
+ * `canCreateBooking()` dan `canCreateInvoice()` sekarang **selalu true**
+ * selama masa aktif belum lewat. Batas waktu ditegakkan oleh
+ * `SubscriptionStatus` (kode `subscription_expired`) dan middleware
+ * `EnsureInvoiceTrialQuota`; bukan di sini.
+ *
+ * Kelas ini dipertahankan (bukan dihapus) karena masih dipakai untuk
+ * melaporkan sisa hari dan status masa uji ke frontend. Kolom
+ * `trial_bookings_used` / `trial_invoices_used` di tabel `subscriptions` tidak
+ * lagi dibaca sebagai pembatas — hanya dipertahankan agar data lama tidak
+ * hilang.
  */
 class TrialQuota
 {
+    /**
+     * Kode lama untuk penolakan karena kuota habis.
+     *
+     * Tidak pernah dikirim lagi oleh server, tetapi dipertahankan karena
+     * frontend masih menanganinya (dan untuk mencegah 500 bila ada klien lama
+     * yang membandingkan nilainya).
+     */
     public const CODE = 'trial_limit_reached';
 
-    public function bookingsLimit(): int
-    {
-        return (int) config('trial.bookings_limit', 2);
-    }
-
-    public function invoicesLimit(): int
-    {
-        return (int) config('trial.invoices_limit', 2);
-    }
-
     /**
-     * Status pemakaian invoice vendor.
+     * Pemakaian booking.
      *
-     * @return array{limited: bool, used: int, limit: int}
-     */
-    public function invoiceUsage(Vendor $vendor): array
-    {
-        return $this->usageFor(
-            $vendor,
-            'trial_invoices_used',
-            $this->invoicesLimit(),
-            fn (): int => $vendor->invoices()->count(),
-        );
-    }
-
-    /**
-     * Status pemakaian booking vendor.
+     * `limited` selalu `false` — tidak ada batas jumlah lagi. Angka `used`
+     * tetap dilaporkan sebagai informasi ("kamu sudah membuat N booking"),
+     * bukan sebagai pembatas.
      *
      * @return array{limited: bool, used: int, limit: int}
      */
     public function bookingUsage(Vendor $vendor): array
     {
-        return $this->usageFor(
-            $vendor,
-            'trial_bookings_used',
-            $this->bookingsLimit(),
-            fn (): int => $vendor->bookings()->count(),
-        );
-    }
-
-    /** True bila vendor masih boleh menerbitkan invoice baru. */
-    public function canCreateInvoice(Vendor $vendor): bool
-    {
-        return $this->hasRemaining($this->invoiceUsage($vendor));
-    }
-
-    /** True bila vendor masih boleh membuat booking baru. */
-    public function canCreateBooking(Vendor $vendor): bool
-    {
-        return $this->hasRemaining($this->bookingUsage($vendor));
-    }
-
-    /**
-     * Hitung pemakaian satu jenis kuota.
-     *
-     * - Tanpa baris langganan → hitung dari data nyata (PRD: sisa jatah trial
-     *   dihitung dari booking/invoice yang benar-benar ada).
-     * - Sudah berlangganan → tanpa batas.
-     * - Trial → pakai penghitung yang tersimpan.
-     *
-     * @param  callable(): int  $realCount
-     * @return array{limited: bool, used: int, limit: int}
-     */
-    private function usageFor(Vendor $vendor, string $column, int $limit, callable $realCount): array
-    {
-        $subscription = $this->activeSubscription($vendor);
-
-        if ($subscription === null) {
-            return ['limited' => true, 'used' => (int) $realCount(), 'limit' => $limit];
-        }
-
-        if ($subscription->status !== 'trial') {
-            return ['limited' => false, 'used' => 0, 'limit' => $limit];
-        }
-
         return [
-            'limited' => true,
-            'used' => (int) ($subscription->{$column} ?? 0),
-            'limit' => $limit,
+            'limited' => false,
+            'used' => $vendor->bookings()->count(),
+            'limit' => 0,
         ];
     }
 
-    /** @param array{limited: bool, used: int, limit: int} $usage */
-    private function hasRemaining(array $usage): bool
+    /**
+     * Pemakaian invoice.
+     *
+     * @return array{limited: bool, used: int, limit: int}
+     */
+    public function invoiceUsage(Vendor $vendor): array
     {
-        if (! $usage['limited']) {
-            return true;
-        }
-
-        return $usage['used'] < $usage['limit'];
+        return [
+            'limited' => false,
+            'used' => $vendor->invoices()->count(),
+            'limit' => 0,
+        ];
     }
 
-    /** Pesan penolakan yang konsisten untuk API. */
-    public function rejectionMessage(): string
+    /** Selalu true — tidak ada kuota invoice selama masa aktif. */
+    public function canCreateInvoice(Vendor $vendor): bool
     {
-        return 'Jatah trial invoice sudah habis. Berlangganan untuk membuat invoice tanpa batas.';
+        return true;
+    }
+
+    /** Selalu true — tidak ada kuota booking selama masa aktif. */
+    public function canCreateBooking(Vendor $vendor): bool
+    {
+        return true;
     }
 
     /**
-     * Tambah penghitung pemakaian booking selama trial (bila relevan).
+     * Tidak lagi dipakai.
+     *
+     * Dibiarkan sebagai no-op supaya pemanggil lama tidak error bila masih
+     * ada. Penghitung `trial_*_used` tidak lagi berpengaruh apa pun.
      */
     public function recordBookingUsage(Vendor $vendor): void
     {
-        if (! Schema::hasTable('subscriptions')) {
-            return;
-        }
-
-        $subscription = $this->activeSubscription($vendor);
-        if ($subscription === null || $subscription->status !== 'trial') {
-            return;
-        }
-
-        DB::table('subscriptions')
-            ->where('id', $subscription->id)
-            ->increment('trial_bookings_used');
+        // sengaja kosong
     }
 
-    /**
-     * Tambah penghitung pemakaian invoice selama trial (bila relevan).
-     */
+    /** Tidak lagi dipakai. */
     public function recordInvoiceUsage(Vendor $vendor): void
     {
-        if (! Schema::hasTable('subscriptions')) {
-            return;
-        }
-
-        $subscription = $this->activeSubscription($vendor);
-        if ($subscription === null || $subscription->status !== 'trial') {
-            return;
-        }
-
-        DB::table('subscriptions')
-            ->where('id', $subscription->id)
-            ->increment('trial_invoices_used');
+        // sengaja kosong
     }
 
-    /** True bila tabel langganan sudah tersedia (penegakan aktif). */
+    /** True bila tabel langganan sudah tersedia. */
     public function isEnforced(): bool
     {
         return Schema::hasTable('subscriptions');
     }
 
-    /** Langganan trial/aktif milik vendor (hanya satu yang boleh hidup). */
-    private function activeSubscription(Vendor $vendor): ?object
+    /**
+     * Sisa hari masa aktif (null bila tidak ada langganan atau tanpa batas).
+     *
+     * Dipakai untuk menampilkan "sisa N hari" di banner — bukan kuota.
+     */
+    public function daysLeft(Vendor $vendor): ?int
     {
         if (! Schema::hasTable('subscriptions')) {
             return null;
         }
 
-        return DB::table('subscriptions')
+        $endsAt = DB::table('subscriptions')
             ->where('vendor_id', $vendor->id)
             ->whereIn('status', ['trial', 'active'])
             ->orderByDesc('id')
-            ->first();
+            ->value('ends_at');
+
+        if ($endsAt === null) {
+            return null;
+        }
+
+        $days = (int) now()->startOfDay()->diffInDays(
+            \Illuminate\Support\Carbon::parse($endsAt)->startOfDay(),
+            false,
+        );
+
+        return max($days, 0);
     }
 }

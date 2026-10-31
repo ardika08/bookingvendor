@@ -47,14 +47,17 @@ export interface Booking {
   createdAt: string
 }
 
-/** Ringkasan status langganan vendor, dipakai untuk badge kuota di header. */
+/**
+ * Ringkasan status langganan vendor, dipakai untuk banner masa uji di header.
+ *
+ * Masa uji berbasis **waktu**: tidak ada kuota booking/invoice. `daysLeft`
+ * menggantikan `remainingBookings`/`remainingInvoices` yang dulu ada.
+ */
 export interface SubscriptionSummary {
   status: 'trial' | 'active' | 'expired'
-  trialBookingsUsed: number
-  trialBookingsLimit: number
-  trialInvoicesUsed: number
-  trialInvoicesLimit: number
   endsAt: string | null
+  /** Sisa hari masa aktif; null bila tanpa batas atau tidak ada langganan. */
+  daysLeft?: number | null
 }
 
 export interface VendorProfile {

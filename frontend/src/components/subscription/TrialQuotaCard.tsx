@@ -1,101 +1,63 @@
-import {
-  Clock,
-} from '@/components/ui/icons'
+import { CalendarClock } from '@/components/ui/icons'
 import { ButtonLink } from '@/components/ui/Button'
 import { cn } from '@/lib/cn'
 import type { SubscriptionSummary } from '@/types/booking'
 
 /**
- * Kartu status masa uji. Kuota transaksi sudah dihapus — masa uji berbasis waktu.
+ * Kartu status masa uji — berbasis **waktu**, bukan kuota transaksi.
  *
- * Menampilkan dua bar progres — booking dan invoice — dengan penekanan naik
- * saat jatah tinggal satu dan jadi merah saat habis. Hanya untuk vendor trial:
- * di luar status itu komponen tidak merender apa-apa, jadi pemanggil bisa
- * memasangnya tanpa syarat.
+ * Versi sebelumnya menampilkan dua bar progres ("Booking 2/2", "Invoice 2/2")
+ * dengan teks "Kuota sekali pakai, tidak direset per bulan". Itu sisa aturan
+ * lama yang sudah dihapus: masa uji kini memberi akses penuh selama N hari
+ * tanpa batas jumlah booking maupun invoice. Menampilkan kuota membuat vendor
+ * mengira hanya boleh membuat dua booking.
+ *
+ * Nama berkas dan nama komponen dipertahankan agar pemanggil tidak perlu
+ * diubah; isinya sekarang sisa hari.
  */
 export function TrialQuotaCard({ subscription }: { subscription: SubscriptionSummary }) {
   if (subscription.status !== 'trial') return null
 
-  const items = [
-    {
-      label: 'Booking',
-      used: subscription.trialBookingsUsed,
-      limit: subscription.trialBookingsLimit,
-    },
-    {
-      label: 'Invoice',
-      used: subscription.trialInvoicesUsed,
-      limit: subscription.trialInvoicesLimit,
-    },
-  ]
+  const daysLeft = subscription.daysLeft ?? null
 
-  const exhausted = items.every((item) => item.used >= item.limit)
-  const urgent = items.some((item) => item.limit - item.used <= 1)
+  // Sisa ≤5 hari dianggap mendesak: peringatan berubah warna, bukan angka kuota.
+  const urgent = daysLeft !== null && daysLeft <= 5
 
   return (
     <section
       className={cn(
         'rounded-xl border px-4 py-3.5',
-        exhausted
-          ? 'border-rose-200 bg-rose-50/70'
-          : urgent
-            ? 'border-amber-200 bg-amber-50/70'
-            : 'border-ink-200/80 bg-white',
+        urgent ? 'border-amber-200 bg-amber-50/70' : 'border-ink-200/80 bg-white',
       )}
-      aria-label="Sisa jatah masa trial"
+      aria-label="Status masa uji"
     >
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
           <p
             className={cn(
               'flex items-center gap-1.5 text-meta font-semibold',
-              exhausted ? 'text-rose-700' : urgent ? 'text-amber-800' : 'text-ink-800',
+              urgent ? 'text-amber-800' : 'text-ink-800',
             )}
           >
-            <Clock className="size-3.5 shrink-0" />
-            {exhausted ? 'Jatah trial habis' : 'Sisa jatah masa trial'}
+            <CalendarClock className="size-3.5 shrink-0" />
+            Masa uji
           </p>
-          <div className="mt-2 space-y-2">
-            {items.map((item) => (
-              <QuotaRow key={item.label} {...item} />
-            ))}
-          </div>
+          <p className="mt-1.5 text-body leading-relaxed text-ink-600">
+            {daysLeft !== null ? (
+              <>
+                <span className="font-semibold text-ink-900">Sisa {daysLeft} hari lagi.</span>{' '}
+                Semua fitur terbuka — booking &amp; invoice tanpa batas jumlah.
+              </>
+            ) : (
+              <>Semua fitur terbuka — booking &amp; invoice tanpa batas jumlah.</>
+            )}
+          </p>
         </div>
 
-        <ButtonLink
-          to="/upgrade"
-          size="sm"
-          variant={exhausted ? 'primary' : 'secondary'}
-          className="shrink-0"
-        >
-          {exhausted ? 'Berlangganan sekarang' : 'Lihat paket'}
+        <ButtonLink to="/langganan" size="sm" variant="secondary" className="shrink-0">
+          Lihat paket
         </ButtonLink>
       </div>
     </section>
-  )
-}
-
-/** Satu baris kuota: label, progres bar, dan hitungan terpakai. */
-function QuotaRow({ label, used, limit }: { label: string; used: number; limit: number }) {
-  const left = Math.max(limit - used, 0)
-  const percent = limit > 0 ? Math.min(Math.round((used / limit) * 100), 100) : 0
-  const exhausted = left === 0
-
-  return (
-    <div>
-      <div className="flex items-baseline justify-between gap-3 text-meta">
-        <span className="text-ink-600">{label}</span>
-        <span className={cn('tabular-nums font-medium', exhausted ? 'text-rose-700' : 'text-ink-800')}>
-          {left > 0 ? `sisa ${left}` : 'habis'}
-          <span className="font-normal text-ink-400"> · {used}/{limit} terpakai</span>
-        </span>
-      </div>
-      <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-ink-100">
-        <div
-          className={cn('h-full rounded-full', exhausted ? 'bg-rose-500' : 'bg-brand-500')}
-          style={{ width: `${percent}%` }}
-        />
-      </div>
-    </div>
   )
 }

@@ -12,9 +12,9 @@ export interface PlatformSettingValues {
   /** Hari setelah langganan berakhir saat vendor masih bisa memakai aplikasi. */
   graceDays: number
   /** Batas jumlah booking selama masa trial. */
-  trialBookingsLimit: number
+  trialDays: number
   /** Batas jumlah invoice selama masa trial. */
-  trialInvoicesLimit: number
+
 }
 
 export type PlatformSettingField = keyof PlatformSettingValues
