@@ -35,8 +35,14 @@ class SubscriptionPaidMail extends Mailable implements ShouldQueue
 
     public function envelope(): Envelope
     {
+        /*
+         * Subjek menyebut hasilnya lebih dulu ("sudah aktif"), bukan prosesnya
+         * ("pembayaran diterima"). Yang dicari vendor di kotak masuk adalah
+         * kepastian bahwa langganannya berjalan — nominal dan paket sudah
+         * terlihat di dalam email.
+         */
         return new Envelope(
-            subject: 'Pembayaran langganan diterima — '.($this->payment->plan?->name ?? 'Paket'),
+            subject: 'Langganan '.($this->payment->plan?->name ?? 'paket').' kamu sudah aktif',
         );
     }
 

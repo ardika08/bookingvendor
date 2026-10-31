@@ -170,8 +170,15 @@ class MailketingMailableTest extends TestCase
         Http::assertSent(function ($request) {
             $subject = (string) ($request->data()['subject'] ?? '');
 
-            return str_contains($subject, 'Selamat datang')
-                && str_contains($subject, '30 hari');
+            /*
+             * Subjek memuat nama vendor dan durasi uji, tanpa em dash dan tanpa
+             * emoji — em dash terpotong di layar ponsel, emoji menaikkan
+             * peluang masuk folder Promosi.
+             */
+            return str_contains($subject, 'Lumen Wedding Story')
+                && str_contains($subject, '30 hari')
+                && ! str_contains($subject, '—')
+                && ! preg_match('/[\x{1F300}-\x{1FAFF}]/u', $subject);
         });
     }
 

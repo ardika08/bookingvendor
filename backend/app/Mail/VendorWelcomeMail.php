@@ -34,8 +34,18 @@ class VendorWelcomeMail extends Mailable implements ShouldQueue
 
     public function envelope(): Envelope
     {
+        /*
+         * Subjek dibuat ringkas dan personal: nama vendor lebih dulu, karena
+         * itulah yang paling dikenali di daftar kotak masuk. Versi sebelumnya
+         * ("Selamat datang di Booking Vendor — masa uji 30 hari dimulai")
+         * memakai em dash dan berakhir dengan kata kerja, sehingga terpotong
+         * di layar ponsel tepat sebelum bagian yang penting.
+         *
+         * Tanpa emoji: sebagian klien email menampilkannya sebagai kotak, dan
+         * emoji di subjek menaikkan peluang masuk folder Promosi.
+         */
         return new Envelope(
-            subject: 'Selamat datang di Booking Vendor — masa uji '.$this->trialDays.' hari dimulai',
+            subject: 'Halo '.$this->vendor->name.', masa uji '.$this->trialDays.' hari kamu sudah aktif',
         );
     }
 
