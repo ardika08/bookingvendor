@@ -25,6 +25,7 @@ import { InvoiceDetailRoute } from '@/pages/routes/InvoiceDetailRoute'
 import { PublicInvoiceRoute } from '@/pages/routes/PublicInvoiceRoute'
 import { OnboardingPage } from '@/pages/OnboardingPage'
 import { PublicScheduleRoute } from '@/pages/routes/PublicScheduleRoute'
+import { LegalPage } from '@/pages/LegalPage'
 import { InvoiceCreateRoute } from '@/pages/routes/InvoiceCreateRoute'
 import { VendorProfileRoute } from '@/pages/routes/VendorProfileRoute'
 import { CheckoutRoute } from '@/pages/routes/CheckoutRoute'
@@ -73,6 +74,27 @@ export function App() {
       <Route path="/daftar" element={<RegisterPage />} />
       <Route path="/invoice/:token" element={<PublicInvoiceRoute />} />
       <Route path="/jadwal/:slug" element={<PublicScheduleRoute />} />
+      {/*
+        Dokumen legal publik: dibutuhkan untuk verifikasi merchant payment
+        gateway, dan berguna bagi calon vendor yang ingin membaca ketentuan
+        sebelum mendaftar.
+      */}
+      {/*
+        Dua rute statis dengan prop eksplisit.
+
+        Riwayat percobaan yang gagal, jangan diulang:
+        1. Dua rute statis TANPA prop `slug` -> `useParams()` kosong, kedua URL
+           menampilkan dokumen yang sama.
+        2. `path="/:slug(syarat-ketentuan|kebijakan-privasi)"` -> sintaks regex
+           path tidak didukung React Router v7 di sini; URL jatuh ke halaman
+           login.
+        3. `path="/:slug"` -> terlalu luas, menangkap semua path.
+
+        Prop eksplisit menghindari ketiganya sekaligus: tidak bergantung pada
+        `useParams`, tidak menangkap path lain.
+      */}
+      <Route path="/syarat-ketentuan" element={<LegalPage slug="syarat-ketentuan" />} />
+      <Route path="/kebijakan-privasi" element={<LegalPage slug="kebijakan-privasi" />} />
       {/*
         Onboarding sengaja di luar `<RoleGate role="vendor">`: halaman ini tidak
         memakai `DashboardLayout`, karena vendor yang belum lengkap belum boleh

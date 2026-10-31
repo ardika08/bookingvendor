@@ -120,7 +120,7 @@ export function PromoLayout() {
 
       <footer className="border-t border-ink-200/70 bg-ink-50/60">
         {/*
-          Empat kolom: brand, kontak, alamat, produk.
+          Lima kolom: brand, kontak, alamat, produk, legal.
           Kolom "Akun" (Masuk / Panel admin) sudah dihapus atas permintaan —
           tautan masuk cukup tersedia lewat tombol di header, dan "Panel admin"
           tidak perlu ditonjolkan di halaman publik.
@@ -129,7 +129,7 @@ export function PromoLayout() {
           terakhir turun ke baris kedua dan menyisakan ruang kosong lebar di
           kanan — persis masalah yang ingin dihindari.
         */}
-        <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.4fr_1fr_1.2fr_0.8fr]">
+        <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.4fr_1fr_1.2fr_0.8fr_0.9fr]">
           <div>
             <div className="flex items-center gap-2.5">
               <span className="flex size-8 items-center justify-center rounded-lg bg-brand-400 text-body font-bold text-ink-900">
@@ -187,6 +187,30 @@ export function PromoLayout() {
                 <a href="#faq" className="inline-block py-1 text-ink-600 hover:text-ink-900">
                   FAQ
                 </a>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <p className="text-caption font-semibold uppercase tracking-wider text-ink-400">
+              Legal
+            </p>
+            <ul className="mt-2 space-y-0.5 text-meta">
+              <li>
+                <Link
+                  to="/syarat-ketentuan"
+                  className="inline-block py-1 text-ink-600 hover:text-ink-900"
+                >
+                  Syarat &amp; Ketentuan
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/kebijakan-privasi"
+                  className="inline-block py-1 text-ink-600 hover:text-ink-900"
+                >
+                  Kebijakan Privasi
+                </Link>
               </li>
             </ul>
           </div>
