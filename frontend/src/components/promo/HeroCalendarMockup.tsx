@@ -100,28 +100,26 @@ const DOW = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min']
 export function HeroCalendarMockup() {
   return (
     /*
-     * `max-w` di bawah `lg`: tanpa batas ini, kartu kalender memakai seluruh
-     * lebar kontainer saat layout masih satu kolom (tablet). Sel tanggal ikut
-     * membesar karena `aspect-square` — di 768px selnya jadi 96x96 sehingga
-     * kalender setinggi 755px, terlalu panjang untuk hero.
+     * STRUKTUR
+     * Flex column: kartu kalender, lalu kartu detail klien. Kartu detail
+     * ditarik naik dengan margin negatif (`lg:-mt-7`) dan diratakan ke kanan
+     * (`lg:self-end`) sehingga hanya menimpa tepi bawah kalender.
      *
-     * Dengan batas 27rem (432px), sel tetap ~55px di tablet dan kalender
-     * turun dari 755px ke ~500px. Di mobile batas ini tidak berpengaruh
-     * (kartu sudah lebih sempit).
+     * Kenapa bukan `position: absolute` seperti sebelumnya: dengan absolute,
+     * offset `-bottom-*` diukur dari padding box wadah. Setiap kali padding
+     * bawah wadah diubah (untuk memberi ruang kartu), posisi kartu ikut
+     * bergeser dan hasilnya berubah-ubah — kartu sempat menggantung 96px keluar
+     * wadah. Dalam alur normal, kartu selalu menempel tepi bawah kalender
+     * tanpa bisa lepas, dan tata letaknya tetap benar di semua lebar.
      *
-     * Desktop juga dibatasi (31rem / 496px): tanpa itu kolom grid selebar
-     * 589px membuat sel 78x78 dan kalender setinggi 637px. Dengan batas ini
-     * sel ~60px — ukuran yang wajar untuk kalender — dan tinggi turun ke
-     * ~530px. Sisa ruang di kanan dipakai kartu detail klien yang menimpa
-     * tepi kartu.
+     * LEBAR
+     * `max-w` di bawah `lg`: tanpa batas ini kartu kalender memakai seluruh
+     * lebar kontainer saat layout satu kolom (tablet), dan karena sel memakai
+     * `aspect-square`, selnya membesar jadi 96x96 — kalender setinggi 755px,
+     * terlalu panjang untuk hero. Dengan batas 27rem, sel tetap ~55px.
+     * Desktop dibatasi 31rem agar sel ~60px.
      */
-    /*
-     * `lg:mr-16`: menyisakan 64px ruang di kanan kolom untuk kartu detail.
-     * Tanpa ini kartu keluar viewport di 1024px (-46px) saat digeser keluar
-     * grid agar tidak menimpa legenda. Kalender sendiri tetap 31rem; ruang
-     * itu hanya dipakai kartu yang menumpuk di atasnya.
-     */
-    <div className="relative mx-auto w-full max-w-[27rem] lg:max-w-[31rem] lg:pb-24">
+    <div className="relative mx-auto flex w-full max-w-[27rem] flex-col lg:max-w-[31rem]">
       <div className="overflow-hidden rounded-2xl border border-ink-200 bg-white shadow-[0_22px_48px_-18px_rgba(27,32,39,0.26),0_4px_12px_-4px_rgba(27,32,39,0.08)]">
         {/* Bar jendela aplikasi */}
         <div className="flex items-center gap-2 border-b border-ink-100 bg-ink-50 px-3.5 py-2.5">
@@ -152,8 +150,21 @@ export function HeroCalendarMockup() {
           </div>
         </div>
 
+        {/*
+          Legenda ada di ATAS grid, bukan di bawahnya.
+          Di bawah grid ia bertabrakan dengan kartu detail klien yang menempel
+          tepi bawah kalender — label "Diblokir" selalu jadi korban karena
+          berada paling kanan. Di atas, legenda tidak mungkin tertutup apa pun.
+        */}
+        <div className="flex flex-wrap items-center gap-x-3.5 gap-y-1 px-3.5 pb-3">
+          <Legend swatch="border border-ink-200 bg-white" label="Tersedia" />
+          <Legend swatch="bg-brand-400" label="Terisi" />
+          <Legend swatch="bg-ink-900" label="Dipilih" />
+          <Legend swatch="bg-ink-200" label="Diblokir" />
+        </div>
+
         {/* Grid tanggal */}
-        <div className="px-2.5 pb-2">
+        <div className="px-2.5 pb-2.5">
           <div className="grid grid-cols-7 gap-1 pb-1.5">
             {DOW.map((d) => (
               <span
@@ -172,13 +183,6 @@ export function HeroCalendarMockup() {
           </div>
         </div>
 
-        {/* Legenda */}
-        <div className="flex flex-wrap items-center gap-x-3.5 gap-y-1 border-t border-ink-100 px-3.5 py-2">
-          <Legend swatch="border border-ink-200 bg-white" label="Tersedia" />
-          <Legend swatch="bg-brand-400" label="Terisi" />
-          <Legend swatch="bg-ink-900" label="Dipilih" />
-          <Legend swatch="bg-ink-200" label="Diblokir" />
-        </div>
       </div>
 
       {/* Kartu detail klien */}
@@ -280,52 +284,21 @@ function ClientCard() {
            label "Tutup" 25–26 tetap terbaca. `-bottom-6` membuatnya hanya
            menimpa tepi bawah, bukan baris tanggal terakhir. */
         /*
-         * Kartu HARUS berada di luar grid kalender agar tidak menimpa legenda
-         * "Diblokir" (terukur tertimpa ~10px pada -right-16). Tapi menggesernya
-         * terlalu jauh membuatnya keluar viewport di 1024px (-62px).
+         * ALUR NORMAL, bukan `position: absolute`.
          *
-         * Jalan tengah: kartu diperkecil ke 15rem dan digeser -right-20 (80px).
-         * Kiri kartu = tepi kanan kalender - 80 - 240, yang masih di kanan
-         * legenda; sisi kanannya tetap di dalam viewport karena kolom hero
-         * menyisakan ruang. `lg:pb-12` memberi ruang bawah.
+         * Versi sebelumnya memakai absolute dengan offset negatif
+         * (`-bottom-24`, `-right-10`/`-right-20`). Hasilnya rapuh: offset
+         * negatif diukur dari padding box wadah, jadi setiap perubahan padding
+         * wadah menggeser kartu — dan pada text zoom 200% kartu melebar sampai
+         * terpotong `overflow-hidden` section (WCAG 1.4.4).
+         *
+         * Sekarang kartu mengalir setelah kalender, lalu ditarik naik dengan
+         * margin negatif (`lg:-mt-7`) dan diratakan kanan (`lg:self-end`).
+         * Tidak ada offset horizontal, jadi kartu tidak bisa keluar wadah atau
+         * terpotong pada zoom berapa pun. Kesan melayang tetap ada dari tarikan
+         * naik + bayangan.
          */
-        /*
-         * Kartu diturunkan (-bottom-14) sehingga berada DI BAWAH baris legenda.
-         * Sebelumnya hanya -bottom-8: kartu masih sejajar vertikal dengan
-         * legenda, jadi meski digeser horizontal ia tetap menimpa label
-         * "Diblokir". Diturunkan, tumpang-tindih horizontal tidak lagi masalah
-         * karena keduanya di ketinggian berbeda.
-         *
-         * `-right-20` + lebar 15rem menjaga sisi kanan tetap di dalam viewport
-         * (di 1024px hanya tersisa ~45px ruang kanan).
-         */
-        /*
-         * `right-0`, BUKAN offset negatif.
-         *
-         * Versi sebelumnya memakai `-right-10`/`-right-20` agar kartu menonjol
-         * keluar kartu kalender. Pada text zoom 200% (`rem` ikut membesar),
-         * kartu melebar ke 480px dan offset negatif mendorong tepi kanannya
-         * 112px melewati `<section className="overflow-hidden">` — terpotong,
-         * tanpa cara menjangkaunya (WCAG 1.4.4).
-         *
-         * Dengan `right-0`, tepi kanan kartu berhenti di tepi wrapper sehingga
-         * tidak pernah keluar section pada zoom berapa pun. Kesan melayang
-         * tetap didapat dari `-bottom-14` (turun melewati tepi bawah kalender)
-         * dan bayangan, tanpa perlu keluar secara horizontal.
-         */
-        /*
-         * `-bottom-24` (96px), bukan -bottom-14.
-         *
-         * Legenda berada di y≈692–709 dan kartu setinggi ~185px. Dengan
-         * -bottom-14 tepi atas kartu jatuh di y≈646 — masih di ATAS legenda,
-         * sehingga label "Diblokir" tertutup (terukur). Menurunkan ke
-         * -bottom-24 menaruh tepi atas kartu di bawah baris legenda, jadi
-         * tumpang-tindih horizontal tidak lagi menutupi teks apa pun.
-         *
-         * Horizontalnya tetap `right-0` agar tidak pernah keluar section pada
-         * text zoom 200% (WCAG 1.4.4).
-         */
-        'lg:absolute lg:-bottom-24 lg:right-0 lg:mt-0 lg:w-[15rem]',
+        'mt-4 w-full lg:-mt-7 lg:w-[16rem] lg:self-end',
       )}
     >
       <div className="flex items-center gap-2.5">
