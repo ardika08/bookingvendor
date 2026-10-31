@@ -1,5 +1,5 @@
 import { Menu, X } from '@/components/ui/icons'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, Outlet } from 'react-router-dom'
 import { SignUpCta } from '@/components/promo/SignUpCta'
 import { COMPANY, copyrightLine } from '@/lib/company'
@@ -24,6 +24,29 @@ const NAV_LINKS = [
 
 export function PromoLayout() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const menuButtonRef = useRef<HTMLButtonElement>(null)
+
+  /*
+   * Escape menutup menu mobile dan mengembalikan fokus ke tombolnya.
+   *
+   * Sebelumnya hanya klik yang menutup menu. Pengguna keyboard yang membuka
+   * menu tidak punya jalan menutupnya selain menekan tombol lagi — pola
+   * disclosure APG mengharuskan Escape berfungsi. Fokus dikembalikan agar
+   * pengguna tidak kehilangan posisi setelah menu hilang dari DOM.
+   */
+  useEffect(() => {
+    if (!menuOpen) return
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setMenuOpen(false)
+        menuButtonRef.current?.focus()
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [menuOpen])
 
   return (
     <div className="min-h-dvh scroll-smooth bg-white text-ink-800">
@@ -59,6 +82,7 @@ export function PromoLayout() {
           </div>
 
           <button
+            ref={menuButtonRef}
             type="button"
             onClick={() => setMenuOpen((prev) => !prev)}
             className="inline-flex size-9 items-center justify-center rounded-lg text-ink-600 hover:bg-ink-100 md:hidden"
@@ -148,19 +172,19 @@ export function PromoLayout() {
             <p className="text-caption font-semibold uppercase tracking-wider text-ink-400">
               Produk
             </p>
-            <ul className="mt-3 space-y-2 text-meta">
+            <ul className="mt-2 space-y-0.5 text-meta">
               <li>
-                <a href="#fitur" className="text-ink-600 hover:text-ink-900">
+                <a href="#fitur" className="inline-block py-1 text-ink-600 hover:text-ink-900">
                   Fitur
                 </a>
               </li>
               <li>
-                <a href="#harga" className="text-ink-600 hover:text-ink-900">
+                <a href="#harga" className="inline-block py-1 text-ink-600 hover:text-ink-900">
                   Harga
                 </a>
               </li>
               <li>
-                <a href="#faq" className="text-ink-600 hover:text-ink-900">
+                <a href="#faq" className="inline-block py-1 text-ink-600 hover:text-ink-900">
                   FAQ
                 </a>
               </li>
@@ -189,12 +213,17 @@ function FooterColumn({
   return (
     <div>
       <p className="text-caption font-semibold uppercase tracking-wider text-ink-400">{title}</p>
-      <ul className="mt-3 space-y-2 text-meta">
+      {/*
+        Tautan memakai `inline-block py-1` agar tinggi target sentuh mencapai
+        ~28px, bukan 17px. `space-y-2` diganti `space-y-0.5` supaya jarak
+        visual tetap rapat meski padding menambah tinggi.
+      */}
+      <ul className="mt-2 space-y-0.5 text-meta">
         {links.map((link) => (
           <li key={link.href}>
             <a
               href={link.href}
-              className="break-words text-ink-600 hover:text-ink-900"
+              className="inline-block break-words py-1 text-ink-600 hover:text-ink-900"
               {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
             >
               {link.label}

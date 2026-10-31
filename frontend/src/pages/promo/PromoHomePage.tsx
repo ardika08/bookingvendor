@@ -27,11 +27,20 @@ import { AudienceSection } from '@/components/promo/AudienceSection'
 export function PromoHomePage() {
   return (
     <>
-      <section className="relative overflow-hidden">
+      {/*
+        `overflow-hidden` TIDAK dipasang di section.
+        Dulu dipasang di sini untuk memotong gradien dekoratif, tetapi efeknya
+        ikut memotong kartu detail klien pada text zoom 200% (112px hilang).
+        Sekarang pemotongan gradien ditangani `overflow-hidden` pada lapisan
+        gradien itu sendiri, sehingga konten tetap boleh melebar.
+      */}
+      <section className="relative">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_60%_at_50%_0%,rgba(216,90,69,0.10),transparent_70%)]"
-        />
+          className="pointer-events-none absolute inset-0 overflow-hidden"
+        >
+          <div className="absolute inset-0 bg-[radial-gradient(60%_60%_at_50%_0%,rgba(216,90,69,0.10),transparent_70%)]" />
+        </div>
         {/*
           Dua kolom: teks di kiri, mockup kalender di kanan.
           Sebelumnya hero center-aligned tanpa visual — calon vendor harus
@@ -92,8 +101,8 @@ export function PromoHomePage() {
             />
             <Highlight
               icon={<ShieldCheck className="size-4" />}
-              title="Masuk satu klik"
-              note="Masuk dengan email dan kata sandi — tanpa perlu akun Google."
+              title="Masuk tanpa akun Google"
+              note="Cukup email dan kata sandi yang kamu buat sendiri saat mendaftar."
             />
           </ul>
         </div>

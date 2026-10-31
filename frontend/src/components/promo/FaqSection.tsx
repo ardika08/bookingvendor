@@ -61,16 +61,22 @@ export function FaqSection() {
           {FAQS.map((faq) => (
             <details
               key={faq.question}
-              className="group rounded-xl border border-ink-200/80 bg-white px-4 py-3 open:border-brand-200 open:bg-brand-50/20"
+              className="group rounded-xl border border-ink-200/80 bg-white open:border-brand-200 open:bg-brand-50/20"
             >
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-body font-medium text-ink-900 [&::-webkit-details-marker]:hidden">
+              {/*
+                Padding vertikal ada di `summary`, bukan di `<details>`.
+                Dulu `py-3` menempel di `<details>` sehingga tinggi baris
+                pertanyaan hanya 20px — di bawah target sentuh 24px dan sulit
+                ditekan di ponsel. Kini seluruh baris jadi area klik.
+              */}
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-body font-medium text-ink-900 [&::-webkit-details-marker]:hidden">
                 {faq.question}
                 <ChevronDown
                   className="size-4 shrink-0 text-ink-400 transition-transform group-open:rotate-180"
                   aria-hidden
                 />
               </summary>
-              <p className="mt-2 text-meta leading-relaxed text-ink-500">{faq.answer}</p>
+              <p className="px-4 pb-3 text-meta leading-relaxed text-ink-500">{faq.answer}</p>
             </details>
           ))}
         </div>

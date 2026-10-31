@@ -22,10 +22,16 @@ class PlanSeeder extends Seeder
 {
     public function run(): void
     {
+        /*
+         * Nama paket memakai pola angka + satuan yang sama untuk ketiganya
+         * ("1 Bulan", "3 Bulan", "12 Bulan"). Sebelumnya campur: "Bulanan",
+         * "3 Bulan", "Tahunan" — dua satuan berbeda untuk objek yang sama,
+         * membingungkan saat dibandingkan di halaman harga.
+         */
         $plans = [
             [
                 'code' => 'monthly',
-                'name' => 'Bulanan',
+                'name' => '1 Bulan',
                 'duration_months' => 1,
                 'price' => 50000,
                 'is_active' => true,
@@ -39,7 +45,7 @@ class PlanSeeder extends Seeder
             ],
             [
                 'code' => 'yearly',
-                'name' => 'Tahunan',
+                'name' => '12 Bulan',
                 'duration_months' => 12,
                 'price' => 480000,
                 'is_active' => true,

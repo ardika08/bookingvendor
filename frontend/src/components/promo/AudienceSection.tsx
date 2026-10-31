@@ -98,7 +98,7 @@ export function AudienceSection() {
             Satu sistem, dipakai lintas jenis vendor pernikahan
           </h2>
           <p className="mt-3 text-body leading-relaxed text-ink-500">
-            Kalau pekerjaan Anda berhubungan dengan tanggal acara, klien, dan tagihan — VendorKit
+            Kalau pekerjaanmu berhubungan dengan tanggal acara, klien, dan tagihan — VendorKit
             dirancang untuk itu. Tidak perlu software berbeda per profesi.
           </p>
 

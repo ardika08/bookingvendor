@@ -97,7 +97,13 @@ function PricingCard({ plan }: { plan: Plan }) {
         )}
       </div>
 
-      <div className="mt-3 flex items-baseline gap-2">
+      {/*
+        `flex-wrap` wajib: pada text zoom 200%, "Rp 480.000" + "Rp 720.000"
+        tidak muat sebaris dan harga coret meluber keluar kartu (terukur
+        scrollWidth 1309 vs viewport 1280). Dengan wrap, harga coret turun ke
+        baris berikutnya alih-alih memaksa halaman melebar.
+      */}
+      <div className="mt-3 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
         <p
           className={cn(
             'text-heading font-semibold tabular-nums',

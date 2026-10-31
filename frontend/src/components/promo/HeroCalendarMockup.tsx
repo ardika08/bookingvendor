@@ -121,7 +121,7 @@ export function HeroCalendarMockup() {
      * grid agar tidak menimpa legenda. Kalender sendiri tetap 31rem; ruang
      * itu hanya dipakai kartu yang menumpuk di atasnya.
      */
-    <div className="relative mx-auto w-full max-w-[27rem] lg:mr-16 lg:max-w-[31rem] lg:pb-12">
+    <div className="relative mx-auto w-full max-w-[27rem] lg:max-w-[31rem] lg:pb-24">
       <div className="overflow-hidden rounded-2xl border border-ink-200 bg-white shadow-[0_22px_48px_-18px_rgba(27,32,39,0.26),0_4px_12px_-4px_rgba(27,32,39,0.08)]">
         {/* Bar jendela aplikasi */}
         <div className="flex items-center gap-2 border-b border-ink-100 bg-ink-50 px-3.5 py-2.5">
@@ -300,14 +300,32 @@ function ClientCard() {
          * (di 1024px hanya tersisa ~45px ruang kanan).
          */
         /*
-         * Geseran bertingkat karena ruang kanan berbeda per lebar:
-         * - 1024–1279px: hanya ~45px ruang kanan → geser kecil (-right-10)
-         * - >=1280px: ~88px ruang → geser lebih jauh (-right-20)
+         * `right-0`, BUKAN offset negatif.
          *
-         * Kartu sudah diturunkan (-bottom-14) sehingga tidak sejajar dengan
-         * baris legenda; tumpang-tindih horizontal tidak lagi menutupi label.
+         * Versi sebelumnya memakai `-right-10`/`-right-20` agar kartu menonjol
+         * keluar kartu kalender. Pada text zoom 200% (`rem` ikut membesar),
+         * kartu melebar ke 480px dan offset negatif mendorong tepi kanannya
+         * 112px melewati `<section className="overflow-hidden">` — terpotong,
+         * tanpa cara menjangkaunya (WCAG 1.4.4).
+         *
+         * Dengan `right-0`, tepi kanan kartu berhenti di tepi wrapper sehingga
+         * tidak pernah keluar section pada zoom berapa pun. Kesan melayang
+         * tetap didapat dari `-bottom-14` (turun melewati tepi bawah kalender)
+         * dan bayangan, tanpa perlu keluar secara horizontal.
          */
-        'lg:absolute lg:-bottom-14 lg:-right-10 lg:mt-0 lg:w-[15rem] xl:-right-20',
+        /*
+         * `-bottom-24` (96px), bukan -bottom-14.
+         *
+         * Legenda berada di y≈692–709 dan kartu setinggi ~185px. Dengan
+         * -bottom-14 tepi atas kartu jatuh di y≈646 — masih di ATAS legenda,
+         * sehingga label "Diblokir" tertutup (terukur). Menurunkan ke
+         * -bottom-24 menaruh tepi atas kartu di bawah baris legenda, jadi
+         * tumpang-tindih horizontal tidak lagi menutupi teks apa pun.
+         *
+         * Horizontalnya tetap `right-0` agar tidak pernah keluar section pada
+         * text zoom 200% (WCAG 1.4.4).
+         */
+        'lg:absolute lg:-bottom-24 lg:right-0 lg:mt-0 lg:w-[15rem]',
       )}
     >
       <div className="flex items-center gap-2.5">
