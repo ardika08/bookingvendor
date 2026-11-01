@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AdminDashboardController;
 use App\Http\Controllers\Api\AdminPlanController;
+use App\Http\Controllers\Api\AdminVoucherController;
 use App\Http\Controllers\Api\AdminReportController;
 use App\Http\Controllers\Api\AdminSettingController;
 use App\Http\Controllers\Api\AdminSubscriptionController;
@@ -26,6 +27,7 @@ use App\Http\Controllers\Api\RegisterController;
 use App\Http\Controllers\Api\PublicScheduleController;
 use App\Http\Controllers\Api\RevenueController;
 use App\Http\Controllers\Api\SubscriptionController;
+use App\Http\Controllers\Api\VoucherClaimController;
 use App\Http\Controllers\Api\UserProfileController;
 use App\Http\Controllers\Api\VendorProfileController;
 use Illuminate\Support\Facades\Route;
@@ -117,6 +119,19 @@ Route::middleware(['auth:sanctum', 'admin.only'])->prefix('admin')->group(functi
         ->name('admin.plans.update');
     Route::delete('plans/{plan}', [AdminPlanController::class, 'destroy'])
         ->name('admin.plans.destroy');
+
+    /*
+     * Voucher: kode yang dibuat admin untuk dibagikan ke vendor.
+     *
+     * Tidak ada endpoint DELETE — riwayat pemakaian harus tetap ada. Untuk
+     * menghentikan kode, admin memakai `status` (is_active = false).
+     */
+    Route::get('vouchers', [AdminVoucherController::class, 'index'])->name('admin.vouchers.index');
+    Route::post('vouchers', [AdminVoucherController::class, 'store'])->name('admin.vouchers.store');
+    Route::match(['put', 'patch'], 'vouchers/{voucher}', [AdminVoucherController::class, 'update'])
+        ->name('admin.vouchers.update');
+    Route::patch('vouchers/{voucher}/status', [AdminVoucherController::class, 'updateStatus'])
+        ->name('admin.vouchers.status');
 
     // Dashboard admin: ringkasan angka platform + grafik pendapatan agregat.
     Route::get('dashboard/summary', [AdminDashboardController::class, 'summary'])
@@ -243,6 +258,16 @@ Route::middleware(['auth:sanctum', 'vendor.active'])->group(function () {
     });
 
     Route::get('subscription', [SubscriptionController::class, 'show'])->name('subscription.show');
+
+    /*
+     * Klaim voucher. Hanya tipe "gratis N bulan" yang bisa diklaim di sini;
+     * voucher diskon dipakai saat checkout.
+     */
+    Route::get('subscription/voucher', [VoucherClaimController::class, 'history'])
+        ->name('subscription.voucher.history');
+    Route::post('subscription/voucher', [VoucherClaimController::class, 'claim'])
+        ->middleware('throttle:10,1')
+        ->name('subscription.voucher.claim');
 
     /*
      * Katalog paket & pembayaran langganan.

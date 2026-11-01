@@ -8,6 +8,7 @@ import {
   Users,
   ShieldCheck,
   type IconComponent,
+  Ticket,
 } from '@/components/ui/icons'
 import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useLocation, useOutletContext } from 'react-router-dom'
@@ -48,6 +49,7 @@ const ADMIN_NAV: AdminNavItem[] = [
   { label: 'Dashboard', to: '/admin', icon: LayoutDashboard },
   { label: 'Kelola Vendor', to: '/admin/vendors', icon: Users },
   { label: 'Paket Langganan', to: '/admin/plans', icon: CreditCard },
+  { label: 'Voucher', to: '/admin/vouchers', icon: Ticket },
   { label: 'Laporan', to: '/admin/reports', icon: BarChart3 },
   { label: 'Akun Saya', to: '/admin/akun', icon: UserRound },
   { label: 'Pengaturan', to: '/admin/settings', icon: Settings2 },

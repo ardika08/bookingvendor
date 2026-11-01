@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import {
   Banknote,
@@ -14,6 +14,7 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { PaymentHistory } from '@/components/subscription/PaymentHistory'
 import { PlanCard } from '@/components/subscription/PlanCard'
 import { SubscriptionStatusCard } from '@/components/subscription/SubscriptionStatusCard'
+import { VoucherClaimCard } from '@/components/subscription/VoucherClaimCard'
 import { cn } from '@/lib/cn'
 import { formatCurrency, formatLongDate } from '@/lib/format'
 import { fetchPayments, fetchPlans, fetchSubscription } from '@/lib/api/subscription'
@@ -57,27 +58,33 @@ export function SubscriptionPage() {
 
   const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({})
 
-  useEffect(() => {
-    let active = true
-
-    Promise.all([fetchPlans(), fetchSubscription(), fetchPayments()])
+  /**
+   * Muat ulang seluruh data langganan.
+   *
+   * Diekstrak jadi fungsi (bukan hanya di dalam useEffect) karena dipanggil
+   * ulang setelah vendor berhasil memakai voucher — masa aktif berubah, jadi
+   * kartu status harus ikut diperbarui tanpa perlu menekan muat ulang.
+   */
+  const reload = useCallback(() => {
+    setLoading(true)
+    return Promise.all([fetchPlans(), fetchSubscription(), fetchPayments()])
       .then(([planList, sub, paymentList]) => {
-        if (!active) return
         setPlans(planList)
         setSubscription(sub)
         setPayments(paymentList)
+        setError(null)
       })
       .catch(() => {
-        if (active) setError('Gagal memuat data langganan. Coba muat ulang halaman.')
+        setError('Gagal memuat data langganan. Coba muat ulang halaman.')
       })
       .finally(() => {
-        if (active) setLoading(false)
+        setLoading(false)
       })
-
-    return () => {
-      active = false
-    }
   }, [])
+
+  useEffect(() => {
+    void reload()
+  }, [reload])
 
   const pendingPayment = useMemo(
     () => payments.find((payment) => payment.status === 'pending') ?? null,
@@ -219,6 +226,14 @@ export function SubscriptionPage() {
       <div role="tabpanel" id="panel-status" aria-labelledby="tab-status" hidden={tab !== 'status'}>
         <div className="space-y-4">
           <SubscriptionStatusCard subscription={subscription} />
+
+          {/*
+            Klaim voucher diletakkan tepat di bawah status langganan, bukan di
+            tab terpisah: vendor yang baru menerima kode dari admin akan mencari
+            di halaman ini, dan menaruhnya di tab lain membuatnya tidak
+            ditemukan.
+          */}
+          <VoucherClaimCard onClaimed={reload} />
 
           <Card>
             <CardHeader
