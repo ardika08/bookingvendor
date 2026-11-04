@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AdminDashboardController;
 use App\Http\Controllers\Api\AdminPlanController;
 use App\Http\Controllers\Api\AdminVoucherController;
+use App\Http\Controllers\Api\AddonController;
 use App\Http\Controllers\Api\AdminReportController;
 use App\Http\Controllers\Api\AdminSettingController;
 use App\Http\Controllers\Api\AdminSubscriptionController;
@@ -313,12 +314,15 @@ Route::middleware(['auth:sanctum', 'vendor.active'])->group(function () {
         Route::post('expire', [CheckoutController::class, 'expire'])->name('payments.expire');
     });
 
+    Route::apiResource('addons', AddonController::class)->except(['show']);
+
     Route::prefix('packages')->group(function () {
         Route::get('/', [PackageController::class, 'index'])->name('packages.index');
         Route::post('/', [PackageController::class, 'store'])->name('packages.store');
         Route::match(['put', 'patch'], '{package}', [PackageController::class, 'update'])
             ->name('packages.update');
         Route::delete('{package}', [PackageController::class, 'destroy'])->name('packages.destroy');
+        Route::put('{package}/addons', [PackageController::class, 'syncAddons'])->name('packages.addons.sync');
     });
 
     Route::prefix('blocked-dates')->group(function () {

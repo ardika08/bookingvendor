@@ -68,6 +68,11 @@ class Vendor extends Model
         return $this->hasMany(Package::class);
     }
 
+    public function addons(): HasMany
+    {
+        return $this->hasMany(Addon::class);
+    }
+
     public function clients(): HasMany
     {
         return $this->hasMany(Client::class);

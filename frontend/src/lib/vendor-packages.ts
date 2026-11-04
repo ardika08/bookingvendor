@@ -14,6 +14,7 @@ export interface PackageFormValues {
   durationHours: string
   description: string
   active: boolean
+  addons: Array<{ addonId: string; price: number; overridePrice: string }>
 }
 
 export type PackageFormErrors = Partial<Record<keyof PackageFormValues, string>>
@@ -26,6 +27,7 @@ export interface VendorPackageDetail extends VendorPackage {
   active: boolean
   /** Jumlah booking yang memakai paket ini (0 = belum pernah dipakai). */
   usageCount: number
+  addons?: Array<{ id: string; name: string; price: number; pivot?: { price?: number } }>
 }
 
 /** Payload `POST/PUT /api/packages`. */
@@ -35,6 +37,7 @@ export interface PackagePayload {
   duration_hours: number | null
   description: string | null
   active: boolean
+  addons?: Array<{ addon_id: string; price: number }>
 }
 
 export const EMPTY_PACKAGE_FORM: PackageFormValues = {
@@ -43,6 +46,7 @@ export const EMPTY_PACKAGE_FORM: PackageFormValues = {
   durationHours: '',
   description: '',
   active: true,
+  addons: [],
 }
 
 export function packageToFormValues(pkg: VendorPackageDetail): PackageFormValues {
@@ -52,6 +56,7 @@ export function packageToFormValues(pkg: VendorPackageDetail): PackageFormValues
     durationHours: pkg.durationHours ? String(pkg.durationHours) : '',
     description: pkg.description ?? '',
     active: pkg.active,
+    addons: (pkg.addons ?? []).map((addon) => ({ addonId: addon.id, price: addon.price, overridePrice: addon.pivot?.price && addon.pivot.price !== addon.price ? formatThousands(addon.pivot.price) : '' })),
   }
 }
 
@@ -102,6 +107,7 @@ export function toPackagePayload(values: PackageFormValues): PackagePayload {
     duration_hours: Number.isFinite(hours) && hours > 0 ? hours : null,
     description: values.description.trim() || null,
     active: values.active,
+    addons: values.addons.map((addon) => ({ addon_id: addon.addonId, price: addon.overridePrice.trim() ? parseThousands(addon.overridePrice) : addon.price })),
   }
 }
 

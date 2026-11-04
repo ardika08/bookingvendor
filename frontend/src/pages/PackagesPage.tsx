@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Card } from '@/components/ui/Card'
 import { TableSkeleton } from '@/components/ui/TableSkeleton'
 import {
@@ -17,6 +17,9 @@ import {
   updatePackage,
 } from '@/lib/api/vendor-packages'
 import { useToast } from '@/components/ui/Toast'
+import { AddonManager } from '@/components/packages/AddonManager'
+import { fetchAddons, updatePackageAddons } from '@/lib/api/vendor-addons'
+import type { Addon } from '@/lib/vendor-addons'
 import {
   toPackagePayload,
   type PackagePayload,
@@ -53,6 +56,9 @@ export function PackagesPage() {
   const [editorOpen, setEditorOpen] = useState(false)
   const [editing, setEditing] = useState<VendorPackageDetail | null>(null)
   const [busyId, setBusyId] = useState<string | null>(null)
+  const [addons, setAddons] = useState<Addon[]>([])
+
+  useEffect(() => { void fetchAddons().then(setAddons).catch(() => setAddons([])) }, [])
 
   const openCreate = useCallback(() => {
     setEditing(null)
@@ -68,11 +74,13 @@ export function PackagesPage() {
     async (payload: PackagePayload, id?: string) => {
       if (id) {
         const updated = await updatePackage(id, payload)
+        await updatePackageAddons(id, payload.addons ?? [])
         replacePackage(updated)
         notify(`Paket "${updated.name}" diperbarui.`, { tone: 'success' })
         return
       }
       const created = await createPackage(payload)
+      await updatePackageAddons(created.id, payload.addons ?? [])
       appendPackage(created)
       notify(`Paket "${created.name}" ditambahkan.`, { tone: 'success' })
     },
@@ -90,6 +98,7 @@ export function PackagesPage() {
             durationHours: pkg.durationHours ? String(pkg.durationHours) : '',
             description: pkg.description ?? '',
             active: !pkg.active,
+            addons: [],
           }),
         })
         replacePackage(updated)
@@ -165,10 +174,13 @@ export function PackagesPage() {
         </div>
       </Card>
 
+      <AddonManager onChanged={setAddons} />
+
       <PackageEditorDialog
         key={editing?.id ?? 'new'}
         open={editorOpen}
         editing={editing}
+        addons={addons}
         onClose={() => setEditorOpen(false)}
         onSubmit={handleSave}
       />

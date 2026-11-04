@@ -22,6 +22,7 @@ import {
   type PackagePayload,
   type VendorPackageDetail,
 } from '@/lib/vendor-packages'
+import type { Addon } from '@/lib/vendor-addons'
 
 /**
  * Kartu katalog paket layanan.
@@ -193,12 +194,14 @@ export function PackageEditorDialog({
   editing,
   onClose,
   onSubmit,
+  addons = [],
 }: {
   open: boolean
   /** null = mode tambah. */
   editing: VendorPackageDetail | null
   onClose: () => void
   onSubmit: (payload: PackagePayload, id?: string) => Promise<void>
+  addons?: Addon[]
 }) {
   const initial = useMemo<PackageFormValues>(
     () => (editing ? packageToFormValues(editing) : EMPTY_PACKAGE_FORM),
@@ -367,6 +370,8 @@ export function PackageEditorDialog({
                 className="w-full rounded-lg border border-ink-200 bg-white px-3 py-2 text-body leading-relaxed text-ink-800 placeholder:text-ink-400 focus:border-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-100"
               />
             </Field>
+
+            {addons.length > 0 ? <div className="rounded-lg border border-ink-200 p-3"><p className="mb-2 text-meta font-medium text-ink-700">Tambahan dalam paket</p>{addons.filter((addon) => addon.active).map((addon) => { const selected = values.addons.find((item) => item.addonId === addon.id); return <label className="flex items-center gap-2 py-1" key={addon.id}><input type="checkbox" checked={Boolean(selected)} onChange={(event) => update('addons', event.target.checked ? [...values.addons, { addonId: addon.id, price: addon.price, overridePrice: '' }] : values.addons.filter((item) => item.addonId !== addon.id))} className="size-4 accent-brand-600" /><span className="flex-1 text-meta text-ink-800">{addon.name}</span>{selected ? <input aria-label={`Harga ${addon.name}`} value={selected.overridePrice} onChange={(event) => update('addons', values.addons.map((item) => item.addonId === addon.id ? { ...item, overridePrice: formatThousands(parseThousands(event.target.value)) } : item))} placeholder={formatThousands(addon.price)} className="w-28 rounded border border-ink-200 px-2 py-1 text-meta" inputMode="numeric" /> : null}</label> })}</div> : null}
 
             <label className="flex items-start gap-2.5 rounded-lg border border-ink-200 px-3 py-2.5">
               <input

@@ -1,0 +1,4 @@
+<?php
+use Illuminate\Database\Migrations\Migration; use Illuminate\Database\Schema\Blueprint; use Illuminate\Support\Facades\Schema;
+return new class extends Migration { public function up(): void { Schema::create('addons', function(Blueprint $t){$t->id();$t->foreignId('vendor_id')->constrained()->cascadeOnDelete();$t->string('name');$t->decimal('price',15,2);$t->boolean('is_active')->default(true);$t->timestamps();$t->index(['vendor_id','is_active']);}); Schema::create('package_addon',function(Blueprint $t){$t->foreignId('package_id')->constrained()->cascadeOnDelete();$t->foreignId('addon_id')->constrained()->cascadeOnDelete();$t->decimal('price',15,2);$t->primary(['package_id','addon_id']);}); }
+public function down(): void {Schema::dropIfExists('package_addon');Schema::dropIfExists('addons');}};

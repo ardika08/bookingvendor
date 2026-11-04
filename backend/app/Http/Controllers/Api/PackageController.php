@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePackageRequest;
 use App\Http\Requests\UpdatePackageRequest;
 use App\Http\Resources\PackageResource;
+use App\Models\Addon;
 use App\Models\Package;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -36,7 +37,7 @@ class PackageController extends Controller
     public function index(Request $request): JsonResponse
     {
         $vendor = $this->resolveVendor();
-        $query = $vendor->packages()->withCount('bookings');
+        $query = $vendor->packages()->withCount('bookings')->with('addons');
 
         $active = $request->query('active');
         if ($active !== null && $active !== '') {
@@ -72,7 +73,7 @@ class PackageController extends Controller
             'is_active' => $request->boolean('active', true),
         ]);
 
-        return (new PackageResource($package->loadCount('bookings')))
+        return (new PackageResource($package->loadCount('bookings')->load('addons')))
             ->response()
             ->setStatusCode(201);
     }
@@ -98,7 +99,17 @@ class PackageController extends Controller
 
         $package->save();
 
-        return (new PackageResource($package->loadCount('bookings')))->response();
+        return (new PackageResource($package->loadCount('bookings')->load('addons')))->response();
+    }
+
+    public function syncAddons(Request $request, Package $package): JsonResponse
+    {
+        $this->authorizePackage($package);
+        $data = $request->validate(['addons' => ['array'], 'addons.*.addon_id' => ['required','integer'], 'addons.*.price' => ['required','numeric','min:0']]);
+        $ids = collect($data['addons'] ?? [])->pluck('addon_id');
+        abort_unless($this->resolveVendor()->addons()->whereIn('id', $ids)->count() === $ids->count(), 422, 'Addon tidak valid.');
+        $package->addons()->sync(collect($data['addons'] ?? [])->mapWithKeys(fn ($row) => [$row['addon_id'] => ['price' => $row['price']]])->all());
+        return response()->json($package->load('addons')->addons->map(fn (Addon $addon) => ['id'=>(string)$addon->id,'name'=>$addon->name,'price'=>(float)$addon->pivot->price,'active'=>(bool)$addon->is_active])->values());
     }
 
     /**

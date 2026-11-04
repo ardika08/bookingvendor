@@ -28,6 +28,12 @@ class PackageResource extends JsonResource
             'durationHours' => $this->duration_hours,
             'active' => $this->is_active,
             'usageCount' => (int) ($this->bookings_count ?? $this->bookings()->count()),
+            'addons' => $this->whenLoaded('addons', fn () => $this->addons->map(fn ($addon) => [
+                'id' => (string) $addon->id,
+                'name' => $addon->name,
+                'price' => (float) ($addon->pivot->price ?? $addon->price),
+                'active' => (bool) $addon->is_active,
+            ])->values()),
         ];
     }
 }
