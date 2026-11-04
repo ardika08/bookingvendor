@@ -38,6 +38,20 @@ export default defineConfig({
         target: BACKEND_ORIGIN,
         changeOrigin: true,
       },
+      /*
+       * Berkas publik yang diunggah vendor (logo usaha) dan apa pun yang
+       * dilayani Laravel lewat symlink `public/storage`. Tanpa proxy ini,
+       * request `/storage/...` dijawab server statis Vite dengan halaman
+       * index.html (SPA fallback), sehingga `<img src>` gagal memuat dan
+       * tampak sebagai gambar rusak — padahal berkasnya ada di backend.
+       *
+       * Hanya relevan untuk dev: di produksi API dan frontend dilayani dari
+       * origin yang sama, jadi `/storage/...` sudah benar tanpa proxy.
+       */
+      '/storage': {
+        target: BACKEND_ORIGIN,
+        changeOrigin: true,
+      },
     },
   },
 })

@@ -18,6 +18,7 @@ import {
 } from '@/lib/invoice-status'
 import { formatCurrency, formatLongDate, formatShortDate } from '@/lib/format'
 import type { PublicInvoiceData } from '@/lib/api/public-invoices'
+import { logoUrlFromPath } from '@/lib/api/vendor-logo'
 
 export function PublicInvoicePage({ data }: { data: PublicInvoiceData }) {
   const { invoice, vendor } = data
@@ -25,6 +26,8 @@ export function PublicInvoicePage({ data }: { data: PublicInvoiceData }) {
   const overdue = isOverdue(invoice)
   const remaining = invoice.status === 'void' ? 0 : remainingAmount(invoice)
   const waDigits = vendor.contactPhone?.replace(/\D/g, '').replace(/^0/, '62') ?? ''
+  /** URL logo untuk `<img src>`; `null` berarti vendor belum memasang logo. */
+  const vendorLogoUrl = logoUrlFromPath(vendor.logoPath)
   const paymentDescription =
     invoice.status === 'paid'
       ? 'Pembayaran untuk invoice ini telah lunas.'
@@ -37,9 +40,22 @@ export function PublicInvoicePage({ data }: { data: PublicInvoiceData }) {
       <div className="mx-auto max-w-5xl space-y-5">
         <header className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-ink-200 bg-white px-5 py-4 shadow-sm sm:px-6">
           <div className="flex min-w-0 items-center gap-3">
-            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-100 text-brand-700">
-              <Building2 className="size-5" aria-hidden="true" />
-            </span>
+            {/*
+              Logo usaha vendor kalau ada; bila belum memasang logo, tampilkan
+              ikon gedung seperti sebelumnya. Ukuran dibatasi (`max-h-11`) supaya
+              logo persegi panjang tidak menggelembungkan kepala invoice.
+            */}
+            {vendorLogoUrl ? (
+              <img
+                src={vendorLogoUrl}
+                alt=""
+                className="h-11 w-11 shrink-0 rounded-xl border border-ink-200 bg-white object-contain p-0.5"
+              />
+            ) : (
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-100 text-brand-700">
+                <Building2 className="size-5" aria-hidden="true" />
+              </span>
+            )}
             <div className="min-w-0">
               <p className="text-2xs font-semibold uppercase tracking-[0.12em] text-ink-400">
                 Invoice dari

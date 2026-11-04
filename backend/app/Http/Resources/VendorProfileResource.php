@@ -28,6 +28,7 @@ class VendorProfileResource extends JsonResource
             'businessName' => $this->name,
             'category' => $this->whenLoaded('category', fn () => $this->category?->name),
             'slug' => $this->slug,
+            'logoPath' => $this->logo_path,
             'avatarUrl' => $user?->avatar_url,
             'description' => $this->description,
             'contactPhone' => $this->contact,

@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/Button'
 import { Card, CardBody, CardFooter, CardHeader } from '@/components/ui/Card'
 import { Field, FormSection, inputClass, textareaClass } from '@/components/ui/Field'
 import { PublicScheduleLinkCard } from '@/components/vendor/PublicScheduleLinkCard'
+import { VendorLogoCard } from '@/components/vendor/VendorLogoCard'
 import { ApiError } from '@/lib/api/client'
 import { initials } from '@/lib/format'
 import { cn } from '@/lib/cn'
@@ -59,6 +60,13 @@ export function VendorProfilePage({
   const [saving, setSaving] = useState(false)
   const [notice, setNotice] = useState<string | null>(null)
   const [submitError, setSubmitError] = useState<ApiError | Error | null>(null)
+  /**
+   * Logo usaha dipegang terpisah dari `values` karena disimpan lewat
+   * endpoint sendiri (multipart), bukan lewat `PUT /vendor/profile`. Data
+   * awal diambil dari `profile.logoUrl` supaya logo yang sudah terpasang
+   * tetap tampil setelah halaman dimuat ulang.
+   */
+  const [logoUrl, setLogoUrl] = useState<string | null>(profile.logoPath)
   const formRef = useRef<HTMLFormElement>(null)
 
   const dirty = isProfileDirty(savedSnapshot, values)
@@ -125,7 +133,14 @@ export function VendorProfilePage({
   const errorCount = Object.keys(errors).length
 
   return (
-    <form ref={formRef} onSubmit={handleSubmit} noValidate className="space-y-4">
+    <div className="space-y-4">
+      <VendorLogoCard
+        logoPath={logoUrl}
+        businessName={values.businessName || profile.businessName}
+        onSaved={setLogoUrl}
+      />
+
+      <form ref={formRef} onSubmit={handleSubmit} noValidate className="space-y-4">
       <Card>
         <CardBody className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-3">
@@ -437,7 +452,8 @@ export function VendorProfilePage({
           </Button>
         </CardFooter>
       </Card>
-    </form>
+      </form>
+    </div>
   )
 }
 

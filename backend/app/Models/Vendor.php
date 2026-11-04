@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Support\Facades\Storage;
 
 class Vendor extends Model
 {
@@ -19,6 +20,7 @@ class Vendor extends Model
         'name',
         'slug',
         'description',
+        'logo_path',
         'location',
         'contact',
         'contact_email',
@@ -40,6 +42,20 @@ class Vendor extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Path logo relatif terhadap disk `public`, mis. `vendor-logos/abc.png`.
+     *
+     * Resource TIDAK mengirim URL absolut di sini: URL absolut dibentuk dari
+     * `APP_URL`, sedangkan API dan frontend bisa berada di origin berbeda
+     * (dev: `:8082` vs `:4173`; produksi: `api.` vs domain utama). Frontend
+     * sudah tahu origin backend (`backendUrl()`), jadi penyusunan URL
+     * diserahkan ke sana.
+     */
+    public function logoUrl(): ?string
+    {
+        return $this->logo_path;
     }
 
     public function category(): BelongsTo

@@ -36,6 +36,7 @@ export const mockUser: CurrentUser = {
     businessName: 'Lumen Wedding Story',
     category: 'Wedding Organizer',
     slug: 'lumen-wedding-story',
+    logoPath: null,
     avatarUrl: null,
   },
   subscription: {

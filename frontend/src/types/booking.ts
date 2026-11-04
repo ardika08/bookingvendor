@@ -65,6 +65,12 @@ export interface VendorProfile {
   businessName: string
   category: string | null
   slug: string
+  /**
+   * Path logo relatif (`vendor-logos/abc.png`), BUKAN URL. Backend tidak
+   * membentuk URL absolut karena origin API bisa berbeda dari domain
+   * frontend. Susun URL dengan `logoUrlFromPath()`.
+   */
+  logoPath: string | null
   avatarUrl: string | null
 }
 

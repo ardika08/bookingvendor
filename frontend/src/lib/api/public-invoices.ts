@@ -22,6 +22,8 @@ export interface PublicInvoiceData {
   >
   vendor: {
     businessName: string
+    /** Path logo relatif; ubah ke URL dengan `logoUrlFromPath()`. */
+    logoPath: string | null
     contactPhone: string | null
     bank: {
       name: string | null
@@ -58,6 +60,7 @@ export async function fetchPublicInvoice(
       },
       vendor: {
         businessName: profile.businessName,
+        logoPath: profile.logoPath,
         contactPhone: profile.contactPhone,
         bank: { ...profile.bank },
       },
@@ -92,6 +95,7 @@ interface PublicInvoiceResponse {
   } | null
   vendor?: {
     name?: string | null
+    logoPath?: string | null
     contact?: string | null
     bank?: {
       name?: string | null
@@ -117,6 +121,7 @@ function mapPublicInvoice(raw: PublicInvoiceResponse): PublicInvoiceData {
     },
     vendor: {
       businessName: raw.vendor?.name ?? '',
+      logoPath: raw.vendor?.logoPath ?? null,
       contactPhone: raw.vendor?.contact ?? null,
       bank: {
         name: raw.vendor?.bank?.name ?? null,

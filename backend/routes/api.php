@@ -29,6 +29,7 @@ use App\Http\Controllers\Api\RevenueController;
 use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\VoucherClaimController;
 use App\Http\Controllers\Api\UserProfileController;
+use App\Http\Controllers\Api\VendorLogoController;
 use App\Http\Controllers\Api\VendorProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -242,6 +243,13 @@ Route::middleware(['auth:sanctum', 'vendor.active'])->group(function () {
         Route::get('profile', [VendorProfileController::class, 'show'])->name('vendor.profile.show');
         Route::match(['put', 'patch'], 'profile', [VendorProfileController::class, 'update'])
             ->name('vendor.profile.update');
+
+        /*
+         * Logo usaha dikirim terpisah sebagai multipart (lihat
+         * VendorLogoController), tidak lewat PUT profil yang ber-JSON.
+         */
+        Route::post('logo', [VendorLogoController::class, 'store'])->name('vendor.logo.store');
+        Route::delete('logo', [VendorLogoController::class, 'destroy'])->name('vendor.logo.destroy');
 
         /*
          * Status kelengkapan onboarding. Dipisah dari `/api/me` supaya data

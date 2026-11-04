@@ -68,6 +68,7 @@ class PublicInvoiceResource extends JsonResource
 
             'vendor' => [
                 'name' => $vendor?->name,
+                'logoPath' => $vendor?->logo_path,
                 'contact' => $vendor?->contact,
                 'location' => $vendor?->location,
                 'bank' => [

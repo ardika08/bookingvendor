@@ -36,6 +36,7 @@ import {
 import { cn } from '@/lib/cn'
 import { formatCurrency, formatLongDate, formatShortDate, initials } from '@/lib/format'
 import type { VendorProfileDetail } from '@/lib/vendor-profile'
+import { logoUrlFromPath } from '@/lib/api/vendor-logo'
 import type { Invoice, InvoicePayment } from '@/types/invoice'
 
 /**
@@ -517,17 +518,31 @@ function InvoicePrintDocument({
   vendorProfile: VendorProfileDetail | null
   statusLabel: string
   typeLabel: string
-  remaining: number
+  remaining: number,
 }) {
+  /** URL logo untuk kepala invoice; `null` berarti vendor belum memasang logo. */
+  const vendorLogoUrl = logoUrlFromPath(vendorProfile?.logoPath ?? null)
+
   return (
     <article className="invoice-print-document">
       <header className="invoice-print-header">
-        <div>
-          <p className="invoice-print-eyebrow">{vendorProfile?.category ?? 'Vendor'}</p>
-          <h1>{vendorProfile?.businessName ?? 'Invoice'}</h1>
-          {vendorProfile?.city ? <p>{vendorProfile.city}</p> : null}
-          {vendorProfile?.contactPhone ? <p>{vendorProfile.contactPhone}</p> : null}
-          {vendorProfile?.contactEmail ? <p>{vendorProfile.contactEmail}</p> : null}
+        <div className="invoice-print-vendor">
+          {/*
+            Logo usaha di kepala invoice versi cetak/PDF. Karena berkas disimpan
+            di server, `object-contain` menjaga logo tidak gepeng, dan tinggi
+            dibatasi agar nama usaha tetap sejajar. Bila belum ada logo, kepala
+            invoice tampil seperti sebelumnya tanpa gambar.
+          */}
+          {vendorLogoUrl ? (
+            <img src={vendorLogoUrl} alt="" className="invoice-print-logo" />
+          ) : null}
+          <div>
+            <p className="invoice-print-eyebrow">{vendorProfile?.category ?? 'Vendor'}</p>
+            <h1>{vendorProfile?.businessName ?? 'Invoice'}</h1>
+            {vendorProfile?.city ? <p>{vendorProfile.city}</p> : null}
+            {vendorProfile?.contactPhone ? <p>{vendorProfile.contactPhone}</p> : null}
+            {vendorProfile?.contactEmail ? <p>{vendorProfile.contactEmail}</p> : null}
+          </div>
         </div>
         <div className="invoice-print-number">
           <p>INVOICE</p>

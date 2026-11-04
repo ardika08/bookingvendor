@@ -411,6 +411,24 @@
     border-bottom: 2px solid #d9dde2;
   }
 
+  .invoice-print-vendor {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    min-width: 0;
+  }
+
+  /*
+   * Logo usaha vendor. Tinggi dibatasi (bukan lebar) supaya logo berbentuk
+   * apa pun tetap muat di kepala invoice tanpa mendorong blok nomor invoice;
+   * `max-width` menjaga logo lebar agar tidak memenuhi seluruh halaman.
+   */
+  .invoice-print-logo {
+    height: 56px;
+    max-width: 160px;
+    object-fit: contain;
+  }
+
   .invoice-print-header h1 {
     margin: 4px 0 8px;
     font-size: 21pt;

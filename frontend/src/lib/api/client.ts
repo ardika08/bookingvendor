@@ -88,6 +88,55 @@ interface RequestOptions {
   signal?: AbortSignal
 }
 
+/**
+ * Unggah berkas (`multipart/form-data`).
+ *
+ * `apiRequest` selalu mengirim JSON karena semua endpoint lain memang JSON.
+ * Berkas tidak bisa lewat jalan itu: `JSON.stringify(FormData)` menghasilkan
+ * `{}`, jadi upload akan sampai ke server tanpa isi apa pun. Karena itu
+ * unggah punya fungsi sendiri yang TIDAK menyetel `Content-Type` — browser
+ * yang menambahkan boundary multipart secara otomatis.
+ */
+export async function apiUpload<T>(path: string, form: FormData, signal?: AbortSignal): Promise<T> {
+  const url = new URL(`${API_BASE_URL}${path}`, window.location.origin)
+
+  let response: Response
+  try {
+    response = await fetch(url.toString(), {
+      method: 'POST',
+      credentials: 'include',
+      signal,
+      headers: {
+        Accept: 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        ...csrfHeader(),
+      },
+      body: form,
+    })
+  } catch (error) {
+    if ((error as Error).name === 'AbortError') throw error
+    throw new ApiError('Tidak dapat menghubungi server. Periksa koneksi lalu coba lagi.', {
+      status: 0,
+    })
+  }
+
+  const payload = await safeJson(response)
+
+  if (!response.ok) {
+    const data = payload as Record<string, unknown> | null
+    const fieldErrors = extractFieldErrors(data)
+    throw new ApiError(
+      typeof data?.message === 'string' ? data.message : defaultMessage(response.status),
+      {
+        status: response.status,
+        fieldErrors,
+      },
+    )
+  }
+
+  return payload as T
+}
+
 export async function apiRequest<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const { method = 'GET', body, query, signal } = options
 

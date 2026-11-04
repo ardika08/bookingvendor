@@ -13,6 +13,7 @@ export const mockVendorProfile: VendorProfileDetail = {
   businessName: 'Lumen Wedding Story',
   category: 'Wedding Organizer',
   slug: 'lumen-wedding-story',
+  logoPath: null,
   avatarUrl: null,
   description:
     'Wedding organizer berbasis Jakarta yang menangani konsep, vendor koordinasi, dan rundown acara.',
