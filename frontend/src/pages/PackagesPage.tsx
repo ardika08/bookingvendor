@@ -56,6 +56,7 @@ export function PackagesPage() {
   const [editorOpen, setEditorOpen] = useState(false)
   const [editing, setEditing] = useState<VendorPackageDetail | null>(null)
   const [busyId, setBusyId] = useState<string | null>(null)
+  const [addonsOpen, setAddonsOpen] = useState(false)
   const [addons, setAddons] = useState<Addon[]>([])
 
   useEffect(() => { void fetchAddons().then(setAddons).catch(() => setAddons([])) }, [])
@@ -141,7 +142,8 @@ export function PackagesPage() {
       </div>
 
       <Card className="overflow-hidden">
-        <PackageListHeader onCreate={openCreate} />
+        <PackageListHeader onCreate={openCreate} onManageAddons={() => setAddonsOpen(true)} />
+        <AddonManager open={addonsOpen} onClose={() => setAddonsOpen(false)} onChanged={setAddons} />
         <div className="border-t border-ink-100">
           <PackageFiltersBar filters={filters} onChange={setFilters} resultCount={packages.length} />
         </div>
@@ -173,8 +175,6 @@ export function PackagesPage() {
           )}
         </div>
       </Card>
-
-      <AddonManager onChanged={setAddons} />
 
       <PackageEditorDialog
         key={editing?.id ?? 'new'}

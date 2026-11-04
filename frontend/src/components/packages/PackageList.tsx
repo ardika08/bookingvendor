@@ -444,16 +444,19 @@ export function PackageErrorState({
 }
 
 /** Kepala kartu daftar paket dengan tombol tambah. */
-export function PackageListHeader({ onCreate }: { onCreate: () => void }) {
+export function PackageListHeader({ onCreate, onManageAddons }: { onCreate: () => void; onManageAddons: () => void }) {
   return (
     <CardHeader
       title="Katalog paket"
       description="Paket & harga yang bisa dipilih saat membuat booking."
       action={
-        <Button size="sm" onClick={onCreate}>
-          <Plus className="size-3.5" />
-          Paket baru
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button size="sm" variant="secondary" onClick={onManageAddons}>Kelola addon</Button>
+          <Button size="sm" onClick={onCreate}>
+            <Plus className="size-3.5" />
+            Paket baru
+          </Button>
+        </div>
       }
     />
   )
