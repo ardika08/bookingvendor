@@ -67,7 +67,17 @@ return [
 
     'timezone' => 'UTC',
 
-    'frontend_url' => env('FRONTEND_URL', 'http://localhost:5173'),
+    /*
+     * URL frontend untuk redirect setelah logout.
+     *
+     * Default sengaja mengikuti APP_URL, BUKAN localhost:5173. Bila default
+     * tetap localhost, satu env FRONTEND_URL yang terlewat di produksi
+     * membuat vendor yang menekan "Keluar" dilempar ke
+     * http://localhost:5173/login — halaman yang tidak ada bagi mereka.
+     * Mengikuti APP_URL berarti produksi otomatis dapat domain sendiri,
+     * dan hanya dev yang perlu mengisi manual.
+     */
+    'frontend_url' => env('FRONTEND_URL', env('APP_URL', 'http://localhost')),
 
     /*
     |--------------------------------------------------------------------------

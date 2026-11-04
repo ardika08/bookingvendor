@@ -134,8 +134,15 @@ export function RegisterPage() {
   const errorCount = Object.keys(errors).length
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-ink-50 px-4 py-10">
-      <div className="w-full max-w-lg">
+    <div className="flex min-h-screen flex-col bg-ink-50">
+      {/*
+        Bagian form: `flex-1` supaya mengisi ruang sisa dan mendorong footer
+        ke bawah. Tanpa `flex-col` di induk, footer (`<footer>` block) akan
+        tersusun berdampingan dengan form di layar sempit — itu yang membuat
+        halaman daftar terlihat berantakan di ponsel.
+      */}
+      <main className="flex flex-1 items-center justify-center px-4 py-10">
+        <div className="w-full max-w-lg">
         <div className="mb-6 text-center">
           <span className="mx-auto flex size-11 items-center justify-center rounded-xl bg-brand-400 text-lead font-bold text-ink-900">
             VK
@@ -336,9 +343,10 @@ export function RegisterPage() {
           </Link>
         </div>
       </div>
+      </main>
 
       <PublicFooter />
-    </main>
+    </div>
   )
 }
 
