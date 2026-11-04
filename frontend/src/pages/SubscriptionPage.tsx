@@ -8,13 +8,15 @@ import {
   Lock,
   Package,
 } from '@/components/ui/icons'
-import { ButtonLink } from '@/components/ui/Button'
+import { Button, ButtonLink } from '@/components/ui/Button'
 import { Card, CardBody, CardHeader } from '@/components/ui/Card'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { PaymentHistory } from '@/components/subscription/PaymentHistory'
 import { PlanCard } from '@/components/subscription/PlanCard'
 import { SubscriptionStatusCard } from '@/components/subscription/SubscriptionStatusCard'
 import { VoucherClaimCard } from '@/components/subscription/VoucherClaimCard'
+import { CheckoutLockedModal } from '@/components/subscription/CheckoutLockedModal'
+import { CHECKOUT_LOCKED } from '@/lib/feature-flags'
 import { cn } from '@/lib/cn'
 import { formatCurrency, formatLongDate } from '@/lib/format'
 import { fetchPayments, fetchPlans, fetchSubscription } from '@/lib/api/subscription'
@@ -55,6 +57,8 @@ export function SubscriptionPage() {
   const [payments, setPayments] = useState<Payment[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  /** Paket yang tombolnya diklik saat checkout terkunci. */
+  const [lockedPlan, setLockedPlan] = useState<Plan | null>(null)
 
   const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({})
 
@@ -343,9 +347,23 @@ export function SubscriptionPage() {
                      * transaksi pending. Tanpa awalan, id paket dibaca sebagai
                      * id payment dan halaman checkout gagal memuat.
                      */
-                    <ButtonLink to={`/upgrade/checkout/plan-${plan.id}`} className="w-full">
-                      Pilih {plan.name}
-                    </ButtonLink>
+                    /*
+                     * CHECKOUT_LOCKED: selama akun Duitku produksi belum
+                     * aktif, tombol tidak membuat transaksi — hanya membuka
+                     * modal pemberitahuan. Halaman ini punya tab Paket
+                     * sendiri, jadi tanpa pengaman ini vendor tetap bisa
+                     * masuk checkout lewat /langganan walau /upgrade sudah
+                     * dikunci.
+                     */
+                    CHECKOUT_LOCKED ? (
+                      <Button onClick={() => setLockedPlan(plan)} className="w-full">
+                        Pilih {plan.name}
+                      </Button>
+                    ) : (
+                      <ButtonLink to={`/upgrade/checkout/plan-${plan.id}`} className="w-full">
+                        Pilih {plan.name}
+                      </ButtonLink>
+                    )
                   ) : (
                     <button
                       type="button"
@@ -363,6 +381,10 @@ export function SubscriptionPage() {
           </div>
         </div>
       </div>
+
+      {lockedPlan !== null ? (
+        <CheckoutLockedModal plan={lockedPlan} onClose={() => setLockedPlan(null)} />
+      ) : null}
     </div>
   )
 }

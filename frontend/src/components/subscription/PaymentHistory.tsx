@@ -3,6 +3,7 @@ import { ButtonLink } from '@/components/ui/Button'
 import { Card, CardBody, CardHeader } from '@/components/ui/Card'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { cn } from '@/lib/cn'
+import { CHECKOUT_LOCKED } from '@/lib/feature-flags'
 import { formatCurrency, formatShortDate } from '@/lib/format'
 import type { Payment, PaymentStatus } from '@/types/subscription'
 
@@ -86,9 +87,22 @@ function PaymentRow({ payment }: { payment: Payment }) {
           {meta.label}
         </span>
         {payment.status === 'pending' ? (
-          <ButtonLink to={`/upgrade/checkout/${payment.id}`} variant="secondary" size="sm">
-            Lanjut bayar
-          </ButtonLink>
+          /*
+           * CHECKOUT_LOCKED: arahkan ke katalog, bukan langsung ke
+           * checkout. Route `/upgrade/checkout/*` sudah ditolak, jadi
+           * membiarkan tombol ini menunjuk ke sana hanya membuat vendor
+           * membuka halaman gagal. Dari katalog, tombol paket sudah
+           * menjelaskan lewat modal bahwa pembayaran belum dibuka.
+           */
+          CHECKOUT_LOCKED ? (
+            <ButtonLink to="/upgrade" variant="secondary" size="sm">
+              Lanjut bayar
+            </ButtonLink>
+          ) : (
+            <ButtonLink to={`/upgrade/checkout/${payment.id}`} variant="secondary" size="sm">
+              Lanjut bayar
+            </ButtonLink>
+          )
         ) : null}
         {payment.status === 'expired' || payment.status === 'rejected' ? (
           <ButtonLink to="/upgrade" variant="secondary" size="sm">
