@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Navigate, useParams } from 'react-router-dom'
+import { Lock } from '@/components/ui/icons'
+import { ButtonLink } from '@/components/ui/Button'
+import { CHECKOUT_LOCKED } from '@/lib/feature-flags'
 import {
   checkPaymentStatus,
   createCheckout,
@@ -33,10 +36,41 @@ import type {
 export function CheckoutRoute() {
   const { ref = '' } = useParams()
 
+  /*
+   * Pengaman kedua di balik tombol yang sudah diganti modal (UpgradePage).
+   * Tanpa ini, halaman checkout tetap bisa dibuka lewat URL langsung atau
+   * tautan "Lanjutkan pembayaran" dari transaksi lama. Fail-closed, sama
+   * seperti flag di UpgradePage: env hilang = terkunci.
+   */
+  if (CHECKOUT_LOCKED) return <CheckoutLockedRoute />
+
   // `plan-<id>` = masuk dari katalog paket; selain itu diperlakukan sebagai
   // id payment (melanjutkan transaksi pending).
   if (ref.startsWith('plan-')) return <PlanCheckoutRoute planId={ref.slice('plan-'.length)} />
   return <PaymentCheckoutRoute paymentId={ref} />
+}
+
+/**
+ * Pengganti halaman checkout saat pembayaran dikunci.
+ *
+ * Bukan redirect ke /upgrade — vendor melihat halaman ini karena sengaja
+ * mencoba membayar (atau melanjutkan transaksi lama), jadi penjelasan
+ * ditampilkan langsung dengan tombol kembali.
+ */
+function CheckoutLockedRoute() {
+  return (
+    <div className="rounded-xl border border-amber-300 bg-amber-50 px-5 py-6 text-center">
+      <Lock className="mx-auto size-5 text-amber-700" />
+      <h1 className="mt-2 text-lead font-semibold text-ink-900">Pembayaran belum dibuka</h1>
+      <p className="mx-auto mt-1 max-w-md text-meta leading-relaxed text-ink-600">
+        Jalur pembayaran online sedang dalam tahap aktivasi. Selama masa testing,
+        semua fitur tetap bebas dipakai tanpa perlu upgrade.
+      </p>
+      <ButtonLink to="/upgrade" variant="secondary" className="mt-4">
+        Kembali ke halaman langganan
+      </ButtonLink>
+    </div>
+  )
 }
 
 function PlanCheckoutRoute({ planId }: { planId: string }) {

@@ -69,6 +69,8 @@ export interface VendorProfile {
 }
 
 export interface CurrentUser {
+  /** Id akun di tabel `users`. Dipakai sebagai kunci preferensi per-akun. */
+  id: string
   name: string
   email: string
   avatarUrl: string | null

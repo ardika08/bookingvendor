@@ -4,6 +4,7 @@ import { Sidebar } from './Sidebar'
 import { Topbar } from './Topbar'
 import { fetchCurrentUser } from '@/lib/auth-session'
 import type { CurrentUser } from '@/types/booking'
+import { WelcomeModal } from './WelcomeModal'
 
 /**
  * Kerangka dashboard vendor.
@@ -16,6 +17,9 @@ import type { CurrentUser } from '@/types/booking'
  * sebelum layout ini dirender, jadi di sini error hanya terjadi bila sesi
  * berakhir di tengah navigasi.
  */
+
+/** Link grup Telegram support — sama dengan tombol di Sidebar. */
+const SUPPORT_URL: string = import.meta.env.VITE_SUPPORT_URL ?? ''
 
 const ROUTE_TITLES: Record<string, string> = {
   '/dashboard': 'Dashboard',
@@ -95,6 +99,20 @@ export function DashboardLayout() {
           <Outlet context={{ user }} />
         </main>
       </div>
+
+      {/*
+        Modal sambutan sekali per akun. Kunci localStorage memuat user.id
+        supaya dua akun di satu browser tetap mendapat sambutan sendiri.
+      */}
+      <WelcomeModal
+        user={{
+          id: user.id,
+          name: user.name,
+          businessName: user.vendor?.businessName ?? null,
+        }}
+        trialDaysLeft={user.subscription?.daysLeft ?? null}
+        supportUrl={SUPPORT_URL}
+      />
 
       {/* Drawer sidebar untuk mobile */}
       {sidebarOpen && (

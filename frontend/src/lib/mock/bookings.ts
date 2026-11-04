@@ -26,6 +26,7 @@ const nextMonth = shiftMonth(1)
 const prevMonth = shiftMonth(-1)
 
 export const mockUser: CurrentUser = {
+  id: 'user-mock',
   name: 'Dika Pratama',
   email: 'dika@lumenwedding.id',
   avatarUrl: null,
