@@ -10,6 +10,7 @@ import {
   logoUrlFromPath,
   uploadVendorLogo,
 } from '@/lib/api/vendor-logo'
+import { VendorLogo } from '@/components/vendor/VendorLogo'
 import { cn } from '@/lib/cn'
 import { initials } from '@/lib/format'
 
@@ -96,13 +97,15 @@ export function VendorLogoCard({
             'border border-ink-200 bg-white',
           )}
         >
-          {logoUrl ? (
-            <img src={logoUrl} alt="" className="size-full object-contain" />
-          ) : (
-            <span className="text-lead font-semibold text-ink-400">
-              {initials(businessName)}
-            </span>
-          )}
+          <VendorLogo
+            path={logoPath}
+            fallback={
+              <span className="text-lead font-semibold text-ink-400">
+                {initials(businessName)}
+              </span>
+            }
+            className="size-full object-contain"
+          />
         </span>
 
         <div className="flex flex-col gap-2">

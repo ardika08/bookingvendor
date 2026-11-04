@@ -36,7 +36,7 @@ import {
 import { cn } from '@/lib/cn'
 import { formatCurrency, formatLongDate, formatShortDate, initials } from '@/lib/format'
 import type { VendorProfileDetail } from '@/lib/vendor-profile'
-import { logoUrlFromPath } from '@/lib/api/vendor-logo'
+import { VendorLogo } from '@/components/vendor/VendorLogo'
 import type { Invoice, InvoicePayment } from '@/types/invoice'
 
 /**
@@ -520,9 +520,6 @@ function InvoicePrintDocument({
   typeLabel: string
   remaining: number,
 }) {
-  /** URL logo untuk kepala invoice; `null` berarti vendor belum memasang logo. */
-  const vendorLogoUrl = logoUrlFromPath(vendorProfile?.logoPath ?? null)
-
   return (
     <article className="invoice-print-document">
       <header className="invoice-print-header">
@@ -533,9 +530,17 @@ function InvoicePrintDocument({
             dibatasi agar nama usaha tetap sejajar. Bila belum ada logo, kepala
             invoice tampil seperti sebelumnya tanpa gambar.
           */}
-          {vendorLogoUrl ? (
-            <img src={vendorLogoUrl} alt="" className="invoice-print-logo" />
-          ) : null}
+          {/*
+            Logo usaha di kepala invoice versi cetak/PDF. Karena berkas disimpan
+            di backend, kegagalan muat (berkas hilang, symlink belum dibuat)
+            tidak boleh tampil sebagai gambar rusak — bila itu terjadi,
+            `VendorLogo` jatuh ke tampilan tanpa logo seperti sebelumnya.
+          */}
+          <VendorLogo
+            path={vendorProfile?.logoPath ?? null}
+            fallback={<span className="hidden" />}
+            className="invoice-print-logo"
+          />
           <div>
             <p className="invoice-print-eyebrow">{vendorProfile?.category ?? 'Vendor'}</p>
             <h1>{vendorProfile?.businessName ?? 'Invoice'}</h1>
