@@ -158,6 +158,24 @@
     -webkit-text-size-adjust: 100%;
   }
 
+  /*
+   * Mencegah ponsel memperbesar halaman sendiri saat isian difokuskan.
+   *
+   * Chrome Android dan Safari iOS otomatis zoom-in ketika <input>/<select>/
+   * <textarea> ber-font < 16px menerima fokus, dan hasil zoom itu tidak bisa
+   * diperkecil kembali (viewport kita tidak mengizinkan pinch-out) — vendor
+   * tersangkut dalam tampilan besar sampai reload. Solusinya bukan memperkecil
+   * label, melainkan menaikkan font KONTROL isian ke 16px di layar sentuh;
+   * label dan teks sekitarnya tetap 13px. Di desktop tidak berpengaruh.
+   */
+  @media (max-width: 767.98px), (pointer: coarse) {
+    input,
+    select,
+    textarea {
+      font-size: 16px !important;
+    }
+  }
+
   body {
     @apply bg-ink-50 font-sans text-body text-ink-800 antialiased;
   }

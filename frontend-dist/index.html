@@ -3,7 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--
+      `maximum-scale=1, user-scalable=no` diperlukan supaya ponsel TIDAK
+      memperbesar halaman sendiri saat vendor menyentuh isian di form
+      (Chrome Android & Safari iOS memaksa zoom pada input ber-font < 16px,
+      lalu hasilnya tidak bisa diperkecil kembali). Ini bukan pilihan aksesibilitas
+      yang baik, jadi nomor font minimum 16px untuk isian tetap diterapkan
+      lewat CSS di `index.css` — lihat komentar di blok `@layer utilities`.
+      Halaman TETAP bisa diperbesar lewat pengaturan teks browser.
+    -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
     <meta
       name="description"
       content="Dashboard operasional vendor wedding: kelola booking, kalender jadwal, dan invoice dalam satu tempat."
@@ -11,8 +23,8 @@
     <link rel="preload" href="/fonts/poppins-400.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/poppins-600.woff2" as="font" type="font/woff2" crossorigin />
     <title>VendorKit — Dashboard Vendor Wedding</title>
-    <script type="module" crossorigin src="/assets/index-DSixuIb3.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-DlTmmJvU.css">
+    <script type="module" crossorigin src="/assets/index-3WxDg5WQ.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-D9MO0Pnk.css">
   </head>
   <body>
     <div id="root"></div>
