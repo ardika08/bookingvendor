@@ -44,7 +44,7 @@ class InvoiceController extends Controller
     {
         $perPage = min(max((int) $request->query('per_page', 10), 1), 100);
 
-        $query = Invoice::query()->with('booking.client', 'booking.package');
+        $query = Invoice::query()->with('booking.client', 'booking.package', 'booking.addons');
 
         if (($status = $request->query('status')) && $status !== 'all') {
             // Frontend memakai `void`; database menyimpan `cancelled`.
@@ -92,7 +92,7 @@ class InvoiceController extends Controller
         $this->authorizeBooking($booking);
 
         $invoices = $booking->invoices()
-            ->with('booking.client', 'booking.package')
+            ->with('booking.client', 'booking.package', 'booking.addons')
             ->orderBy('created_at')
             ->orderBy('id')
             ->get();
@@ -109,7 +109,7 @@ class InvoiceController extends Controller
     {
         $this->authorizeInvoice($invoice);
 
-        $invoice->load('booking.client', 'booking.package');
+        $invoice->load('booking.client', 'booking.package', 'booking.addons');
 
         return (new InvoiceResource($invoice))->response();
     }
@@ -157,7 +157,7 @@ class InvoiceController extends Controller
             },
         );
 
-        $invoice->load('booking.client', 'booking.package');
+        $invoice->load('booking.client', 'booking.package', 'booking.addons');
 
         return (new InvoiceResource($invoice))
             ->response()
@@ -204,7 +204,7 @@ class InvoiceController extends Controller
         }
 
         $invoice->save();
-        $invoice->load('booking.client', 'booking.package');
+        $invoice->load('booking.client', 'booking.package', 'booking.addons');
 
         return (new InvoiceResource($invoice))->response();
     }
@@ -236,8 +236,8 @@ class InvoiceController extends Controller
 
         $invoice->status = Invoice::STATUS_CANCELLED;
         $invoice->link_active = false;
-        $invoice->save();
-        $invoice->load('booking.client', 'booking.package');
+                $invoice->save();
+                $invoice->load('booking.client', 'booking.package', 'booking.addons');
 
         return (new InvoiceResource($invoice))->response();
     }
@@ -295,7 +295,7 @@ class InvoiceController extends Controller
 
         return response()->json(
             $booking->invoices()
-                ->with('booking.client', 'booking.package')
+                ->with('booking.client', 'booking.package', 'booking.addons')
                 ->orderBy('term_number')
                 ->get()
                 ->map(fn (Invoice $invoice) => (new InvoiceResource($invoice))->resolve())

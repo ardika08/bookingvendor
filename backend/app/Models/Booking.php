@@ -37,7 +37,16 @@ class Booking extends Model
         'event_details',
         'status',
         'total_price',
+        'source',
+        'referral_name',
+        'referral_discount',
     ];
+
+    /** Booking dari klien langsung (bukan rekanan). */
+    public const SOURCE_DIRECT = 'direct';
+
+    /** Booking yang masuk lewat rekanan vendor lain. */
+    public const SOURCE_REFERRAL = 'referral';
 
     protected function casts(): array
     {
@@ -47,6 +56,7 @@ class Booking extends Model
             // dalam bentuk yang dipakai frontend.
             'event_time' => 'datetime:H:i',
             'total_price' => 'decimal:2',
+            'referral_discount' => 'decimal:2',
         ];
     }
 

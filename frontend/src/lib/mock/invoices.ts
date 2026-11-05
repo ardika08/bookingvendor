@@ -12,6 +12,23 @@ import type { Invoice, InvoicePayment, InvoiceType } from '@/types/invoice'
 
 const today = new Date()
 
+/** Harga paket untuk mock — dipakai sebagai baris "paket" di invoice. */
+const PACKAGE_PRICES: Record<string, number> = {
+  'pkg-silver': 8500000,
+  'pkg-gold': 15000000,
+  'pkg-platinum': 24500000,
+}
+
+function mockPackagePrice(packageId: string | null): number {
+  return packageId ? (PACKAGE_PRICES[packageId] ?? 0) : 0
+}
+
+/** Contoh addon untuk booking demo (bk-1), supaya UI rincian punya isi. */
+const demoAddons = [
+  { id: 'addon-demo-1', name: 'Extra time 5 jam', price: 650000 },
+  { id: 'addon-demo-2', name: 'Drone shot', price: 1500000 },
+]
+
 function shiftDays(days: number): string {
   return toIsoDate(new Date(today.getFullYear(), today.getMonth(), today.getDate() + days))
 }
@@ -85,6 +102,8 @@ export const mockInvoices: Invoice[] = seeds
         clientName: booking.client.name,
         clientPhone: booking.client.phone,
         packageName: booking.packageName,
+        packagePrice: mockPackagePrice(booking.packageId),
+        addons: booking.id === 'bk-1' ? demoAddons : [],
         type: seed.type,
         status: seed.status,
         issuedAt,

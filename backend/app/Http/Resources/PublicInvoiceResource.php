@@ -64,6 +64,12 @@ class PublicInvoiceResource extends JsonResource
                 'eventTime' => $booking?->event_time,
                 'eventLocation' => $booking?->event_location,
                 'packageName' => $package?->name,
+                'packagePrice' => (float) ($package?->price ?? 0),
+                'addons' => $booking?->addons?->map(fn ($addon) => [
+                    'id' => (string) $addon->id,
+                    'name' => $addon->name,
+                    'price' => (float) $addon->price,
+                ])->values()->all() ?? [],
             ],
 
             'vendor' => [

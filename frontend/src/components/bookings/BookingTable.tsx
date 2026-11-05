@@ -1,4 +1,4 @@
-import { FileText, MapPin } from '@/components/ui/icons'
+import { FileText, MapPin, Users } from '@/components/ui/icons'
 import { Link } from 'react-router-dom'
 import { StatusBadge, StatusMenu } from '@/components/bookings/StatusControls'
 import { cn } from '@/lib/cn'
@@ -68,6 +68,15 @@ export function BookingTable({
                 </td>
                 <td className="px-3 py-3">
                   <StatusBadge status={booking.status} />
+                  {booking.isReferral ? (
+                    <span
+                      className="ml-1.5 inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-caption font-medium text-amber-700"
+                      title={`Dari rekanan: ${booking.referralName ?? 'tidak disebut'}`}
+                    >
+                      <Users className="size-3" aria-hidden="true" />
+                      Rekanan
+                    </span>
+                  ) : null}
                 </td>
                 <td className="px-3 py-3 text-right">
                   <span className="text-body font-semibold tabular-nums text-ink-900">

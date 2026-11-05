@@ -30,6 +30,9 @@ export interface VendorPackage {
   price: number
 }
 
+/** Sumber booking: klien langsung atau dari rekanan vendor lain. */
+export type BookingSource = 'direct' | 'referral'
+
 export interface Booking {
   id: string
   client: Client
@@ -43,6 +46,14 @@ export interface Booking {
   status: BookingStatus
   totalPrice: number
   notes: string | null
+  /** Sumber booking — `direct` (klien sendiri) atau `referral` (rekanan). */
+  source: BookingSource
+  /** Nama rekanan, terisi hanya jika `source = referral`. */
+  referralName: string | null
+  /** Diskon rekanan dalam Rupiah (harga ke klien tetap `totalPrice`). */
+  referralDiscount: number
+  /** Singkat: `source === 'referral'` — dipakai badge di daftar booking. */
+  isReferral: boolean
   invoiceCount: number
   createdAt: string
 }

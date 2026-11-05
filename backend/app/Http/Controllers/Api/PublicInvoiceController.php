@@ -25,7 +25,7 @@ class PublicInvoiceController extends Controller
         $invoice = Invoice::query()
             ->where('public_token', $token)
             ->where('link_active', true)
-            ->with(['booking.vendor', 'booking.client', 'booking.package'])
+            ->with(['booking.vendor', 'booking.client', 'booking.package', 'booking.addons'])
             ->first();
 
         if ($invoice === null) {

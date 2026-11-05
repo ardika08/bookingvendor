@@ -19,6 +19,9 @@ export function bookingToFormValues(booking: Booking): BookingFormValues {
     totalPrice: booking.totalPrice > 0 ? formatThousands(booking.totalPrice) : '',
     status: booking.status,
     notes: booking.notes ?? '',
+    isReferral: booking.isReferral,
+    referralName: booking.referralName ?? '',
+    referralDiscount: booking.referralDiscount > 0 ? formatThousands(booking.referralDiscount) : '',
   }
 }
 
@@ -45,6 +48,9 @@ export function changedFieldLabels(
     totalPrice: 'Nilai kontrak',
     status: 'Status',
     notes: 'Catatan',
+    isReferral: 'Sumber booking',
+    referralName: 'Nama rekanan',
+    referralDiscount: 'Diskon rekanan',
   }
 
   return (Object.keys(labels) as Array<keyof BookingFormValues>)
@@ -52,9 +58,18 @@ export function changedFieldLabels(
     .map((key) => ({
       key,
       label: labels[key] as string,
-      from: before[key] ? String(before[key]) : '—',
-      to: after[key] ? String(after[key]) : '—',
+      from: displayValue(key, before[key]),
+      to: displayValue(key, after[key]),
     }))
+}
+
+/** Tampilan nilai field untuk ringkasan perubahan. */
+function displayValue(key: keyof BookingFormValues, value: BookingFormValues[keyof BookingFormValues]): string {
+  if (key === 'isReferral') {
+    return value ? 'Dari rekanan' : 'Klien langsung'
+  }
+  if (value === '' || value === null) return '—'
+  return String(value)
 }
 
 function formatThousands(value: number): string {

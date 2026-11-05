@@ -324,6 +324,87 @@ class BookingCrudTest extends TestCase
         );
     }
 
+    /**
+     * Regresi: booking dari rekanan vendor.
+     *
+     * Booking masuk lewat rekanan (mis. rekanan vendor lain mengirim klien),
+     * dengan potongan harga untuk rekanan tersebut. `total_price` tetap harga
+     * final yang ditagihkan ke klien — diskon disimpan terpisah untuk laporan.
+     */
+    public function test_buat_booking_dari_rekanan_dengan_diskon(): void
+    {
+        $response = $this->postJson('/api/bookings', [
+            'client' => [
+                'name' => 'Rina & Doni',
+                'phone' => '081355667788',
+                'email' => null,
+            ],
+            'event_date' => '2026-12-05',
+            'event_time' => '10:00',
+            'event_location' => 'Gedung Serbaguna',
+            'package_id' => (string) $this->package->id,
+            'total_price' => 13500000,
+            'status' => 'tentative',
+            'notes' => null,
+            'source' => 'referral',
+            'referral_name' => 'Budi Studio',
+            'referral_discount' => 1500000,
+        ]);
+
+        $response->assertCreated()
+            ->assertJsonPath('source', 'referral')
+            ->assertJsonPath('isReferral', true)
+            ->assertJsonPath('referralName', 'Budi Studio')
+            ->assertJsonPath('referralDiscount', 1500000)
+            // Harga klien tidak berubah oleh diskon rekanan.
+            ->assertJsonPath('totalPrice', 13500000);
+
+        $this->assertDatabaseHas('bookings', [
+            'vendor_id' => $this->vendor->id,
+            'source' => 'referral',
+            'referral_name' => 'Budi Studio',
+            'referral_discount' => 1500000,
+        ]);
+    }
+
+    /** Booking langsung tetap default (`direct`, diskon 0). */
+    public function test_buat_booking_default_direct(): void
+    {
+        $this->postJson('/api/bookings', [
+            'client' => [
+                'name' => 'Alya & Rizky',
+                'phone' => '081444556677',
+            ],
+            'event_date' => '2026-12-19',
+            'package_id' => (string) $this->package->id,
+            'total_price' => 9000000,
+            'status' => 'tentative',
+        ])->assertCreated()
+            ->assertJsonPath('source', 'direct')
+            ->assertJsonPath('isReferral', false)
+            ->assertJsonPath('referralDiscount', 0);
+    }
+
+    /** Diskron rekanan > nilai kontrak ditolak. */
+    public function test_buat_booking_diskon_rekanan_melebihi_kontrak_ditolak(): void
+    {
+        $response = $this->postJson('/api/bookings', [
+            'client' => [
+                'name' => 'Tono & Wati',
+                'phone' => '081555443322',
+            ],
+            'event_date' => '2026-12-26',
+            'package_id' => (string) $this->package->id,
+            'total_price' => 10000000,
+            'status' => 'tentative',
+            'source' => 'referral',
+            'referral_name' => 'Budi Studio',
+            'referral_discount' => 12000000,
+        ]);
+
+        $response->assertStatus(422);
+    }
+
     public function test_buat_booking_mencocokkan_klien_berdasarkan_telepon(): void
     {
         $this->postJson('/api/bookings', [

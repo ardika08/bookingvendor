@@ -447,6 +447,81 @@ export function BookingFormPage({
                   </Field>
 
                   <Field
+                    id="isReferral"
+                    label="Sumber booking"
+                    className="sm:col-span-2"
+                    hint="Aktifkan bila klien dikenalkan rekanan vendor lain."
+                  >
+                    <button
+                      type="button"
+                      data-field="isReferral"
+                      onClick={() => {
+                        const next = !values.isReferral
+                        update('isReferral', next)
+                        if (!next) {
+                          update('referralName', '')
+                          update('referralDiscount', '')
+                        }
+                      }}
+                      aria-pressed={values.isReferral}
+                      className={cn(
+                        'inline-flex h-9 items-center gap-2 rounded-lg px-3 text-meta font-medium ring-1 transition',
+                        values.isReferral
+                          ? 'bg-brand-50 text-brand-700 ring-2 ring-brand-500'
+                          : 'bg-white text-ink-600 ring-ink-200 hover:bg-ink-50',
+                      )}
+                    >
+                      <span className="size-1.5 rounded-full bg-current" />
+                      {values.isReferral ? 'Dari rekanan vendor' : 'Klien langsung'}
+                    </button>
+                  </Field>
+
+                  {values.isReferral ? (
+                    <>
+                      <Field
+                        id="referralName"
+                        label="Nama rekanan"
+                        required
+                        error={errors.referralName}
+                      >
+                        <input
+                          id="referralName"
+                          data-field="referralName"
+                          value={values.referralName}
+                          onChange={(event) => update('referralName', event.target.value)}
+                          placeholder="Budi Studio / Kak Tina"
+                          className={inputClass(Boolean(errors.referralName))}
+                        />
+                      </Field>
+                      <Field
+                        id="referralDiscount"
+                        label="Diskon rekanan (Rp)"
+                        error={errors.referralDiscount}
+                        hint="Potongan harga yang diberikan ke rekanan."
+                      >
+                        <div className="relative">
+                          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-body text-ink-400">
+                            Rp
+                          </span>
+                          <input
+                            id="referralDiscount"
+                            data-field="referralDiscount"
+                            value={values.referralDiscount}
+                            onChange={(event) =>
+                              update(
+                                'referralDiscount',
+                                formatCurrencyInput(parseCurrencyInput(event.target.value)),
+                              )
+                            }
+                            inputMode="numeric"
+                            className={cn(inputClass(Boolean(errors.referralDiscount)), 'pl-9 tabular-nums')}
+                          />
+                        </div>
+                      </Field>
+                    </>
+                  ) : null}
+
+                  <Field
                     id="notes"
                     label="Catatan internal (opsional)"
                     className="sm:col-span-2"

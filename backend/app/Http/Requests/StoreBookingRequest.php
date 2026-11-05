@@ -43,6 +43,15 @@ class StoreBookingRequest extends FormRequest
             'total_price' => ['required', 'numeric', 'min:0'],
             'status' => ['required', 'string', 'in:tentative,confirmed,completed,cancelled'],
             'notes' => ['nullable', 'string', 'max:2000'],
+
+            /*
+             * Booking dari rekanan vendor lain. Diskon disimpan sebagai nominal
+             * Rupiah (bukan persen) supaya angka yang dipakai invoice & laporan
+             * tidak berubah ketika harga dasar berubah.
+             */
+            'source' => ['nullable', 'string', 'in:direct,referral'],
+            'referral_name' => ['nullable', 'string', 'max:120'],
+            'referral_discount' => ['nullable', 'numeric', 'min:0'],
         ];
     }
 
@@ -63,7 +72,11 @@ class StoreBookingRequest extends FormRequest
             'total_price.numeric' => 'Nilai kontrak harus berupa angka.',
             'total_price.min' => 'Nilai kontrak tidak boleh negatif.',
             'package_id.exists' => 'Paket tidak ditemukan.',
-            'status.in' => 'Status tidak dikenal.',
+            'status.in' => 'Status tidak dikenali.',
+            'source.in' => 'Sumber booking tidak dikenali.',
+            'referral_name.max' => 'Nama rekanan terlalu panjang.',
+            'referral_discount.numeric' => 'Diskon rekanan harus berupa angka.',
+            'referral_discount.min' => 'Diskon rekanan tidak boleh negatif.',
         ];
     }
 
@@ -90,8 +103,30 @@ class StoreBookingRequest extends FormRequest
                 $this->validatePhone($validator);
                 $this->validatePackage($validator, $vendorId);
                 $this->validateDateAvailability($validator, $vendorId);
+                $this->validateReferralDiscount($validator);
             },
         ];
+    }
+
+
+    /**
+     * Diskon rekanan tidak boleh melebihi nilai kontrak.
+     *
+     * Diskon adalah potongan yang diberikan rekanan, jadi nilainya tidak
+     * mungkin lebih besar dari harga yang ditagihkan ke klien.
+     */
+    private function validateReferralDiscount(Validator $validator): void
+    {
+        $source = (string) $this->input('source');
+
+        if ($source === 'referral') {
+            $totalPrice = (float) $this->input('total_price');
+            $discount = (float) $this->input('referral_discount');
+
+            if ($discount > $totalPrice) {
+                $validator->errors()->add('referral_discount', 'Diskon rekanan tidak boleh melebihi nilai kontrak.');
+            }
+        }
     }
 
     /** Nomor WA harus format Indonesia yang bisa dihubungi. */

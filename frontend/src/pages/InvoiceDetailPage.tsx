@@ -23,6 +23,7 @@ import { DetailGrid, DetailItem } from '@/components/ui/DetailGrid'
 import { PaymentRecordModal } from '@/components/invoices/PaymentRecordModal'
 import { InvoicePaymentHistory } from '@/components/invoices/InvoicePaymentHistory'
 import { InvoiceShareLinkCard } from '@/components/invoices/InvoiceShareLinkCard'
+import { InvoiceLineItems } from '@/components/invoices/InvoiceLineItems'
 import { ReorderTermsButton } from '@/components/invoices/ReorderTermsModal'
 import type { PaymentPayload } from '@/lib/payment-form'
 import {
@@ -203,11 +204,20 @@ export function InvoiceDetailPage({
             />
             <CardBody>
               <div className="space-y-2.5 text-body">
-                <AmountRow
-                  label="Nilai kontrak booking"
-                  value={formatCurrency(invoice.bookingTotal)}
-                  muted
+                <InvoiceLineItems
+                  packageName={invoice.packageName}
+                  packagePrice={invoice.packagePrice}
+                  addons={invoice.addons}
                 />
+                <div className="flex items-baseline justify-between gap-3 border-t border-ink-100 pt-2.5">
+                  <span className="font-medium text-ink-900">Total layanan</span>
+                  <span className="text-body font-semibold tabular-nums text-ink-900">
+                    {formatCurrency(
+                      invoice.packagePrice +
+                        invoice.addons.reduce((sum, addon) => sum + addon.price, 0),
+                    )}
+                  </span>
+                </div>
                 <AmountRow
                   label={`Ditagihkan pada invoice ini (${billedPercent}% kontrak)`}
                   value={formatCurrency(invoice.amount)}

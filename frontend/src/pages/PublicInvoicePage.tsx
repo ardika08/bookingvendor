@@ -17,6 +17,7 @@ import {
   termLabel,
 } from '@/lib/invoice-status'
 import { formatCurrency, formatLongDate, formatShortDate } from '@/lib/format'
+import { InvoiceLineItems } from '@/components/invoices/InvoiceLineItems'
 import type { PublicInvoiceData } from '@/lib/api/public-invoices'
 import { VendorLogo } from '@/components/vendor/VendorLogo'
 
@@ -147,6 +148,23 @@ export function PublicInvoicePage({ data }: { data: PublicInvoiceData }) {
                   value={formatLongDate(invoice.dueAt)}
                 />
               </dl>
+
+              <div className="rounded-xl border border-ink-200 bg-ink-50/70 p-4 sm:p-5">
+                <h2 className="mb-3 text-caption font-semibold uppercase tracking-wide text-ink-500">
+                  Rincian layanan
+                </h2>
+                <InvoiceLineItems
+                  packageName={invoice.packageName}
+                  packagePrice={invoice.packagePrice}
+                  addons={invoice.addons}
+                />
+                <div className="mt-3 flex items-baseline justify-between gap-3 border-t border-ink-200 pt-3">
+                  <span className="text-body font-semibold text-ink-900">Total layanan</span>
+                  <span className="text-lead font-semibold tabular-nums text-ink-900">
+                    {formatCurrency(invoice.packagePrice + invoice.addons.reduce((sum, a) => sum + a.price, 0))}
+                  </span>
+                </div>
+              </div>
 
               <div className="rounded-xl border border-ink-200 bg-ink-50/70 p-4 sm:p-5">
                 <h2 className="mb-3 text-caption font-semibold uppercase tracking-wide text-ink-500">

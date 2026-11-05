@@ -263,6 +263,9 @@ class BookingController extends Controller
                 'event_details' => $validated['notes'] ?? null,
                 'status' => $validated['status'],
                 'total_price' => $validated['total_price'],
+                'source' => $validated['source'] ?? Booking::SOURCE_DIRECT,
+                'referral_name' => $validated['referral_name'] ?? null,
+                'referral_discount' => $validated['referral_discount'] ?? 0,
             ]);
 
             $this->schedule->sync($booking);
@@ -298,6 +301,9 @@ class BookingController extends Controller
                 'event_details' => $validated['notes'] ?? null,
                 'status' => $validated['status'],
                 'total_price' => $validated['total_price'],
+                'source' => $validated['source'] ?? Booking::SOURCE_DIRECT,
+                'referral_name' => $validated['referral_name'] ?? null,
+                'referral_discount' => $validated['referral_discount'] ?? 0,
             ])->save();
 
             // Tanggal bisa berubah: lepas penanda lama, buat yang baru.

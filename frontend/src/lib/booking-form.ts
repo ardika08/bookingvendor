@@ -1,4 +1,4 @@
-import type { BookingStatus } from '@/types/booking'
+import type { BookingSource, BookingStatus } from '@/types/booking'
 import { BOOKING_STATUSES } from '@/types/booking'
 
 /**
@@ -19,6 +19,11 @@ export interface BookingFormValues {
   totalPrice: string
   status: BookingStatus
   notes: string
+  /** Toggle booking rekanan — saat true, nama rekanan wajib diisi. */
+  isReferral: boolean
+  referralName: string
+  /** Diskon rekanan dalam Rupiah (string input berformat). */
+  referralDiscount: string
 }
 
 export type BookingFormErrors = Partial<Record<keyof BookingFormValues, string>>
@@ -34,6 +39,9 @@ export const EMPTY_BOOKING_FORM: BookingFormValues = {
   totalPrice: '',
   status: 'tentative',
   notes: '',
+  isReferral: false,
+  referralName: '',
+  referralDiscount: '',
 }
 
 /** Format no. HP Indonesia: 08xx, 628xx, atau +628xx. */
@@ -94,6 +102,18 @@ export function validateBookingForm(
     errors.status = 'Status tidak dikenal.'
   }
 
+  if (values.isReferral) {
+    if (!values.referralName.trim()) {
+      errors.referralName = 'Nama rekanan wajib diisi.'
+    }
+
+    if (values.referralDiscount.trim() && !/^\d+$/.test(values.referralDiscount.replace(/\./g, ''))) {
+      errors.referralDiscount = 'Diskon rekanan harus berupa angka.'
+    } else if (parseCurrencyInput(values.referralDiscount) > parseCurrencyInput(values.totalPrice)) {
+      errors.referralDiscount = 'Diskon rekanan tidak boleh melebihi nilai kontrak.'
+    }
+  }
+
   return errors
 }
 
@@ -124,6 +144,9 @@ export interface BookingPayload {
   total_price: number
   status: BookingStatus
   notes: string | null
+  source: BookingSource
+  referral_name: string | null
+  referral_discount: number
 }
 
 export function toBookingPayload(values: BookingFormValues): BookingPayload {
@@ -140,5 +163,8 @@ export function toBookingPayload(values: BookingFormValues): BookingPayload {
     total_price: parseCurrencyInput(values.totalPrice),
     status: values.status,
     notes: values.notes.trim() || null,
+    source: values.isReferral ? 'referral' : 'direct',
+    referral_name: values.isReferral ? values.referralName.trim() || null : null,
+    referral_discount: values.isReferral ? parseCurrencyInput(values.referralDiscount) : 0,
   }
 }

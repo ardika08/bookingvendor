@@ -12,6 +12,8 @@ export interface PublicInvoiceData {
     | 'number'
     | 'clientName'
     | 'packageName'
+    | 'packagePrice'
+    | 'addons'
     | 'type'
     | 'status'
     | 'dueAt'
@@ -50,6 +52,8 @@ export async function fetchPublicInvoice(
         number: invoice.number,
         clientName: invoice.clientName,
         packageName: invoice.packageName,
+        packagePrice: invoice.packagePrice ?? 0,
+        addons: invoice.addons ?? [],
         type: invoice.type,
         status: invoice.status,
         dueAt: invoice.dueAt,
@@ -92,6 +96,8 @@ interface PublicInvoiceResponse {
     clientName?: string | null
     eventDate?: string | null
     packageName?: string | null
+    packagePrice?: number | null
+    addons?: { id: string; name: string; price: number }[] | null
   } | null
   vendor?: {
     name?: string | null
@@ -111,6 +117,12 @@ function mapPublicInvoice(raw: PublicInvoiceResponse): PublicInvoiceData {
       number: raw.number,
       clientName: raw.booking?.clientName ?? '',
       packageName: raw.booking?.packageName ?? null,
+      packagePrice: raw.booking?.packagePrice ?? 0,
+      addons: (raw.booking?.addons ?? []).map((addon) => ({
+        id: addon.id,
+        name: addon.name,
+        price: addon.price,
+      })),
       type: raw.type,
       status: raw.status,
       dueAt: raw.dueAt ?? '',

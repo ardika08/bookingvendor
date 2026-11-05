@@ -24,6 +24,12 @@ export type InvoiceStatus = 'unpaid' | 'partial' | 'paid' | 'void'
 
 export const INVOICE_STATUSES: InvoiceStatus[] = ['unpaid', 'partial', 'paid', 'void']
 
+export interface InvoiceAddon {
+  id: string
+  name: string
+  price: number
+}
+
 export interface Invoice {
   id: string
   /** Nomor yang dibaca manusia, mis. `INV/2026/10/0007`. */
@@ -34,6 +40,15 @@ export interface Invoice {
   clientPhone: string
   /** Nama paket/layanan yang ditagihkan. */
   packageName: string | null
+  /** Harga paket dasar (tanpa addon), dipakai untuk rincian baris. */
+  packagePrice: number
+  /**
+   * Snapshot addon yang dipilih saat booking.
+   *
+   * Nama & harga dibekukan saat booking dibuat, jadi invoice lama tetap
+   * menampilkan nilai saat itu walau harga addon di katalog kemudian naik.
+   */
+  addons: InvoiceAddon[]
   type: InvoiceType
   status: InvoiceStatus
   /** ISO date `YYYY-MM-DD` — tanggal invoice diterbitkan. */

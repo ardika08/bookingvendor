@@ -26,6 +26,7 @@ class InvoiceResource extends JsonResource
         $booking = $this->whenLoaded('booking', fn () => $this->booking);
         $client = $booking?->client;
         $package = $booking?->package;
+        $addons = $booking?->addons;
 
         return [
             'id' => (string) $this->id,
@@ -34,6 +35,12 @@ class InvoiceResource extends JsonResource
             'clientName' => $client?->name ?? '',
             'clientPhone' => $client?->phone ?? '',
             'packageName' => $package?->name,
+            'packagePrice' => (float) ($package?->price ?? 0),
+            'addons' => $addons?->map(fn ($addon) => [
+                'id' => (string) $addon->id,
+                'name' => $addon->name,
+                'price' => (float) $addon->price,
+            ])->values()->all() ?? [],
             'type' => $this->type,
             'status' => $this->status === Invoice::STATUS_CANCELLED ? 'void' : $this->status,
             'issuedAt' => optional($this->created_at)->toDateString() ?? now()->toDateString(),

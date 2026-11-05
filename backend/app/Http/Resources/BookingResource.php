@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -41,6 +42,17 @@ class BookingResource extends JsonResource
             'status' => $this->status,
             'totalPrice' => (float) $this->total_price,
             'notes' => $this->event_details,
+
+            /*
+             * Sumber booking: `direct` (klien sendiri) atau `referral` (dari
+             * rekanan vendor lain). Diskon rekanan dipakai untuk laporan
+             * profit; `totalPrice` tetap harga yang ditagihkan klien.
+             */
+            'source' => $this->source,
+            'referralName' => $this->referral_name,
+            'referralDiscount' => (float) ($this->referral_discount ?? 0),
+            'isReferral' => $this->source === Booking::SOURCE_REFERRAL,
+
             'addons' => $addons instanceof \Illuminate\Support\Collection
                 ? $addons->map(fn ($addon) => [
                     'id' => (string) $addon->id,

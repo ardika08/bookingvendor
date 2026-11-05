@@ -202,6 +202,8 @@ export async function createInvoice(
       clientName: '',
       clientPhone: '',
       packageName: null,
+      packagePrice: 0,
+      addons: [],
       type: payload.type,
       status: 'unpaid',
       issuedAt,
