@@ -88,6 +88,14 @@ class VendorProfileController extends Controller
             $vendor->contact_email = $validated['contact_email'] ?? null;
         }
 
+        if (! $partial || $request->has('portfolio_url')) {
+            $vendor->portfolio_url = $validated['portfolio_url'] ?? null;
+            // Label tanpa URL tidak ada gunanya; kosongkan bersamaan.
+            $vendor->portfolio_label = filled($validated['portfolio_url'] ?? null)
+                ? ($validated['portfolio_label'] ?? null)
+                : null;
+        }
+
         if (! $partial || $request->has('city')) {
             $vendor->location = $validated['city'] ?? null;
         }

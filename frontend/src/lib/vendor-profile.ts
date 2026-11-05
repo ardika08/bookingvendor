@@ -15,6 +15,8 @@ export interface VendorProfileFormValues {
   description: string
   contactPhone: string
   contactEmail: string
+  portfolioUrl: string
+  portfolioLabel: string
   city: string
   bankName: string
   bankAccountNumber: string
@@ -30,6 +32,8 @@ export interface VendorProfilePayload {
   description: string | null
   contact_phone: string | null
   contact_email: string | null
+  portfolio_url: string | null
+  portfolio_label: string | null
   city: string | null
   bank: {
     name: string | null
@@ -58,6 +62,8 @@ export interface VendorProfileDetail extends VendorProfile {
   description: string | null
   contactPhone: string | null
   contactEmail: string | null
+  portfolioUrl: string | null
+  portfolioLabel: string | null
   city: string | null
   bank: {
     name: string | null
@@ -73,6 +79,8 @@ export function profileToFormValues(profile: VendorProfileDetail): VendorProfile
     description: profile.description ?? '',
     contactPhone: profile.contactPhone ?? '',
     contactEmail: profile.contactEmail ?? '',
+    portfolioUrl: profile.portfolioUrl ?? '',
+    portfolioLabel: profile.portfolioLabel ?? '',
     city: profile.city ?? '',
     bankName: profile.bank.name ?? '',
     bankAccountNumber: profile.bank.accountNumber ?? '',
@@ -116,6 +124,14 @@ export function validateVendorProfile(
 
   if (values.contactEmail.trim() && !EMAIL_PATTERN.test(values.contactEmail.trim())) {
     errors.contactEmail = 'Format email tidak valid.'
+  }
+
+  if (values.portfolioUrl.trim()) {
+    if (!/^https:\/\/\S+$/i.test(values.portfolioUrl.trim())) {
+      errors.portfolioUrl = 'Tautan portofolio harus memakai https://'
+    } else if (values.portfolioUrl.trim().length > 255) {
+      errors.portfolioUrl = 'Tautan portofolio maksimal 255 karakter.'
+    }
   }
 
   const bankName = values.bankName.trim()
@@ -179,6 +195,8 @@ export function toVendorProfilePayload(values: VendorProfileFormValues): VendorP
     description: values.description.trim() || null,
     contact_phone: values.contactPhone.trim() || null,
     contact_email: values.contactEmail.trim() || null,
+    portfolio_url: values.portfolioUrl.trim() || null,
+    portfolio_label: values.portfolioUrl.trim() ? values.portfolioLabel.trim() || null : null,
     city: values.city.trim() || null,
     bank: {
       name: values.bankName.trim() || null,
@@ -195,6 +213,8 @@ const SERVER_FIELD_MAP: Record<string, keyof VendorProfileFormValues> = {
   description: 'description',
   contact_phone: 'contactPhone',
   contact_email: 'contactEmail',
+  portfolio_url: 'portfolioUrl',
+  portfolio_label: 'portfolioLabel',
   city: 'city',
   'bank.name': 'bankName',
   'bank.account_number': 'bankAccountNumber',

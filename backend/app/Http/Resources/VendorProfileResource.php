@@ -33,6 +33,8 @@ class VendorProfileResource extends JsonResource
             'description' => $this->description,
             'contactPhone' => $this->contact,
             'contactEmail' => $this->contact_email,
+            'portfolioUrl' => $this->portfolio_url,
+            'portfolioLabel' => $this->portfolio_label,
             'city' => $this->location,
             'isActive' => $this->is_active,
             'bank' => [

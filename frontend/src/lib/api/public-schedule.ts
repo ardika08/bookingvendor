@@ -10,6 +10,8 @@ export interface PublicScheduleData {
     category: string | null
     location?: string | null
     description?: string | null
+    portfolioUrl?: string | null
+    portfolioLabel?: string | null
     /** Paket aktif yang bisa dipesan calon klien. */
     packages?: PublicSchedulePackage[]
   }

@@ -7,11 +7,12 @@ import {
   CircleCheck,
   CircleX,
   Clock3,
+  Link2,
   Plus,
   RefreshCw,
 } from '@/components/ui/icons'
 import { Button } from '@/components/ui/Button'
-import { Card } from '@/components/ui/Card'
+import { Card, CardBody, CardHeader } from '@/components/ui/Card'
 import { ApiError } from '@/lib/api/client'
 import { PublicBookingDialog } from '@/components/public/PublicBookingDialog'
 import {
@@ -223,6 +224,28 @@ export function PublicSchedulePage({ slug }: { slug: string }) {
 
         {data && data.vendor.packages && data.vendor.packages.length > 0 ? (
           <PublicPackageList packages={data.vendor.packages} />
+        ) : null}
+
+        {data?.vendor.portfolioUrl ? (
+          <Card>
+            <CardHeader
+              title="Portofolio"
+              description="Lihat contoh hasil kerja kami."
+            />
+            <CardBody>
+              <a
+                href={data.vendor.portfolioUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-brand-200 bg-brand-50 px-4 text-meta font-semibold text-brand-700 transition hover:bg-brand-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
+              >
+                <Link2 className="size-3.5 shrink-0" aria-hidden="true" />
+                <span className="truncate">
+                  {data.vendor.portfolioLabel || data.vendor.portfolioUrl}
+                </span>
+              </a>
+            </CardBody>
+          </Card>
         ) : null}
       </div>
 

@@ -67,6 +67,8 @@ class PublicScheduleController extends Controller
                 'category' => $vendor->category?->name,
                 'location' => $vendor->location,
                 'description' => $vendor->description,
+                'portfolioUrl' => $vendor->portfolio_url,
+                'portfolioLabel' => $vendor->portfolio_label,
                 // Hanya paket aktif yang ditampilkan; paket nonaktif tidak
                 // untuk dijual sehingga tidak relevan bagi calon klien.
                 'packages' => $this->packages($vendor),

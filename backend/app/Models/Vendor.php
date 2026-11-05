@@ -21,6 +21,8 @@ class Vendor extends Model
         'slug',
         'description',
         'logo_path',
+        'portfolio_url',
+        'portfolio_label',
         'location',
         'contact',
         'contact_email',

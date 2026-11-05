@@ -44,6 +44,8 @@ class UpdateVendorProfileRequest extends FormRequest
             'description' => ['nullable', 'string', 'max:2000'],
             'contact_phone' => ['nullable', 'string', 'max:20', 'regex:/^(\+62|62|0)8[1-9][0-9]{6,11}$/'],
             'contact_email' => ['nullable', 'email', 'max:120'],
+            'portfolio_url' => ['nullable', 'url', 'max:255', 'starts_with:https://'],
+            'portfolio_label' => ['nullable', 'string', 'max:60'],
             'city' => ['nullable', 'string', 'max:60'],
             'bank.name' => ['nullable', 'string', 'max:40'],
             'bank.account_number' => ['nullable', 'string', 'regex:/^\d{6,20}$/'],
@@ -62,6 +64,9 @@ class UpdateVendorProfileRequest extends FormRequest
             'business_name.max' => 'Nama usaha maksimal 80 karakter.',
             'contact_phone.regex' => 'Format nomor tidak valid. Contoh: 08123456789.',
             'contact_email.email' => 'Format email tidak valid.',
+            'portfolio_url.url' => 'Tautan portofolio harus berupa URL yang valid.',
+            'portfolio_url.starts_with' => 'Tautan portofolio harus memakai https://',
+            'portfolio_label.max' => 'Label portofolio maksimal 60 karakter.',
             'bank.account_number.regex' => 'Nomor rekening hanya angka (6–20 digit).',
         ];
     }

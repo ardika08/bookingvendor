@@ -19,6 +19,8 @@ export const mockVendorProfile: VendorProfileDetail = {
     'Wedding organizer berbasis Jakarta yang menangani konsep, vendor koordinasi, dan rundown acara.',
   contactPhone: '0812-9000-1122',
   contactEmail: 'hello@lumenwedding.id',
+  portfolioUrl: 'https://instagram.com/lumenweddingstory',
+  portfolioLabel: 'Portofolio Instagram',
   city: 'Jakarta Selatan',
   bank: {
     name: '',

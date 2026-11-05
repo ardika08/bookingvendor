@@ -4,6 +4,7 @@ import {
   CheckCircle2,
   CreditCard,
   Info,
+  Link2,
   Mail,
   MapPin,
   Phone,
@@ -323,6 +324,44 @@ export function VendorProfilePage({
                       />
                     </div>
                   </Field>
+
+                  <Field
+                    id="portfolioUrl"
+                    label="Tautan portofolio"
+                    hint="Instagram, website, atau Drive. Wajib https:// Tampil di halaman jadwal publik."
+                    error={errors.portfolioUrl}
+                  >
+                    <div className="relative">
+                      <Link2 className="pointer-events-none absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-ink-400" />
+                      <input
+                        id="portfolioUrl"
+                        data-field="portfolioUrl"
+                        type="url"
+                        value={values.portfolioUrl}
+                        onChange={(event) => update('portfolioUrl', event.target.value)}
+                        placeholder="https://instagram.com/namausaha"
+                        className={cn(inputClass(Boolean(errors.portfolioUrl)), 'pl-9')}
+                      />
+                    </div>
+                  </Field>
+
+                  <Field
+                    id="portfolioLabel"
+                    label="Label tautan (opsional)"
+                    hint="Contoh: Instagram portofolio. Kosong = tampil alamat tautannya."
+                    error={errors.portfolioLabel}
+                  >
+                    <div className="relative">
+                      <input
+                        id="portfolioLabel"
+                        data-field="portfolioLabel"
+                        value={values.portfolioLabel}
+                        onChange={(event) => update('portfolioLabel', event.target.value)}
+                        placeholder="Instagram portofolio"
+                        className={inputClass(Boolean(errors.portfolioLabel))}
+                      />
+                    </div>
+                  </Field>
                 </div>
               </FormSection>
             </CardBody>
@@ -417,6 +456,7 @@ export function VendorProfilePage({
               <SummaryRow label="Kota" value={values.city || '—'} />
               <SummaryRow label="WhatsApp" value={values.contactPhone || '—'} mono />
               <SummaryRow label="Email" value={values.contactEmail || '—'} />
+              <SummaryRow label="Portofolio" value={values.portfolioLabel || values.portfolioUrl || '—'} />
               <SummaryRow
                 label="Rekening"
                 value={
