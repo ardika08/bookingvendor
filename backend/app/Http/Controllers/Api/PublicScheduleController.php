@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Addon;
 use App\Models\Package;
 use App\Models\Vendor;
 use App\Models\VendorSchedule;
@@ -76,13 +77,14 @@ class PublicScheduleController extends Controller
     }
 
     /**
-     * @return list<array{id: string, name: string, price: float, durationHours: int|null, description: string|null}>
+     * @return list<array{id: string, name: string, price: float, durationHours: int|null, description: string|null, addons: list<array{id: string, name: string, price: float}>}>
      */
     private function packages(Vendor $vendor): array
     {
         return Package::query()
             ->where('vendor_id', $vendor->id)
             ->where('is_active', true)
+            ->with(['addons' => fn ($query) => $query->where('is_active', true)])
             ->orderBy('price')
             ->get()
             ->map(fn (Package $package): array => [
@@ -91,6 +93,16 @@ class PublicScheduleController extends Controller
                 'price' => (float) $package->price,
                 'durationHours' => $package->duration_hours,
                 'description' => $package->description,
+                // Addon nonaktif tidak untuk dijual, jadi tidak ditampilkan.
+                // Harga memakai harga khusus paket (pivot), bukan harga katalog.
+                'addons' => $package->addons
+                    ->map(fn (Addon $addon): array => [
+                        'id' => (string) $addon->id,
+                        'name' => $addon->name,
+                        'price' => (float) ($addon->pivot->price ?? $addon->price),
+                    ])
+                    ->values()
+                    ->all(),
             ])
             ->values()
             ->all();

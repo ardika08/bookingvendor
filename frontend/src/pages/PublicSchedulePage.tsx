@@ -7,6 +7,7 @@ import {
   CircleCheck,
   CircleX,
   Clock3,
+  Plus,
   RefreshCw,
 } from '@/components/ui/icons'
 import { Button } from '@/components/ui/Button'
@@ -263,6 +264,27 @@ function PublicPackageList({ packages }: { packages: PublicSchedulePackage[] }) 
 
               {item.description ? (
                 <p className="text-meta leading-relaxed text-ink-600">{item.description}</p>
+              ) : null}
+
+              {item.addons && item.addons.length > 0 ? (
+                <div className="border-t border-ink-100 pt-2">
+                  <p className="text-2xs font-semibold uppercase tracking-[0.12em] text-ink-400">
+                    Addon tersedia
+                  </p>
+                  <ul className="mt-1.5 space-y-1">
+                    {item.addons.map((addon) => (
+                      <li key={addon.id} className="flex items-baseline justify-between gap-3">
+                        <span className="inline-flex items-center gap-1.5 text-meta text-ink-600">
+                          <Plus className="size-3 shrink-0 text-ink-400" aria-hidden="true" />
+                          {addon.name}
+                        </span>
+                        <span className="shrink-0 text-meta font-medium tabular-nums text-ink-700">
+                          {formatRupiah(addon.price)}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               ) : null}
             </div>
           </Card>

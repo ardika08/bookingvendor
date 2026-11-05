@@ -23,6 +23,13 @@ export interface PublicSchedulePackage {
   price: number
   durationHours: number | null
   description: string | null
+  addons?: PublicScheduleAddon[]
+}
+
+export interface PublicScheduleAddon {
+  id: string
+  name: string
+  price: number
 }
 
 /** Ambil ketersediaan publik tanpa mengirim data booking atau klien ke halaman. */
