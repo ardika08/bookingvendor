@@ -78,6 +78,32 @@ class PublicBookingTest extends TestCase
         ])->assertStatus(422);
     }
 
+    /**
+     * Regresi: endpoint publik tidak boleh menuntut CSRF.
+     *
+     * Klien dari link jadwal tidak punya sesi, jadi tidak ada cookie
+     * `XSRF-TOKEN`. Tanpa pengecualian di `bootstrap/app.php`, POST selalu
+     * dijawab 419 dan form booking publik tidak pernah bisa dipakai.
+     */
+    public function test_booking_publik_tidak_menuntut_csrf(): void
+    {
+        $vendor = $this->vendor();
+        $package = $this->package($vendor);
+
+        // Request tanpa token CSRF sama sekali.
+        $this->withMiddleware(\Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class);
+
+        $response = $this->post('/api/public/bookings', [
+            'slug' => $vendor->slug,
+            'client' => ['name' => 'Budi', 'phone' => '08123456789'],
+            'event_date' => '2027-04-20',
+            'package_id' => (string) $package->id,
+        ], ['Accept' => 'application/json']);
+
+        $this->assertNotSame(419, $response->getStatusCode(), 'Booking publik tidak boleh ditolak karena CSRF.');
+        $response->assertCreated();
+    }
+
     private function vendor(): Vendor
     {
         $user = User::query()->create([

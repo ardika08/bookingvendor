@@ -23,6 +23,23 @@ return Application::configure(basePath: dirname(__DIR__))
          */
         $middleware->statefulApi();
 
+        /*
+         * Booking publik dikecualikan dari CSRF.
+         *
+         * Klien yang memesan dari link jadwal tidak punya akun dan tidak pernah
+         * memanggil `/sanctum/csrf-cookie`, sehingga tidak ada cookie
+         * `XSRF-TOKEN` untuk dikirim balik. Tanpa pengecualian ini, POST selalu
+         * ditolak 419 dan browser menampilkan pesan gagal yang menyesatkan.
+         *
+         * Aman karena endpoint ini memang publik: penulisannya divalidasi ketat
+         * di `PublicBookingController` (vendor aktif, tanggal bebas, paket milik
+         * vendor itu, addon milik paket itu, harga dihitung server) dan dibatasi
+         * rate limit per IP.
+         */
+        $middleware->validateCsrfTokens(except: [
+            'api/public/bookings',
+        ]);
+
         $middleware->alias([
             'invoice.trial' => \App\Http\Middleware\EnsureInvoiceTrialQuota::class,
             'vendor.active' => \App\Http\Middleware\EnsureVendorIsActive::class,
