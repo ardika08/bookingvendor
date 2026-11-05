@@ -23,6 +23,7 @@ class BookingResource extends JsonResource
     {
         $client = $this->whenLoaded('client', fn () => $this->client);
         $package = $this->whenLoaded('package', fn () => $this->package);
+        $addons = $this->whenLoaded('addons', fn () => $this->addons);
 
         return [
             'id' => (string) $this->id,
@@ -40,6 +41,14 @@ class BookingResource extends JsonResource
             'status' => $this->status,
             'totalPrice' => (float) $this->total_price,
             'notes' => $this->event_details,
+            'addons' => $addons instanceof \Illuminate\Support\Collection
+                ? $addons->map(fn ($addon) => [
+                    'id' => (string) $addon->id,
+                    'addonId' => $addon->addon_id !== null ? (string) $addon->addon_id : null,
+                    'name' => $addon->name,
+                    'price' => (float) $addon->price,
+                ])->values()->all()
+                : [],
             'invoiceCount' => (int) ($this->invoices_count ?? 0),
             'createdAt' => optional($this->created_at)->toDateString(),
         ];

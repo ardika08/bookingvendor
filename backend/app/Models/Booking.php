@@ -70,6 +70,16 @@ class Booking extends Model
         return $this->hasMany(Invoice::class);
     }
 
+    public function addons(): HasMany
+    {
+        return $this->hasMany(BookingAddon::class, 'booking_id');
+    }
+
+    public function bookingAddons(): HasMany
+    {
+        return $this->addons();
+    }
+
     /** Booking yang benar-benar menempati tanggal (batal melepas tanggalnya). */
     public function scopeOccupyingDate($query)
     {

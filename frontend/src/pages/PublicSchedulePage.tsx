@@ -13,6 +13,7 @@ import {
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { ApiError } from '@/lib/api/client'
+import { PublicBookingDialog } from '@/components/public/PublicBookingDialog'
 import {
   fetchPublicSchedule,
   type PublicScheduleData,
@@ -37,6 +38,7 @@ export function PublicSchedulePage({ slug }: { slug: string }) {
     | { key: string; error: Error }
     | null
   >(null)
+  const [bookingOpen, setBookingOpen] = useState(false)
   const [reloadToken, setReloadToken] = useState(0)
   const requestKey = `${slug}:${monthKey}:${reloadToken}`
   const currentRequest = requestState?.key === requestKey ? requestState : null
@@ -209,6 +211,7 @@ export function PublicSchedulePage({ slug }: { slug: string }) {
                 unavailableDates={unavailableDates}
                 selectedDate={selectedDate}
                 onSelectDate={setSelectedDate}
+                onBookDate={() => setBookingOpen(true)}
               />
             )}
           </div>
@@ -222,6 +225,15 @@ export function PublicSchedulePage({ slug }: { slug: string }) {
           <PublicPackageList packages={data.vendor.packages} />
         ) : null}
       </div>
+
+      <PublicBookingDialog
+        open={bookingOpen}
+        slug={slug}
+        date={selectedDate}
+        packages={data?.vendor.packages ?? []}
+        onClose={() => setBookingOpen(false)}
+        onSuccess={() => setReloadToken((current) => current + 1)}
+      />
     </main>
   )
 }
@@ -308,15 +320,18 @@ export function PublicScheduleCalendar({
   unavailableDates,
   selectedDate,
   onSelectDate,
+  onBookDate,
 }: {
   matrix: MonthMatrix
   todayIso: string
   unavailableDates: Set<string>
   selectedDate: string | null
   onSelectDate: (date: string) => void
+  onBookDate: (date: string) => void
 }) {
   const selectedUnavailable = selectedDate ? unavailableDates.has(selectedDate) : false
   const selectedPast = selectedDate ? isPastDate(selectedDate, todayIso) : false
+  const selectedFree = Boolean(selectedDate) && !selectedPast && !selectedUnavailable
 
   return (
     <div className="space-y-1.5" aria-label={`Kalender ${matrix.label}`}>
@@ -370,27 +385,39 @@ export function PublicScheduleCalendar({
       </div>
 
       {selectedDate ? (
-        <div
-          role="status"
-          aria-live="polite"
-          className={`mt-4 flex items-start gap-2 rounded-lg border px-3 py-3 ${selectedUnavailable ? 'border-rose-200 bg-rose-50 text-rose-900' : 'border-emerald-200 bg-emerald-50 text-emerald-900'}`}
-        >
-          {selectedUnavailable ? (
-            <CircleX className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-          ) : (
-            <CircleCheck className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-          )}
-          <div>
-            <p className="text-meta font-semibold">{formatLongDate(selectedDate)}</p>
-            <p className="mt-0.5 text-caption leading-relaxed">
-              {selectedPast
-                ? 'Tanggal ini sudah berlalu.'
-                : selectedUnavailable
-                  ? 'Maaf, tanggal ini sudah terisi. Silakan pilih tanggal lain yang bertanda Tersedia.'
-                  : 'Tanggal ini masih tersedia.'}
-            </p>
+        <>
+          <div
+            role="status"
+            aria-live="polite"
+            className={`mt-4 flex items-start gap-2 rounded-lg border px-3 py-3 ${selectedUnavailable ? 'border-rose-200 bg-rose-50 text-rose-900' : 'border-emerald-200 bg-emerald-50 text-emerald-900'}`}
+          >
+            {selectedUnavailable ? (
+              <CircleX className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+            ) : (
+              <CircleCheck className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+            )}
+            <div>
+              <p className="text-meta font-semibold">{formatLongDate(selectedDate)}</p>
+              <p className="mt-0.5 text-caption leading-relaxed">
+                {selectedPast
+                  ? 'Tanggal ini sudah berlalu.'
+                  : selectedUnavailable
+                    ? 'Maaf, tanggal ini sudah terisi. Silakan pilih tanggal lain yang bertanda Tersedia.'
+                    : 'Tanggal ini masih tersedia.'}
+              </p>
+            </div>
           </div>
-        </div>
+
+          {selectedFree ? (
+            <Button
+              type="button"
+              className="relative"
+              onClick={() => onBookDate(selectedDate)}
+            >
+              Booking tanggal ini
+            </Button>
+          ) : null}
+        </>
       ) : (
         <p className="mt-4 text-center text-caption text-ink-400">
           Pilih tanggal untuk melihat ketersediaannya.

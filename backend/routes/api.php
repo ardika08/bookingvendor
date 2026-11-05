@@ -25,6 +25,7 @@ use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\PublicInvoiceController;
 use App\Http\Controllers\Api\PublicPlanController;
 use App\Http\Controllers\Api\RegisterController;
+use App\Http\Controllers\Api\PublicBookingController;
 use App\Http\Controllers\Api\PublicScheduleController;
 use App\Http\Controllers\Api\RevenueController;
 use App\Http\Controllers\Api\SubscriptionController;
@@ -352,6 +353,8 @@ Route::prefix('public')->group(function () {
      */
     Route::get('schedules/{slug}', [PublicScheduleController::class, 'show'])
         ->name('public.schedules.show');
+    Route::post('bookings', [PublicBookingController::class, 'store'])
+        ->name('public.bookings.store');
 
     /*
      * Katalog paket untuk halaman promosi. Publik karena calon vendor belum

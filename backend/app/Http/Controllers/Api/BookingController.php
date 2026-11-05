@@ -45,7 +45,7 @@ class BookingController extends Controller
         $vendor = $this->resolveVendor();
 
         $query = $vendor->bookings()
-            ->with('client', 'package')
+            ->with('client', 'package', 'addons')
             ->withCount('invoices');
 
         if ($month = $request->query('month')) {
@@ -220,7 +220,7 @@ class BookingController extends Controller
     {
         $this->authorizeBooking($booking);
 
-        $booking->load('client', 'package')->loadCount('invoices');
+        $booking->load('client', 'package', 'addons')->loadCount('invoices');
 
         return (new BookingResource($booking))->response();
     }
@@ -270,7 +270,7 @@ class BookingController extends Controller
             return $booking;
         });
 
-        $booking->load('client', 'package')->loadCount('invoices');
+        $booking->load('client', 'package', 'addons')->loadCount('invoices');
 
         return (new BookingResource($booking))
             ->response()
@@ -304,7 +304,7 @@ class BookingController extends Controller
             $this->schedule->sync($booking);
         });
 
-        $booking->load('client', 'package')->loadCount('invoices');
+        $booking->load('client', 'package', 'addons')->loadCount('invoices');
 
         return (new BookingResource($booking))->response();
     }
