@@ -69,3 +69,38 @@ export async function fetchClient(
 ): Promise<ClientSummary> {
   return apiRequest<ClientSummary>(`/clients/${encodeURIComponent(id)}`, { signal })
 }
+
+/** Payload ubah data kontak klien. */
+export interface UpdateClientPayload {
+  name: string
+  phone: string
+  email: string | null
+  address: string | null
+  notes: string | null
+}
+
+/** Ubah data kontak klien. Mengembalikan data terbaru beserta agregatnya. */
+export async function updateClient(
+  id: string,
+  payload: UpdateClientPayload,
+): Promise<ClientSummary> {
+  return apiRequest<ClientSummary>(`/clients/${encodeURIComponent(id)}`, {
+    method: 'PUT',
+    body: payload,
+  })
+}
+
+/**
+ * Hapus klien beserta seluruh booking-nya (cascade di level DB).
+ *
+ * Backend mengembalikan jumlah booking ikut terhapus — dipakai frontend
+ * untuk pesan konfirmasi & toast hasil.
+ */
+export async function deleteClient(
+  id: string,
+): Promise<{ deleted: boolean; deletedBookings: number }> {
+  return apiRequest<{ deleted: boolean; deletedBookings: number }>(
+    `/clients/${encodeURIComponent(id)}`,
+    { method: 'DELETE' },
+  )
+}

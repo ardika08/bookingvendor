@@ -181,6 +181,99 @@ class ClientListTest extends TestCase
         $this->assertSame('2027-05-05', $response->json('lastEventDate'));
     }
 
+    /**
+     * Regresi: hapus klien ikut membawa booking-nya.
+     *
+     * Foreign key `client_id` memakai `cascadeOnDelete`, jadi booking, invoice,
+     * dan baris addon klien terhapus bersama klien di level DB. Yang diuji di
+     * sini: controller benar-benar menghapus klien, dan melaporkan jumlah
+     * booking ikut terhapus agar UI bisa menampilkan pesan yang jujur.
+     */
+    public function test_hapus_klien_membawa_booking(): void
+    {
+        $client = $this->makeClient('Rani & Bagas', '081299887766');
+        $this->makeBooking($client, '2027-01-10', Booking::STATUS_CONFIRMED, 15000000);
+        $this->makeBooking($client, '2027-03-20', Booking::STATUS_COMPLETED, 5000000);
+
+        $response = $this->actingAs($this->user)->deleteJson("/api/clients/{$client->id}");
+
+        $response->assertOk()
+            ->assertJsonPath('deleted', true)
+            ->assertJsonPath('deletedBookings', 2);
+
+        $this->assertDatabaseMissing('clients', ['id' => $client->id]);
+        $this->assertDatabaseMissing('bookings', ['client_id' => $client->id]);
+    }
+
+    /** Hanya kontak yang bisa diubah; agregat tetap dihitung server. */
+    public function test_ubah_klien_hanya_field_kontak(): void
+    {
+        $client = $this->makeClient('Sinta Arya', '085711223344', 'sinta@example.test');
+        $this->makeBooking($client, '2027-01-10', Booking::STATUS_CONFIRMED, 12000000);
+
+        $response = $this->actingAs($this->user)->putJson("/api/clients/{$client->id}", [
+            'name' => 'Sinta & Arya',
+            'phone' => '085799887766',
+            'email' => null,
+            'address' => 'Bandung',
+            'notes' => 'Minta konfirmasi venue',
+        ]);
+
+        $response->assertOk()
+            ->assertJsonPath('name', 'Sinta & Arya')
+            ->assertJsonPath('phone', '085799887766')
+            ->assertJsonPath('address', 'Bandung')
+            ->assertJsonPath('notes', 'Minta konfirmasi venue')
+            // Agregat tetap ikut dikembalikan.
+            ->assertJsonPath('bookingCount', 1)
+            ->assertJsonPath('totalValue', 12000000);
+    }
+
+    /** Nomor telepon tidak valid ditolak saat ubah data. */
+    public function test_ubah_klien_nomor_invalid_ditolak(): void
+    {
+        $client = $this->makeClient('Tono Wati', '081555443322');
+
+        $response = $this->actingAs($this->user)->putJson("/api/clients/{$client->id}", [
+            'name' => 'Tono Wati',
+            'phone' => '12345',
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors('phone');
+    }
+
+    /** Isolasi antar-vendor: klien vendor lain tidak bisa diubah/dihapus. */
+    public function test_vendor_lain_tidak_bisa_ubah_atau_hapus_klien(): void
+    {
+        $client = $this->makeClient('Klien Vendor A', '081234567890');
+
+        $otherUser = User::create([
+            'name' => 'Vendor Lain',
+            'email' => 'other@example.com',
+            'password' => bcrypt('password'),
+            'role' => 'vendor',
+        ]);
+        $otherVendor = Vendor::create([
+            'user_id' => $otherUser->id,
+            'name' => 'Vendor B',
+            'slug' => 'vendor-b',
+            'contact_phone' => '081234567891',
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($otherUser)
+            ->putJson("/api/clients/{$client->id}", ['name' => 'Direbut', 'phone' => '081234567890'])
+            ->assertStatus(404);
+
+        $this->actingAs($otherUser)
+            ->deleteJson("/api/clients/{$client->id}")
+            ->assertStatus(404);
+
+        $this->assertSame($this->vendor->id, $client->fresh()->vendor_id);
+        $this->assertSame('Klien Vendor A', $client->fresh()->name);
+    }
+
     private function makeClient(string $name, string $phone, ?string $email = null): Client
     {
         return Client::create([

@@ -205,6 +205,8 @@ Route::middleware(['auth:sanctum', 'vendor.active'])->group(function () {
      */
     Route::get('clients', [ClientController::class, 'index'])->name('clients.index');
     Route::get('clients/{client}', [ClientController::class, 'show'])->name('clients.show');
+    Route::put('clients/{client}', [ClientController::class, 'update'])->name('clients.update');
+    Route::delete('clients/{client}', [ClientController::class, 'destroy'])->name('clients.destroy');
 
     /*
      * Seri pendapatan bulanan untuk grafik dashboard.

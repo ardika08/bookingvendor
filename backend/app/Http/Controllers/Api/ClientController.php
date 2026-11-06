@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Concerns\ResolvesVendor;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateClientRequest;
 use App\Http\Resources\ClientResource;
 use App\Models\Booking;
 use App\Models\Client;
@@ -94,6 +95,45 @@ class ClientController extends Controller
         return response()->json(
             (new ClientResource($client))->resolve(),
         );
+    }
+
+    /**
+     * PUT /api/clients/{client}
+     *
+     * Ubah data kontak. Hanya field kontak yang bisa diubah — jumlah booking
+     * dan nilai klien adalah agregat, bukan kolom yang bisa ditimpa manual.
+     */
+    public function update(UpdateClientRequest $request, Client $client): JsonResponse
+    {
+        $vendor = $this->resolveVendor();
+
+        abort_unless($client->vendor_id === $vendor->id, 404);
+
+        $client->update($request->validated());
+
+        return $this->show($client);
+    }
+
+    /**
+     * DELETE /api/clients/{client}
+     *
+     * Hapus klien beserta seluruh booking-nya. Foreign key `client_id` memakai
+     * `cascadeOnDelete`, jadi booking, invoice, dan baris addon ikut terhapus
+     * di level database — satu perintah, tanpa risiko data setengah terhapus.
+     */
+    public function destroy(Client $client): JsonResponse
+    {
+        $vendor = $this->resolveVendor();
+
+        abort_unless($client->vendor_id === $vendor->id, 404);
+
+        $deletedBookings = $client->bookings()->count();
+        $client->delete();
+
+        return response()->json([
+            'deleted' => true,
+            'deletedBookings' => $deletedBookings,
+        ]);
     }
 
     /**
